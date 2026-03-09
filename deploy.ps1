@@ -4,14 +4,18 @@ Write-Host "📝 Committing all changes..." -ForegroundColor Cyan
 
 git add .
 
-git commit -m "fix: UTF-8 encoding issues and prepare for Vercel deployment
+$commitMessage = @"
+fix: UTF-8 encoding issues and prepare for Vercel deployment
 
 - Fix invalid UTF-8 characters in admin-job-detail-client.tsx
 - Update lib/db.ts to support Neon SSL connections
 - Add postinstall script for Prisma client generation
 - Add admin setup script with DIRECT_URL support
 - Add comprehensive deployment documentation
-- Unlink from old Vercel project"
+- Unlink from old Vercel project
+"@
+
+git commit -m $commitMessage
 
 Write-Host ""
 Write-Host "🚀 Pushing to GitHub..." -ForegroundColor Cyan
