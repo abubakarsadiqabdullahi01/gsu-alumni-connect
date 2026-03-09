@@ -4,7 +4,10 @@ import { Pool } from "pg";
 
 const databaseUrl = process.env.DATABASE_URL;
 if (!databaseUrl) {
-  throw new Error("DATABASE_URL is required");
+  throw new Error(
+    "DATABASE_URL is required. Please set it in your Vercel environment variables: " +
+    "https://vercel.com/humsadtechnologies/gsu-alumni-connect/settings/environment-variables"
+  );
 }
 
 const isLocalDatabase = /localhost|127\.0\.0\.1/i.test(databaseUrl);
