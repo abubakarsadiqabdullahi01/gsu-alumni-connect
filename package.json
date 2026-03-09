@@ -6,6 +6,7 @@
     "dev": "next dev",
     "dev:fresh": "rd /s /q .next 2>nul & next dev",
     "build": "next build",
+    "vercel-build": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint",
     "db:push": "prisma db push",
@@ -20,8 +21,7 @@
     "auth:make-user": "node scripts/set-user-role.cjs --role user",
     "admin:create": "node scripts/setup-admin.cjs",
     "admin:create:preview": "node scripts/setup-admin.cjs --dry-run",
-    "prepare": "husky",
-    "postinstall": "prisma generate"
+    "prepare": "husky"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
