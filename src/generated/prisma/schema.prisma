@@ -1,0 +1,917 @@
+// ============================================================
+// GSU ALUMNI CONNECT â€” PRISMA SCHEMA
+// PostgreSQL | Prisma 6.x | Better Auth 1.5
+// ============================================================
+// TABLE OF CONTENTS
+//  1.  Generator & Datasource
+//  2.  Enums
+//  3.  Better Auth Core  (User, Session, Account, Verification)
+//  4.  Graduate Profile  (academic + personal extension of User)
+//  5.  Employment History
+//  6.  Education (post-graduation)
+//  7.  Skills & Endorsements
+//  8.  Graduate Location  (alumni map)
+//  9.  Achievements & Badges
+// 10.  Alumni Groups & Posts
+// 11.  Messaging
+// 12.  Connections & Blocking
+// 13.  Job Board
+// 14.  Mentorship
+// 15.  Notifications & Activity Feed
+// 16.  Upload Audit Log
+// ============================================================
+
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// 1. GENERATOR & DATASOURCE
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// 2. ENUMS
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+enum AccountStatus {
+  PENDING // created by upload, never logged in
+  ACTIVE // completed onboarding
+  SUSPENDED // admin-suspended
+}
+
+enum Sex {
+  M
+  F
+}
+
+enum DegreeClass {
+  FIRST_CLASS
+  SECOND_CLASS_UPPER
+  SECOND_CLASS_LOWER
+  THIRD_CLASS
+  PASS
+}
+
+enum EmploymentType {
+  FULL_TIME
+  PART_TIME
+  CONTRACT
+  SELF_EMPLOYED
+  UNEMPLOYED
+  STUDENT
+}
+
+enum GroupType {
+  COHORT // auto: "2019 Set"
+  DEPARTMENT // auto: "Accounting Alumni"
+  FACULTY // auto: "Faculty of Arts Alumni"
+  STATE // auto: "Gombe State Alumni"
+  CUSTOM // user-created
+}
+
+enum GroupMemberRole {
+  ADMIN
+  MODERATOR
+  MEMBER
+}
+
+enum ConnectionStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  BLOCKED
+}
+
+enum MentorshipStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  COMPLETED
+  CANCELLED
+}
+
+enum JobType {
+  FULL_TIME
+  PART_TIME
+  CONTRACT
+  REMOTE
+  HYBRID
+  INTERNSHIP
+}
+
+enum NotificationType {
+  WELCOME
+  PROFILE_VIEW
+  CONNECTION_REQUEST
+  CONNECTION_ACCEPTED
+  MESSAGE_RECEIVED
+  GROUP_POST
+  JOB_MATCH
+  MENTORSHIP_REQUEST
+  MENTORSHIP_ACCEPTED
+  ENDORSEMENT
+  GRADUATION_ANNIVERSARY
+  ADMIN_BROADCAST
+  ACCOUNT_CREATED
+}
+
+enum EventType {
+  REUNION
+  MEETUP
+  WORKSHOP
+  NETWORKING
+  WEBINAR
+}
+
+enum ActivityType {
+  JOINED_PLATFORM
+  UPDATED_JOB
+  JOINED_GROUP
+  POSTED_IN_GROUP
+  POSTED_JOB
+  PROFILE_COMPLETED
+  GRADUATION_ANNIVERSARY
+}
+
+enum BadgeType {
+  FIRST_CLASS_HONOURS // graduate has first class
+  PROFILE_COMPLETE // 100% profile completion
+  EARLY_ADOPTER // first 500 to join
+  MENTOR // active mentor
+  JOB_POSTER // posted 3+ jobs
+  TOP_CONNECTOR // 50+ profile views
+  VERIFIED // admin-verified employment
+}
+
+enum ReactionType {
+  LIKE
+  LOVE
+  CLAP
+  FIRE
+  INSIGHTFUL
+}
+
+enum Proficiency {
+  BEGINNER
+  INTERMEDIATE
+  EXPERT
+}
+
+enum UploadStatus {
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// 3. BETTER AUTH CORE TABLES
+//    DO NOT RENAME â€” Better Auth CLI maps to these exact names
+//    @map() aliases keep the DB columns in snake_case
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+model User {
+  // â”€â”€ Better Auth required fields â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  id            String   @id @default(uuid())
+  name          String // display name (full_name)
+  email         String?  @unique // set during onboarding (nullable until then)
+  emailVerified Boolean  @default(false) @map("email_verified")
+  image         String? // profile photo URL
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  // â”€â”€ Better Auth plugin fields â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  role             String?   @default("user") // "user" | "admin"  (admin plugin)
+  banned           Boolean?  @default(false) // admin plugin
+  banReason        String?   @map("ban_reason") // admin plugin
+  banExpires       DateTime? @map("ban_expires") // admin plugin
+  twoFactorEnabled Boolean?  @default(false) @map("two_factor_enabled")
+
+  // â”€â”€ GSU Custom auth fields â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // NOTE: Better Auth additionalFields maps these automatically
+  registrationNo  String        @unique @map("registration_no")
+  defaultPassword Boolean       @default(true) @map("default_password")
+  accountStatus   AccountStatus @default(PENDING) @map("account_status")
+  phone           String?       @unique
+  lastSeenAt      DateTime?     @map("last_seen_at")
+
+  // â”€â”€ Better Auth relations â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  sessions   Session[]
+  accounts   Account[]
+  twoFactors TwoFactor[]
+
+  // â”€â”€ App relations â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  graduate Graduate?
+
+  @@map("user")
+}
+
+model Session {
+  id        String   @id @default(uuid())
+  expiresAt DateTime @map("expires_at")
+  token     String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  ipAddress String? @map("ip_address")
+  userAgent String? @map("user_agent")
+
+  userId String @map("user_id")
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Better Auth admin plugin
+  impersonatedBy String? @map("impersonated_by")
+
+  @@map("session")
+}
+
+model Account {
+  id         String @id @default(uuid())
+  accountId  String @map("account_id")
+  providerId String @map("provider_id")
+
+  userId String @map("user_id")
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  accessToken           String?   @map("access_token")
+  refreshToken          String?   @map("refresh_token")
+  idToken               String?   @map("id_token")
+  accessTokenExpiresAt  DateTime? @map("access_token_expires_at")
+  refreshTokenExpiresAt DateTime? @map("refresh_token_expires_at")
+  scope                 String?
+  password              String?
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id @default(uuid())
+  identifier String
+  value      String
+  expiresAt  DateTime @map("expires_at")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  @@map("verification")
+}
+
+model TwoFactor {
+  id          String @id @default(uuid())
+  secret      String
+  backupCodes String @map("backup_codes")
+
+  userId String @map("user_id")
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("two_factor")
+}
+
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// 4. GRADUATE PROFILE
+//    1:1 with User â€” holds all academic + profile data
+//    Fields sourced from Excel are marked with // [EXCEL] comment
+//    Fields filled by graduate marked with // [USER]
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+model Graduate {
+  id     String @id @default(uuid())
+  userId String @unique @map("user_id")
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // â”€â”€ From Excel (LOCKED â€” never overwritten after import) â”€
+  registrationNo String       @unique @map("registration_no") // [EXCEL] e.g. UG19/ASAC/1025
+  fullName       String       @map("full_name") // [EXCEL] normalized
+  surname        String? // [EXCEL] mid-era sheets
+  otherNames     String?      @map("other_names") // [EXCEL] mid-era sheets
+  sex            Sex? // [EXCEL]
+  stateOfOrigin  String?      @map("state_of_origin") // [EXCEL]
+  lga            String? // [EXCEL] local govt area
+  facultyCode    String?      @map("faculty_code") // [EXCEL] AS, ED, SC, MD, PH
+  facultyName    String?      @map("faculty_name") // [EXCEL] expanded
+  courseCode     String?      @map("course_code") // [EXCEL] AC, BA, EC ...
+  departmentName String?      @map("department_name") // [EXCEL] expanded
+  cgpa           Decimal?     @db.Decimal(4, 2) // [EXCEL] null for mid-era
+  degreeClass    DegreeClass? @map("degree_class") // [EXCEL] normalized
+  graduationYear String?      @map("graduation_year") // [EXCEL] "2023-2024"
+  entryYear      Int?         @map("entry_year") // [DERIVED] from reg no prefix
+  jambNumber     String?      @map("jamb_number") // [EXCEL] mid-era only
+  sourceSheet    String?      @map("source_sheet") // [SYSTEM] which sheet imported from
+
+  // â”€â”€ Profile (filled by graduate during onboarding + later) â”€
+  dateOfBirth     DateTime? @map("date_of_birth") // [USER]
+  bio             String?   @db.Text // [USER]
+  linkedinUrl     String?   @map("linkedin_url") // [USER]
+  twitterUrl      String?   @map("twitter_url") // [USER]
+  githubUrl       String?   @map("github_url") // [USER]
+  personalWebsite String?   @map("personal_website") // [USER]
+  nyscState       String?   @map("nysc_state") // [USER] NYSC posting state
+  nyscYear        Int?      @map("nysc_year") // [USER]
+
+  // â”€â”€ Privacy Controls â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  showCgpa               Boolean @default(true) @map("show_cgpa")
+  showEmail              Boolean @default(false) @map("show_email")
+  showPhone              Boolean @default(false) @map("show_phone")
+  showDob                Boolean @default(false) @map("show_dob")
+  showInDirectory        Boolean @default(true) @map("show_in_directory")
+  allowMessages          Boolean @default(true) @map("allow_messages")
+  showActivityFeed       Boolean @default(true) @map("show_activity_feed")
+  openToOpportunities    Boolean @default(false) @map("open_to_opportunities")
+  availableForMentorship Boolean @default(false) @map("available_for_mentorship")
+
+  // â”€â”€ System â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  profileCompleted Boolean  @default(false) @map("profile_completed")
+  onboardingStep   Int      @default(0) @map("onboarding_step") // 0-5 so user can resume
+  profileViews     Int      @default(0) @map("profile_views")
+  salaryMin        Decimal? @map("salary_min") @db.Decimal(14, 2) // private â€” admin only
+  salaryMax        Decimal? @map("salary_max") @db.Decimal(14, 2) // private â€” admin only
+  salaryCurrency   String   @default("NGN") @map("salary_currency")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  // â”€â”€ Relations â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  employment           Employment[]
+  education            Education[]
+  skills               Skill[]
+  endorsementsGiven    Endorsement[]             @relation("EndorserRelation")
+  endorsementsReceived Endorsement[]             @relation("EndorsedRelation")
+  location             GraduateLocation?
+  achievements         Achievement[]
+  badges               ProfileBadge[]
+  groupMemberships     GroupMember[]
+  groupPosts           GroupPost[]
+  postComments         PostComment[]
+  postReactions        PostReaction[]
+  sentMessages         Message[]                 @relation("SenderRelation")
+  conversations        ConversationParticipant[]
+  connectionsInitiated Connection[]              @relation("RequesterRelation")
+  connectionsReceived  Connection[]              @relation("ReceiverRelation")
+  jobPostings          JobPosting[]
+  jobApplications      JobApplication[]
+  eventsCreated        Event[]
+  eventAttendances     EventAttendee[]
+  mentorshipAsMentee   Mentorship[]              @relation("MenteeRelation")
+  mentorshipAsMentor   Mentorship[]              @relation("MentorRelation")
+  notifications        Notification[]
+  activityFeed         ActivityFeedItem[]
+  profileViewsLog      ProfileView[]             @relation("ViewedRelation")
+  profileViewsGiven    ProfileView[]             @relation("ViewerRelation")
+
+  @@index([registrationNo])
+  @@index([graduationYear])
+  @@index([facultyCode, courseCode])
+  @@index([degreeClass])
+  @@index([stateOfOrigin])
+  @@map("graduate")
+}
+
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// 5. EMPLOYMENT HISTORY
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+model Employment {
+  id         String   @id @default(uuid())
+  graduateId String   @map("graduate_id")
+  graduate   Graduate @relation(fields: [graduateId], references: [id], onDelete: Cascade)
+
+  jobTitle       String         @map("job_title")
+  companyName    String         @map("company_name")
+  industry       String? // Banking, Tech, Education, Health, Law, Govt...
+  employmentType EmploymentType @default(FULL_TIME) @map("employment_type")
+
+  city        String?
+  state       String?
+  country     String    @default("Nigeria")
+  isCurrent   Boolean   @default(false) @map("is_current")
+  startDate   DateTime? @map("start_date")
+  endDate     DateTime? @map("end_date") // null when isCurrent = true
+  description String?   @db.Text
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([graduateId])
+  @@index([companyName])
+  @@index([industry])
+  @@map("employment")
+}
+
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// 6. EDUCATION (post-graduation degrees)
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+model Education {
+  id         String   @id @default(uuid())
+  graduateId String   @map("graduate_id")
+  graduate   Graduate @relation(fields: [graduateId], references: [id], onDelete: Cascade)
+
+  institution  String
+  degree       String? // MSc, MBA, PhD, PGD, LLM...
+  fieldOfStudy String? @map("field_of_study")
+  startYear    Int?    @map("start_year")
+  endYear      Int?    @map("end_year")
+  isCurrent    Boolean @default(false) @map("is_current")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([graduateId])
+  @@map("education")
+}
+
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// 7. SKILLS & ENDORSEMENTS
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+model Skill {
+  id         String   @id @default(uuid())
+  graduateId String   @map("graduate_id")
+  graduate   Graduate @relation(fields: [graduateId], references: [id], onDelete: Cascade)
+
+  skillName   String      @map("skill_name")
+  proficiency Proficiency @default(INTERMEDIATE)
+
+  endorsements Endorsement[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([graduateId, skillName])
+  @@map("skill")
+}
+
+model Endorsement {
+  id         String   @id @default(uuid())
+  endorserId String   @map("endorser_id")
+  endorser   Graduate @relation("EndorserRelation", fields: [endorserId], references: [id], onDelete: Cascade)
+
+  endorsedId String   @map("endorsed_id")
+  endorsed   Graduate @relation("EndorsedRelation", fields: [endorsedId], references: [id], onDelete: Cascade)
+
+  skillId String @map("skill_id")
+  skill   Skill  @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([endorserId, endorsedId, skillId])
+  @@map("endorsement")
+}
+
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// 8. GRADUATE LOCATION  (alumni map)
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+model GraduateLocation {
+  id         String   @id @default(uuid())
+  graduateId String   @unique @map("graduate_id")
+  graduate   Graduate @relation(fields: [graduateId], references: [id], onDelete: Cascade)
+
+  city      String?
+  state     String?
+  country   String   @default("Nigeria")
+  latitude  Decimal? @db.Decimal(10, 6)
+  longitude Decimal? @db.Decimal(10, 6)
+
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([state])
+  @@map("graduate_location")
+}
+
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// 9. ACHIEVEMENTS & BADGES
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+model Achievement {
+  id         String   @id @default(uuid())
+  graduateId String   @map("graduate_id")
+  graduate   Graduate @relation(fields: [graduateId], references: [id], onDelete: Cascade)
+
+  title       String
+  description String?   @db.Text
+  year        Int?
+  verified    Boolean   @default(false) // admin can verify
+  verifiedAt  DateTime? @map("verified_at")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([graduateId])
+  @@map("achievement")
+}
+
+model ProfileBadge {
+  id         String   @id @default(uuid())
+  graduateId String   @map("graduate_id")
+  graduate   Graduate @relation(fields: [graduateId], references: [id], onDelete: Cascade)
+
+  badgeType BadgeType @map("badge_type")
+  awardedAt DateTime  @default(now()) @map("awarded_at")
+
+  @@unique([graduateId, badgeType])
+  @@map("profile_badge")
+}
+
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// 10. ALUMNI GROUPS & POSTS
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+model AlumniGroup {
+  id            String    @id @default(uuid())
+  name          String
+  slug          String    @unique // URL-safe name for routing
+  description   String?   @db.Text
+  coverImageUrl String?   @map("cover_image_url")
+  type          GroupType @default(CUSTOM)
+  isAuto        Boolean   @default(false) @map("is_auto") // system-created from upload data
+
+  // Metadata for auto-groups
+  cohortYear  String? @map("cohort_year") // e.g. "2019"
+  facultyCode String? @map("faculty_code")
+  courseCode  String? @map("course_code")
+  stateCode   String? @map("state_code")
+
+  createdById String? @map("created_by_id")
+
+  members GroupMember[]
+  posts   GroupPost[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([type])
+  @@index([slug])
+  @@map("alumni_group")
+}
+
+model GroupMember {
+  id         String      @id @default(uuid())
+  groupId    String      @map("group_id")
+  group      AlumniGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  graduateId String      @map("graduate_id")
+  graduate   Graduate    @relation(fields: [graduateId], references: [id], onDelete: Cascade)
+
+  role       GroupMemberRole @default(MEMBER)
+  joinedAt   DateTime        @default(now()) @map("joined_at")
+  lastReadAt DateTime?       @map("last_read_at")
+
+  @@unique([groupId, graduateId])
+  @@map("group_member")
+}
+
+model GroupPost {
+  id       String      @id @default(uuid())
+  groupId  String      @map("group_id")
+  group    AlumniGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  authorId String      @map("author_id")
+  author   Graduate    @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  content   String  @db.Text
+  imageUrl  String? @map("image_url")
+  isDeleted Boolean @default(false) @map("is_deleted")
+  isPinned  Boolean @default(false) @map("is_pinned")
+
+  comments  PostComment[]
+  reactions PostReaction[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([groupId, createdAt(sort: Desc)])
+  @@map("group_post")
+}
+
+model PostComment {
+  id       String    @id @default(uuid())
+  postId   String    @map("post_id")
+  post     GroupPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  authorId String    @map("author_id")
+  author   Graduate  @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  content   String        @db.Text
+  isDeleted Boolean       @default(false) @map("is_deleted")
+  parentId  String?       @map("parent_id") // for threaded replies
+  parent    PostComment?  @relation("CommentReplies", fields: [parentId], references: [id])
+  replies   PostComment[] @relation("CommentReplies")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([postId])
+  @@map("post_comment")
+}
+
+model PostReaction {
+  id         String    @id @default(uuid())
+  postId     String    @map("post_id")
+  post       GroupPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  graduateId String    @map("graduate_id")
+  graduate   Graduate  @relation(fields: [graduateId], references: [id], onDelete: Cascade)
+
+  reaction ReactionType
+
+  @@unique([postId, graduateId])
+  @@map("post_reaction")
+}
+
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// 11. MESSAGING
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+model Conversation {
+  id            String   @id @default(uuid())
+  isGroup       Boolean  @default(false) @map("is_group")
+  groupName     String?  @map("group_name") // for group chats (not alumni groups)
+  groupImageUrl String?  @map("group_image_url")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  participants ConversationParticipant[]
+  messages     Message[]
+
+  @@map("conversation")
+}
+
+model ConversationParticipant {
+  id             String       @id @default(uuid())
+  conversationId String       @map("conversation_id")
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  graduateId     String       @map("graduate_id")
+  graduate       Graduate     @relation(fields: [graduateId], references: [id], onDelete: Cascade)
+
+  joinedAt   DateTime  @default(now()) @map("joined_at")
+  lastReadAt DateTime? @map("last_read_at")
+  isAdmin    Boolean   @default(false) @map("is_admin") // for group chat admin
+
+  @@unique([conversationId, graduateId])
+  @@map("conversation_participant")
+}
+
+model Message {
+  id             String       @id @default(uuid())
+  conversationId String       @map("conversation_id")
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  senderId       String       @map("sender_id")
+  sender         Graduate     @relation("SenderRelation", fields: [senderId], references: [id], onDelete: Cascade)
+
+  body      String    @db.Text
+  fileUrl   String?   @map("file_url") // attachment
+  fileType  String?   @map("file_type") // image/pdf/etc
+  isDeleted Boolean   @default(false) @map("is_deleted")
+  deletedAt DateTime? @map("deleted_at")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([conversationId, createdAt(sort: Desc)])
+  @@map("message")
+}
+
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// 12. CONNECTIONS & PROFILE VIEWS
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+model Connection {
+  id          String   @id @default(uuid())
+  requesterId String   @map("requester_id")
+  requester   Graduate @relation("RequesterRelation", fields: [requesterId], references: [id], onDelete: Cascade)
+  receiverId  String   @map("receiver_id")
+  receiver    Graduate @relation("ReceiverRelation", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  status ConnectionStatus @default(PENDING)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([requesterId, receiverId])
+  @@map("connection")
+}
+
+model ProfileView {
+  id       String   @id @default(uuid())
+  viewedId String   @map("viewed_id") // whose profile was viewed
+  viewed   Graduate @relation("ViewedRelation", fields: [viewedId], references: [id], onDelete: Cascade)
+  viewerId String   @map("viewer_id") // who viewed it
+  viewer   Graduate @relation("ViewerRelation", fields: [viewerId], references: [id], onDelete: Cascade)
+
+  viewedAt DateTime @default(now()) @map("viewed_at")
+
+  @@index([viewedId, viewedAt(sort: Desc)])
+  @@map("profile_view")
+}
+
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// 13. JOB BOARD
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+model JobPosting {
+  id         String   @id @default(uuid())
+  postedById String   @map("posted_by_id")
+  postedBy   Graduate @relation(fields: [postedById], references: [id], onDelete: Cascade)
+
+  title        String
+  companyName  String  @map("company_name")
+  description  String? @db.Text
+  requirements String? @db.Text
+  industry     String?
+  jobType      JobType @default(FULL_TIME) @map("job_type")
+
+  locationCity  String? @map("location_city")
+  locationState String? @map("location_state")
+  country       String  @default("Nigeria")
+
+  salaryMin     Decimal? @map("salary_min") @db.Decimal(14, 2)
+  salaryMax     Decimal? @map("salary_max") @db.Decimal(14, 2)
+  salaryVisible Boolean  @default(false) @map("salary_visible")
+  currencyCode  String   @default("NGN") @map("currency_code")
+
+  applicationUrl   String?   @map("application_url")
+  applicationEmail String?   @map("application_email")
+  deadline         DateTime?
+  isActive         Boolean   @default(true) @map("is_active")
+  isVerified       Boolean   @default(false) @map("is_verified") // admin-verified posting
+
+  applications JobApplication[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([isActive, createdAt(sort: Desc)])
+  @@index([industry])
+  @@map("job_posting")
+}
+
+model JobApplication {
+  id          String     @id @default(uuid())
+  jobId       String     @map("job_id")
+  job         JobPosting @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  applicantId String     @map("applicant_id")
+  applicant   Graduate   @relation(fields: [applicantId], references: [id], onDelete: Cascade)
+
+  coverNote String? @map("cover_note") @db.Text
+  cvUrl     String? @map("cv_url")
+  status    String  @default("APPLIED") // APPLIED | REVIEWED | SHORTLISTED | REJECTED
+
+  appliedAt DateTime @default(now()) @map("applied_at")
+
+  @@unique([jobId, applicantId])
+  @@map("job_application")
+}
+
+model Event {
+  id        String   @id @default(uuid())
+  creatorId String   @map("creator_id")
+  creator   Graduate @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+
+  title       String
+  description String?   @db.Text
+  type        EventType
+  location    String
+  startsAt    DateTime  @map("starts_at")
+  endsAt      DateTime? @map("ends_at")
+  capacity    Int?
+  isPublic    Boolean   @default(true) @map("is_public")
+  isCancelled Boolean   @default(false) @map("is_cancelled")
+
+  attendees EventAttendee[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([startsAt(sort: Desc)])
+  @@index([type])
+  @@map("event")
+}
+
+model EventAttendee {
+  id         String   @id @default(uuid())
+  eventId    String   @map("event_id")
+  event      Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  graduateId String   @map("graduate_id")
+  graduate   Graduate @relation(fields: [graduateId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@unique([eventId, graduateId])
+  @@index([graduateId])
+  @@map("event_attendee")
+}
+
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// 14. MENTORSHIP
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+model Mentorship {
+  id       String   @id @default(uuid())
+  menteeId String   @map("mentee_id")
+  mentee   Graduate @relation("MenteeRelation", fields: [menteeId], references: [id], onDelete: Cascade)
+  mentorId String   @map("mentor_id")
+  mentor   Graduate @relation("MentorRelation", fields: [mentorId], references: [id], onDelete: Cascade)
+
+  subject String?
+  message String?          @db.Text
+  status  MentorshipStatus @default(PENDING)
+  notes   String?          @db.Text // mentor's private notes
+
+  acceptedAt  DateTime? @map("accepted_at")
+  completedAt DateTime? @map("completed_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  @@index([mentorId, status])
+  @@map("mentorship")
+}
+
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// 15. NOTIFICATIONS & ACTIVITY FEED
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+model Notification {
+  id         String   @id @default(uuid())
+  graduateId String   @map("graduate_id")
+  graduate   Graduate @relation(fields: [graduateId], references: [id], onDelete: Cascade)
+
+  type      NotificationType
+  title     String
+  body      String           @db.Text
+  actionUrl String?          @map("action_url") // deep link to relevant page
+  isRead    Boolean          @default(false) @map("is_read")
+  readAt    DateTime?        @map("read_at")
+
+  // Reference to the triggering entity (flexible JSON)
+  metadata Json? // e.g. { fromGraduateId, jobId, groupId }
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([graduateId, isRead, createdAt(sort: Desc)])
+  @@map("notification")
+}
+
+model ActivityFeedItem {
+  id         String   @id @default(uuid())
+  graduateId String   @map("graduate_id")
+  graduate   Graduate @relation(fields: [graduateId], references: [id], onDelete: Cascade)
+
+  actionType ActivityType @map("action_type")
+  headline   String       @db.Text // e.g. "Amina updated her job to Senior Engineer at MTN"
+  isPublic   Boolean      @default(true) @map("is_public")
+
+  metadata Json? // flexible: { jobTitle, company, groupName, etc. }
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([createdAt(sort: Desc)])
+  @@index([graduateId])
+  @@map("activity_feed_item")
+}
+
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// 16. UPLOAD AUDIT LOG
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+model AdminSetting {
+  id String @id @default("main")
+
+  platformName   String  @default("GSU Alumni Connect") @map("platform_name")
+  supportEmail   String  @default("alumni@gsu.edu.ng") @map("support_email")
+  welcomeMessage String? @map("welcome_message") @db.Text
+
+  allowSelfRegistration      Boolean @default(false) @map("allow_self_registration")
+  requireEmailVerification   Boolean @default(true) @map("require_email_verification")
+  forcePasswordChangeOnFirst Boolean @default(true) @map("force_password_change_on_first")
+  enableTwoFactor            Boolean @default(true) @map("enable_two_factor")
+
+  featureJobBoard   Boolean @default(true) @map("feature_job_board")
+  featureMentorship Boolean @default(true) @map("feature_mentorship")
+  featureMessaging  Boolean @default(true) @map("feature_messaging")
+  featureMap        Boolean @default(true) @map("feature_map")
+  featureGroups     Boolean @default(true) @map("feature_groups")
+  featureSkills     Boolean @default(false) @map("feature_skills")
+
+  updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("admin_setting")
+}
+
+model UploadAuditLog {
+  id               String @id @default(uuid())
+  uploadedByUserId String @map("uploaded_by_user_id") // admin user id
+
+  fileName       String       @map("file_name")
+  totalRows      Int          @map("total_rows")
+  created        Int          @default(0) // new accounts created
+  updated        Int          @default(0) // existing records updated
+  skipped        Int          @default(0) // duplicates skipped
+  failed         Int          @default(0) // rows with errors
+  status         UploadStatus @default(PROCESSING)
+  errorReportUrl String?      @map("error_report_url") // CSV download link
+  notes          String?      @db.Text
+
+  sheetsProcessed Json?     @map("sheets_processed") // array of {sheet, count}
+  startedAt       DateTime  @default(now()) @map("started_at")
+  completedAt     DateTime? @map("completed_at")
+
+  @@index([uploadedByUserId])
+  @@map("upload_audit_log")
+}
