@@ -271,7 +271,7 @@ export function AdminJobDetailClient({ jobId }: { jobId: string }) {
                   </Badge>
                 </div>
                 <CardDescription>
-                  {payload.job.companyName} • Posted {formatDistanceToNow(new Date(payload.job.createdAt), { addSuffix: true })}
+                  {payload.job.companyName} Â· Posted {formatDistanceToNow(new Date(payload.job.createdAt), { addSuffix: true })}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4 text-sm">
@@ -304,7 +304,7 @@ export function AdminJobDetailClient({ jobId }: { jobId: string }) {
                 <div className="rounded-lg border p-3">
                   <p className="text-xs font-semibold text-muted-foreground">Posted By</p>
                   <p className="font-medium">{payload.job.postedBy.fullName} ({payload.job.postedBy.registrationNo})</p>
-                  <p className="text-xs text-muted-foreground">{payload.job.postedBy.facultyName || "-"} • {payload.job.postedBy.departmentName || "-"}</p>
+                  <p className="text-xs text-muted-foreground">{payload.job.postedBy.facultyName || "-"} Â· {payload.job.postedBy.departmentName || "-"}</p>
                   <div className="mt-2 flex flex-wrap gap-3 text-xs text-muted-foreground">
                     <span className="inline-flex items-center gap-1"><Mail className="size-3.5" /> {payload.job.postedBy.user.email || "No email"}</span>
                     <span className="inline-flex items-center gap-1"><Phone className="size-3.5" /> {payload.job.postedBy.user.phone || "No phone"}</span>
@@ -328,7 +328,7 @@ export function AdminJobDetailClient({ jobId }: { jobId: string }) {
                         <div className="space-y-1">
                           <p className="font-medium">{app.applicant.fullName}</p>
                           <p className="text-xs text-muted-foreground">
-                            {app.applicant.registrationNo} • {app.applicant.facultyName || "-"} • {app.applicant.departmentName || "-"}
+                            {app.applicant.registrationNo} Â· {app.applicant.facultyName || "-"} Â· {app.applicant.departmentName || "-"}
                           </p>
                           <p className="text-xs text-muted-foreground">
                             Applied {formatDistanceToNow(new Date(app.appliedAt), { addSuffix: true })}
