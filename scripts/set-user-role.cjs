@@ -27,7 +27,7 @@ Usage:
 
 Examples:
   pnpm auth:make-admin -- --registration-no UG18/SCZO/1080
-  pnpm auth:make-admin -- --email someone@example.com
+  pnpm auth:make-admin -- --email abubakarsadiq@humsad.com
   pnpm auth:set-role -- --user-id 123e4567-e89b-12d3-a456-426614174000 --role user
 `);
 }

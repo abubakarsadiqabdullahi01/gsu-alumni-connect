@@ -10161,6 +10161,7 @@ export namespace Prisma {
     twitterUrl: string | null
     githubUrl: string | null
     personalWebsite: string | null
+    signatureUrl: string | null
     nyscState: string | null
     nyscYear: number | null
     showCgpa: boolean | null
@@ -10208,6 +10209,7 @@ export namespace Prisma {
     twitterUrl: string | null
     githubUrl: string | null
     personalWebsite: string | null
+    signatureUrl: string | null
     nyscState: string | null
     nyscYear: number | null
     showCgpa: boolean | null
@@ -10255,6 +10257,7 @@ export namespace Prisma {
     twitterUrl: number
     githubUrl: number
     personalWebsite: number
+    signatureUrl: number
     nyscState: number
     nyscYear: number
     showCgpa: number
@@ -10324,6 +10327,7 @@ export namespace Prisma {
     twitterUrl?: true
     githubUrl?: true
     personalWebsite?: true
+    signatureUrl?: true
     nyscState?: true
     nyscYear?: true
     showCgpa?: true
@@ -10371,6 +10375,7 @@ export namespace Prisma {
     twitterUrl?: true
     githubUrl?: true
     personalWebsite?: true
+    signatureUrl?: true
     nyscState?: true
     nyscYear?: true
     showCgpa?: true
@@ -10418,6 +10423,7 @@ export namespace Prisma {
     twitterUrl?: true
     githubUrl?: true
     personalWebsite?: true
+    signatureUrl?: true
     nyscState?: true
     nyscYear?: true
     showCgpa?: true
@@ -10552,6 +10558,7 @@ export namespace Prisma {
     twitterUrl: string | null
     githubUrl: string | null
     personalWebsite: string | null
+    signatureUrl: string | null
     nyscState: string | null
     nyscYear: number | null
     showCgpa: boolean
@@ -10618,6 +10625,7 @@ export namespace Prisma {
     twitterUrl?: boolean
     githubUrl?: boolean
     personalWebsite?: boolean
+    signatureUrl?: boolean
     nyscState?: boolean
     nyscYear?: boolean
     showCgpa?: boolean
@@ -10693,6 +10701,7 @@ export namespace Prisma {
     twitterUrl?: boolean
     githubUrl?: boolean
     personalWebsite?: boolean
+    signatureUrl?: boolean
     nyscState?: boolean
     nyscYear?: boolean
     showCgpa?: boolean
@@ -10741,6 +10750,7 @@ export namespace Prisma {
     twitterUrl?: boolean
     githubUrl?: boolean
     personalWebsite?: boolean
+    signatureUrl?: boolean
     nyscState?: boolean
     nyscYear?: boolean
     showCgpa?: boolean
@@ -10789,6 +10799,7 @@ export namespace Prisma {
     twitterUrl?: boolean
     githubUrl?: boolean
     personalWebsite?: boolean
+    signatureUrl?: boolean
     nyscState?: boolean
     nyscYear?: boolean
     showCgpa?: boolean
@@ -10810,7 +10821,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type GraduateOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "registrationNo" | "fullName" | "surname" | "otherNames" | "sex" | "stateOfOrigin" | "lga" | "facultyCode" | "facultyName" | "courseCode" | "departmentName" | "cgpa" | "degreeClass" | "graduationYear" | "entryYear" | "jambNumber" | "sourceSheet" | "dateOfBirth" | "bio" | "linkedinUrl" | "twitterUrl" | "githubUrl" | "personalWebsite" | "nyscState" | "nyscYear" | "showCgpa" | "showEmail" | "showPhone" | "showDob" | "showInDirectory" | "allowMessages" | "showActivityFeed" | "openToOpportunities" | "availableForMentorship" | "profileCompleted" | "onboardingStep" | "profileViews" | "salaryMin" | "salaryMax" | "salaryCurrency" | "createdAt" | "updatedAt", ExtArgs["result"]["graduate"]>
+  export type GraduateOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "registrationNo" | "fullName" | "surname" | "otherNames" | "sex" | "stateOfOrigin" | "lga" | "facultyCode" | "facultyName" | "courseCode" | "departmentName" | "cgpa" | "degreeClass" | "graduationYear" | "entryYear" | "jambNumber" | "sourceSheet" | "dateOfBirth" | "bio" | "linkedinUrl" | "twitterUrl" | "githubUrl" | "personalWebsite" | "signatureUrl" | "nyscState" | "nyscYear" | "showCgpa" | "showEmail" | "showPhone" | "showDob" | "showInDirectory" | "allowMessages" | "showActivityFeed" | "openToOpportunities" | "availableForMentorship" | "profileCompleted" | "onboardingStep" | "profileViews" | "salaryMin" | "salaryMax" | "salaryCurrency" | "createdAt" | "updatedAt", ExtArgs["result"]["graduate"]>
   export type GraduateInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
     employment?: boolean | Graduate$employmentArgs<ExtArgs>
@@ -10905,6 +10916,7 @@ export namespace Prisma {
       twitterUrl: string | null
       githubUrl: string | null
       personalWebsite: string | null
+      signatureUrl: string | null
       nyscState: string | null
       nyscYear: number | null
       showCgpa: boolean
@@ -11399,6 +11411,7 @@ export namespace Prisma {
     readonly twitterUrl: FieldRef<"Graduate", 'String'>
     readonly githubUrl: FieldRef<"Graduate", 'String'>
     readonly personalWebsite: FieldRef<"Graduate", 'String'>
+    readonly signatureUrl: FieldRef<"Graduate", 'String'>
     readonly nyscState: FieldRef<"Graduate", 'String'>
     readonly nyscYear: FieldRef<"Graduate", 'Int'>
     readonly showCgpa: FieldRef<"Graduate", 'Boolean'>
@@ -41848,6 +41861,7 @@ export namespace Prisma {
     twitterUrl: 'twitterUrl',
     githubUrl: 'githubUrl',
     personalWebsite: 'personalWebsite',
+    signatureUrl: 'signatureUrl',
     nyscState: 'nyscState',
     nyscYear: 'nyscYear',
     showCgpa: 'showCgpa',
@@ -43051,6 +43065,7 @@ export namespace Prisma {
     twitterUrl?: StringNullableFilter<"Graduate"> | string | null
     githubUrl?: StringNullableFilter<"Graduate"> | string | null
     personalWebsite?: StringNullableFilter<"Graduate"> | string | null
+    signatureUrl?: StringNullableFilter<"Graduate"> | string | null
     nyscState?: StringNullableFilter<"Graduate"> | string | null
     nyscYear?: IntNullableFilter<"Graduate"> | number | null
     showCgpa?: BoolFilter<"Graduate"> | boolean
@@ -43125,6 +43140,7 @@ export namespace Prisma {
     twitterUrl?: SortOrderInput | SortOrder
     githubUrl?: SortOrderInput | SortOrder
     personalWebsite?: SortOrderInput | SortOrder
+    signatureUrl?: SortOrderInput | SortOrder
     nyscState?: SortOrderInput | SortOrder
     nyscYear?: SortOrderInput | SortOrder
     showCgpa?: SortOrder
@@ -43202,6 +43218,7 @@ export namespace Prisma {
     twitterUrl?: StringNullableFilter<"Graduate"> | string | null
     githubUrl?: StringNullableFilter<"Graduate"> | string | null
     personalWebsite?: StringNullableFilter<"Graduate"> | string | null
+    signatureUrl?: StringNullableFilter<"Graduate"> | string | null
     nyscState?: StringNullableFilter<"Graduate"> | string | null
     nyscYear?: IntNullableFilter<"Graduate"> | number | null
     showCgpa?: BoolFilter<"Graduate"> | boolean
@@ -43276,6 +43293,7 @@ export namespace Prisma {
     twitterUrl?: SortOrderInput | SortOrder
     githubUrl?: SortOrderInput | SortOrder
     personalWebsite?: SortOrderInput | SortOrder
+    signatureUrl?: SortOrderInput | SortOrder
     nyscState?: SortOrderInput | SortOrder
     nyscYear?: SortOrderInput | SortOrder
     showCgpa?: SortOrder
@@ -43331,6 +43349,7 @@ export namespace Prisma {
     twitterUrl?: StringNullableWithAggregatesFilter<"Graduate"> | string | null
     githubUrl?: StringNullableWithAggregatesFilter<"Graduate"> | string | null
     personalWebsite?: StringNullableWithAggregatesFilter<"Graduate"> | string | null
+    signatureUrl?: StringNullableWithAggregatesFilter<"Graduate"> | string | null
     nyscState?: StringNullableWithAggregatesFilter<"Graduate"> | string | null
     nyscYear?: IntNullableWithAggregatesFilter<"Graduate"> | number | null
     showCgpa?: BoolWithAggregatesFilter<"Graduate"> | boolean
@@ -45844,6 +45863,7 @@ export namespace Prisma {
     twitterUrl?: string | null
     githubUrl?: string | null
     personalWebsite?: string | null
+    signatureUrl?: string | null
     nyscState?: string | null
     nyscYear?: number | null
     showCgpa?: boolean
@@ -45918,6 +45938,7 @@ export namespace Prisma {
     twitterUrl?: string | null
     githubUrl?: string | null
     personalWebsite?: string | null
+    signatureUrl?: string | null
     nyscState?: string | null
     nyscYear?: number | null
     showCgpa?: boolean
@@ -45990,6 +46011,7 @@ export namespace Prisma {
     twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
     personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
     nyscState?: NullableStringFieldUpdateOperationsInput | string | null
     nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
     showCgpa?: BoolFieldUpdateOperationsInput | boolean
@@ -46064,6 +46086,7 @@ export namespace Prisma {
     twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
     personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
     nyscState?: NullableStringFieldUpdateOperationsInput | string | null
     nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
     showCgpa?: BoolFieldUpdateOperationsInput | boolean
@@ -46137,6 +46160,7 @@ export namespace Prisma {
     twitterUrl?: string | null
     githubUrl?: string | null
     personalWebsite?: string | null
+    signatureUrl?: string | null
     nyscState?: string | null
     nyscYear?: number | null
     showCgpa?: boolean
@@ -46183,6 +46207,7 @@ export namespace Prisma {
     twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
     personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
     nyscState?: NullableStringFieldUpdateOperationsInput | string | null
     nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
     showCgpa?: BoolFieldUpdateOperationsInput | boolean
@@ -46230,6 +46255,7 @@ export namespace Prisma {
     twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
     personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
     nyscState?: NullableStringFieldUpdateOperationsInput | string | null
     nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
     showCgpa?: BoolFieldUpdateOperationsInput | boolean
@@ -49088,6 +49114,7 @@ export namespace Prisma {
     twitterUrl?: SortOrder
     githubUrl?: SortOrder
     personalWebsite?: SortOrder
+    signatureUrl?: SortOrder
     nyscState?: SortOrder
     nyscYear?: SortOrder
     showCgpa?: SortOrder
@@ -49145,6 +49172,7 @@ export namespace Prisma {
     twitterUrl?: SortOrder
     githubUrl?: SortOrder
     personalWebsite?: SortOrder
+    signatureUrl?: SortOrder
     nyscState?: SortOrder
     nyscYear?: SortOrder
     showCgpa?: SortOrder
@@ -49192,6 +49220,7 @@ export namespace Prisma {
     twitterUrl?: SortOrder
     githubUrl?: SortOrder
     personalWebsite?: SortOrder
+    signatureUrl?: SortOrder
     nyscState?: SortOrder
     nyscYear?: SortOrder
     showCgpa?: SortOrder
@@ -53613,6 +53642,7 @@ export namespace Prisma {
     twitterUrl?: string | null
     githubUrl?: string | null
     personalWebsite?: string | null
+    signatureUrl?: string | null
     nyscState?: string | null
     nyscYear?: number | null
     showCgpa?: boolean
@@ -53685,6 +53715,7 @@ export namespace Prisma {
     twitterUrl?: string | null
     githubUrl?: string | null
     personalWebsite?: string | null
+    signatureUrl?: string | null
     nyscState?: string | null
     nyscYear?: number | null
     showCgpa?: boolean
@@ -53865,6 +53896,7 @@ export namespace Prisma {
     twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
     personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
     nyscState?: NullableStringFieldUpdateOperationsInput | string | null
     nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
     showCgpa?: BoolFieldUpdateOperationsInput | boolean
@@ -53937,6 +53969,7 @@ export namespace Prisma {
     twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
     personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
     nyscState?: NullableStringFieldUpdateOperationsInput | string | null
     nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
     showCgpa?: BoolFieldUpdateOperationsInput | boolean
@@ -55950,6 +55983,7 @@ export namespace Prisma {
     twitterUrl?: string | null
     githubUrl?: string | null
     personalWebsite?: string | null
+    signatureUrl?: string | null
     nyscState?: string | null
     nyscYear?: number | null
     showCgpa?: boolean
@@ -56023,6 +56057,7 @@ export namespace Prisma {
     twitterUrl?: string | null
     githubUrl?: string | null
     personalWebsite?: string | null
+    signatureUrl?: string | null
     nyscState?: string | null
     nyscYear?: number | null
     showCgpa?: boolean
@@ -56110,6 +56145,7 @@ export namespace Prisma {
     twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
     personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
     nyscState?: NullableStringFieldUpdateOperationsInput | string | null
     nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
     showCgpa?: BoolFieldUpdateOperationsInput | boolean
@@ -56183,6 +56219,7 @@ export namespace Prisma {
     twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
     personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
     nyscState?: NullableStringFieldUpdateOperationsInput | string | null
     nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
     showCgpa?: BoolFieldUpdateOperationsInput | boolean
@@ -56254,6 +56291,7 @@ export namespace Prisma {
     twitterUrl?: string | null
     githubUrl?: string | null
     personalWebsite?: string | null
+    signatureUrl?: string | null
     nyscState?: string | null
     nyscYear?: number | null
     showCgpa?: boolean
@@ -56327,6 +56365,7 @@ export namespace Prisma {
     twitterUrl?: string | null
     githubUrl?: string | null
     personalWebsite?: string | null
+    signatureUrl?: string | null
     nyscState?: string | null
     nyscYear?: number | null
     showCgpa?: boolean
@@ -56414,6 +56453,7 @@ export namespace Prisma {
     twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
     personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
     nyscState?: NullableStringFieldUpdateOperationsInput | string | null
     nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
     showCgpa?: BoolFieldUpdateOperationsInput | boolean
@@ -56487,6 +56527,7 @@ export namespace Prisma {
     twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
     personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
     nyscState?: NullableStringFieldUpdateOperationsInput | string | null
     nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
     showCgpa?: BoolFieldUpdateOperationsInput | boolean
@@ -56558,6 +56599,7 @@ export namespace Prisma {
     twitterUrl?: string | null
     githubUrl?: string | null
     personalWebsite?: string | null
+    signatureUrl?: string | null
     nyscState?: string | null
     nyscYear?: number | null
     showCgpa?: boolean
@@ -56631,6 +56673,7 @@ export namespace Prisma {
     twitterUrl?: string | null
     githubUrl?: string | null
     personalWebsite?: string | null
+    signatureUrl?: string | null
     nyscState?: string | null
     nyscYear?: number | null
     showCgpa?: boolean
@@ -56742,6 +56785,7 @@ export namespace Prisma {
     twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
     personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
     nyscState?: NullableStringFieldUpdateOperationsInput | string | null
     nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
     showCgpa?: BoolFieldUpdateOperationsInput | boolean
@@ -56815,6 +56859,7 @@ export namespace Prisma {
     twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
     personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
     nyscState?: NullableStringFieldUpdateOperationsInput | string | null
     nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
     showCgpa?: BoolFieldUpdateOperationsInput | boolean
@@ -56902,6 +56947,7 @@ export namespace Prisma {
     twitterUrl?: string | null
     githubUrl?: string | null
     personalWebsite?: string | null
+    signatureUrl?: string | null
     nyscState?: string | null
     nyscYear?: number | null
     showCgpa?: boolean
@@ -56975,6 +57021,7 @@ export namespace Prisma {
     twitterUrl?: string | null
     githubUrl?: string | null
     personalWebsite?: string | null
+    signatureUrl?: string | null
     nyscState?: string | null
     nyscYear?: number | null
     showCgpa?: boolean
@@ -57051,6 +57098,7 @@ export namespace Prisma {
     twitterUrl?: string | null
     githubUrl?: string | null
     personalWebsite?: string | null
+    signatureUrl?: string | null
     nyscState?: string | null
     nyscYear?: number | null
     showCgpa?: boolean
@@ -57124,6 +57172,7 @@ export namespace Prisma {
     twitterUrl?: string | null
     githubUrl?: string | null
     personalWebsite?: string | null
+    signatureUrl?: string | null
     nyscState?: string | null
     nyscYear?: number | null
     showCgpa?: boolean
@@ -57232,6 +57281,7 @@ export namespace Prisma {
     twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
     personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
     nyscState?: NullableStringFieldUpdateOperationsInput | string | null
     nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
     showCgpa?: BoolFieldUpdateOperationsInput | boolean
@@ -57305,6 +57355,7 @@ export namespace Prisma {
     twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
     personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
     nyscState?: NullableStringFieldUpdateOperationsInput | string | null
     nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
     showCgpa?: BoolFieldUpdateOperationsInput | boolean
@@ -57387,6 +57438,7 @@ export namespace Prisma {
     twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
     personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
     nyscState?: NullableStringFieldUpdateOperationsInput | string | null
     nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
     showCgpa?: BoolFieldUpdateOperationsInput | boolean
@@ -57460,6 +57512,7 @@ export namespace Prisma {
     twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
     personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
     nyscState?: NullableStringFieldUpdateOperationsInput | string | null
     nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
     showCgpa?: BoolFieldUpdateOperationsInput | boolean
@@ -57558,6 +57611,7 @@ export namespace Prisma {
     twitterUrl?: string | null
     githubUrl?: string | null
     personalWebsite?: string | null
+    signatureUrl?: string | null
     nyscState?: string | null
     nyscYear?: number | null
     showCgpa?: boolean
@@ -57631,6 +57685,7 @@ export namespace Prisma {
     twitterUrl?: string | null
     githubUrl?: string | null
     personalWebsite?: string | null
+    signatureUrl?: string | null
     nyscState?: string | null
     nyscYear?: number | null
     showCgpa?: boolean
@@ -57718,6 +57773,7 @@ export namespace Prisma {
     twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
     personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
     nyscState?: NullableStringFieldUpdateOperationsInput | string | null
     nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
     showCgpa?: BoolFieldUpdateOperationsInput | boolean
@@ -57791,6 +57847,7 @@ export namespace Prisma {
     twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
     personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
     nyscState?: NullableStringFieldUpdateOperationsInput | string | null
     nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
     showCgpa?: BoolFieldUpdateOperationsInput | boolean
@@ -57862,6 +57919,7 @@ export namespace Prisma {
     twitterUrl?: string | null
     githubUrl?: string | null
     personalWebsite?: string | null
+    signatureUrl?: string | null
     nyscState?: string | null
     nyscYear?: number | null
     showCgpa?: boolean
@@ -57935,6 +57993,7 @@ export namespace Prisma {
     twitterUrl?: string | null
     githubUrl?: string | null
     personalWebsite?: string | null
+    signatureUrl?: string | null
     nyscState?: string | null
     nyscYear?: number | null
     showCgpa?: boolean
@@ -58022,6 +58081,7 @@ export namespace Prisma {
     twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
     personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
     nyscState?: NullableStringFieldUpdateOperationsInput | string | null
     nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
     showCgpa?: BoolFieldUpdateOperationsInput | boolean
@@ -58095,6 +58155,7 @@ export namespace Prisma {
     twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
     personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
     nyscState?: NullableStringFieldUpdateOperationsInput | string | null
     nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
     showCgpa?: BoolFieldUpdateOperationsInput | boolean
@@ -58166,6 +58227,7 @@ export namespace Prisma {
     twitterUrl?: string | null
     githubUrl?: string | null
     personalWebsite?: string | null
+    signatureUrl?: string | null
     nyscState?: string | null
     nyscYear?: number | null
     showCgpa?: boolean
@@ -58239,6 +58301,7 @@ export namespace Prisma {
     twitterUrl?: string | null
     githubUrl?: string | null
     personalWebsite?: string | null
+    signatureUrl?: string | null
     nyscState?: string | null
     nyscYear?: number | null
     showCgpa?: boolean
@@ -58326,6 +58389,7 @@ export namespace Prisma {
     twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
     personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
     nyscState?: NullableStringFieldUpdateOperationsInput | string | null
     nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
     showCgpa?: BoolFieldUpdateOperationsInput | boolean
@@ -58399,6 +58463,7 @@ export namespace Prisma {
     twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
     personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
     nyscState?: NullableStringFieldUpdateOperationsInput | string | null
     nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
     showCgpa?: BoolFieldUpdateOperationsInput | boolean
@@ -58605,6 +58670,7 @@ export namespace Prisma {
     twitterUrl?: string | null
     githubUrl?: string | null
     personalWebsite?: string | null
+    signatureUrl?: string | null
     nyscState?: string | null
     nyscYear?: number | null
     showCgpa?: boolean
@@ -58678,6 +58744,7 @@ export namespace Prisma {
     twitterUrl?: string | null
     githubUrl?: string | null
     personalWebsite?: string | null
+    signatureUrl?: string | null
     nyscState?: string | null
     nyscYear?: number | null
     showCgpa?: boolean
@@ -58812,6 +58879,7 @@ export namespace Prisma {
     twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
     personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
     nyscState?: NullableStringFieldUpdateOperationsInput | string | null
     nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
     showCgpa?: BoolFieldUpdateOperationsInput | boolean
@@ -58885,6 +58953,7 @@ export namespace Prisma {
     twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
     personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
     nyscState?: NullableStringFieldUpdateOperationsInput | string | null
     nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
     showCgpa?: BoolFieldUpdateOperationsInput | boolean
@@ -58997,6 +59066,7 @@ export namespace Prisma {
     twitterUrl?: string | null
     githubUrl?: string | null
     personalWebsite?: string | null
+    signatureUrl?: string | null
     nyscState?: string | null
     nyscYear?: number | null
     showCgpa?: boolean
@@ -59070,6 +59140,7 @@ export namespace Prisma {
     twitterUrl?: string | null
     githubUrl?: string | null
     personalWebsite?: string | null
+    signatureUrl?: string | null
     nyscState?: string | null
     nyscYear?: number | null
     showCgpa?: boolean
@@ -59256,6 +59327,7 @@ export namespace Prisma {
     twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
     personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
     nyscState?: NullableStringFieldUpdateOperationsInput | string | null
     nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
     showCgpa?: BoolFieldUpdateOperationsInput | boolean
@@ -59329,6 +59401,7 @@ export namespace Prisma {
     twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
     personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
     nyscState?: NullableStringFieldUpdateOperationsInput | string | null
     nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
     showCgpa?: BoolFieldUpdateOperationsInput | boolean
@@ -59463,6 +59536,7 @@ export namespace Prisma {
     twitterUrl?: string | null
     githubUrl?: string | null
     personalWebsite?: string | null
+    signatureUrl?: string | null
     nyscState?: string | null
     nyscYear?: number | null
     showCgpa?: boolean
@@ -59536,6 +59610,7 @@ export namespace Prisma {
     twitterUrl?: string | null
     githubUrl?: string | null
     personalWebsite?: string | null
+    signatureUrl?: string | null
     nyscState?: string | null
     nyscYear?: number | null
     showCgpa?: boolean
@@ -59715,6 +59790,7 @@ export namespace Prisma {
     twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
     personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
     nyscState?: NullableStringFieldUpdateOperationsInput | string | null
     nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
     showCgpa?: BoolFieldUpdateOperationsInput | boolean
@@ -59788,6 +59864,7 @@ export namespace Prisma {
     twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
     personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
     nyscState?: NullableStringFieldUpdateOperationsInput | string | null
     nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
     showCgpa?: BoolFieldUpdateOperationsInput | boolean
@@ -59937,6 +60014,7 @@ export namespace Prisma {
     twitterUrl?: string | null
     githubUrl?: string | null
     personalWebsite?: string | null
+    signatureUrl?: string | null
     nyscState?: string | null
     nyscYear?: number | null
     showCgpa?: boolean
@@ -60010,6 +60088,7 @@ export namespace Prisma {
     twitterUrl?: string | null
     githubUrl?: string | null
     personalWebsite?: string | null
+    signatureUrl?: string | null
     nyscState?: string | null
     nyscYear?: number | null
     showCgpa?: boolean
@@ -60134,6 +60213,7 @@ export namespace Prisma {
     twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
     personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
     nyscState?: NullableStringFieldUpdateOperationsInput | string | null
     nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
     showCgpa?: BoolFieldUpdateOperationsInput | boolean
@@ -60207,6 +60287,7 @@ export namespace Prisma {
     twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
     personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
     nyscState?: NullableStringFieldUpdateOperationsInput | string | null
     nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
     showCgpa?: BoolFieldUpdateOperationsInput | boolean
@@ -60393,6 +60474,7 @@ export namespace Prisma {
     twitterUrl?: string | null
     githubUrl?: string | null
     personalWebsite?: string | null
+    signatureUrl?: string | null
     nyscState?: string | null
     nyscYear?: number | null
     showCgpa?: boolean
@@ -60466,6 +60548,7 @@ export namespace Prisma {
     twitterUrl?: string | null
     githubUrl?: string | null
     personalWebsite?: string | null
+    signatureUrl?: string | null
     nyscState?: string | null
     nyscYear?: number | null
     showCgpa?: boolean
@@ -60584,6 +60667,7 @@ export namespace Prisma {
     twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
     personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
     nyscState?: NullableStringFieldUpdateOperationsInput | string | null
     nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
     showCgpa?: BoolFieldUpdateOperationsInput | boolean
@@ -60657,6 +60741,7 @@ export namespace Prisma {
     twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
     personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
     nyscState?: NullableStringFieldUpdateOperationsInput | string | null
     nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
     showCgpa?: BoolFieldUpdateOperationsInput | boolean
@@ -60753,6 +60838,7 @@ export namespace Prisma {
     twitterUrl?: string | null
     githubUrl?: string | null
     personalWebsite?: string | null
+    signatureUrl?: string | null
     nyscState?: string | null
     nyscYear?: number | null
     showCgpa?: boolean
@@ -60826,6 +60912,7 @@ export namespace Prisma {
     twitterUrl?: string | null
     githubUrl?: string | null
     personalWebsite?: string | null
+    signatureUrl?: string | null
     nyscState?: string | null
     nyscYear?: number | null
     showCgpa?: boolean
@@ -60944,6 +61031,7 @@ export namespace Prisma {
     twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
     personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
     nyscState?: NullableStringFieldUpdateOperationsInput | string | null
     nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
     showCgpa?: BoolFieldUpdateOperationsInput | boolean
@@ -61017,6 +61105,7 @@ export namespace Prisma {
     twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
     personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
     nyscState?: NullableStringFieldUpdateOperationsInput | string | null
     nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
     showCgpa?: BoolFieldUpdateOperationsInput | boolean
@@ -61088,6 +61177,7 @@ export namespace Prisma {
     twitterUrl?: string | null
     githubUrl?: string | null
     personalWebsite?: string | null
+    signatureUrl?: string | null
     nyscState?: string | null
     nyscYear?: number | null
     showCgpa?: boolean
@@ -61161,6 +61251,7 @@ export namespace Prisma {
     twitterUrl?: string | null
     githubUrl?: string | null
     personalWebsite?: string | null
+    signatureUrl?: string | null
     nyscState?: string | null
     nyscYear?: number | null
     showCgpa?: boolean
@@ -61237,6 +61328,7 @@ export namespace Prisma {
     twitterUrl?: string | null
     githubUrl?: string | null
     personalWebsite?: string | null
+    signatureUrl?: string | null
     nyscState?: string | null
     nyscYear?: number | null
     showCgpa?: boolean
@@ -61310,6 +61402,7 @@ export namespace Prisma {
     twitterUrl?: string | null
     githubUrl?: string | null
     personalWebsite?: string | null
+    signatureUrl?: string | null
     nyscState?: string | null
     nyscYear?: number | null
     showCgpa?: boolean
@@ -61397,6 +61490,7 @@ export namespace Prisma {
     twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
     personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
     nyscState?: NullableStringFieldUpdateOperationsInput | string | null
     nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
     showCgpa?: BoolFieldUpdateOperationsInput | boolean
@@ -61470,6 +61564,7 @@ export namespace Prisma {
     twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
     personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
     nyscState?: NullableStringFieldUpdateOperationsInput | string | null
     nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
     showCgpa?: BoolFieldUpdateOperationsInput | boolean
@@ -61552,6 +61647,7 @@ export namespace Prisma {
     twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
     personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
     nyscState?: NullableStringFieldUpdateOperationsInput | string | null
     nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
     showCgpa?: BoolFieldUpdateOperationsInput | boolean
@@ -61625,6 +61721,7 @@ export namespace Prisma {
     twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
     personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
     nyscState?: NullableStringFieldUpdateOperationsInput | string | null
     nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
     showCgpa?: BoolFieldUpdateOperationsInput | boolean
@@ -61696,6 +61793,7 @@ export namespace Prisma {
     twitterUrl?: string | null
     githubUrl?: string | null
     personalWebsite?: string | null
+    signatureUrl?: string | null
     nyscState?: string | null
     nyscYear?: number | null
     showCgpa?: boolean
@@ -61769,6 +61867,7 @@ export namespace Prisma {
     twitterUrl?: string | null
     githubUrl?: string | null
     personalWebsite?: string | null
+    signatureUrl?: string | null
     nyscState?: string | null
     nyscYear?: number | null
     showCgpa?: boolean
@@ -61845,6 +61944,7 @@ export namespace Prisma {
     twitterUrl?: string | null
     githubUrl?: string | null
     personalWebsite?: string | null
+    signatureUrl?: string | null
     nyscState?: string | null
     nyscYear?: number | null
     showCgpa?: boolean
@@ -61918,6 +62018,7 @@ export namespace Prisma {
     twitterUrl?: string | null
     githubUrl?: string | null
     personalWebsite?: string | null
+    signatureUrl?: string | null
     nyscState?: string | null
     nyscYear?: number | null
     showCgpa?: boolean
@@ -62005,6 +62106,7 @@ export namespace Prisma {
     twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
     personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
     nyscState?: NullableStringFieldUpdateOperationsInput | string | null
     nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
     showCgpa?: BoolFieldUpdateOperationsInput | boolean
@@ -62078,6 +62180,7 @@ export namespace Prisma {
     twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
     personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
     nyscState?: NullableStringFieldUpdateOperationsInput | string | null
     nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
     showCgpa?: BoolFieldUpdateOperationsInput | boolean
@@ -62160,6 +62263,7 @@ export namespace Prisma {
     twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
     personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
     nyscState?: NullableStringFieldUpdateOperationsInput | string | null
     nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
     showCgpa?: BoolFieldUpdateOperationsInput | boolean
@@ -62233,6 +62337,7 @@ export namespace Prisma {
     twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
     personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
     nyscState?: NullableStringFieldUpdateOperationsInput | string | null
     nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
     showCgpa?: BoolFieldUpdateOperationsInput | boolean
@@ -62304,6 +62409,7 @@ export namespace Prisma {
     twitterUrl?: string | null
     githubUrl?: string | null
     personalWebsite?: string | null
+    signatureUrl?: string | null
     nyscState?: string | null
     nyscYear?: number | null
     showCgpa?: boolean
@@ -62377,6 +62483,7 @@ export namespace Prisma {
     twitterUrl?: string | null
     githubUrl?: string | null
     personalWebsite?: string | null
+    signatureUrl?: string | null
     nyscState?: string | null
     nyscYear?: number | null
     showCgpa?: boolean
@@ -62492,6 +62599,7 @@ export namespace Prisma {
     twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
     personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
     nyscState?: NullableStringFieldUpdateOperationsInput | string | null
     nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
     showCgpa?: BoolFieldUpdateOperationsInput | boolean
@@ -62565,6 +62673,7 @@ export namespace Prisma {
     twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
     personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
     nyscState?: NullableStringFieldUpdateOperationsInput | string | null
     nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
     showCgpa?: BoolFieldUpdateOperationsInput | boolean
@@ -62707,6 +62816,7 @@ export namespace Prisma {
     twitterUrl?: string | null
     githubUrl?: string | null
     personalWebsite?: string | null
+    signatureUrl?: string | null
     nyscState?: string | null
     nyscYear?: number | null
     showCgpa?: boolean
@@ -62780,6 +62890,7 @@ export namespace Prisma {
     twitterUrl?: string | null
     githubUrl?: string | null
     personalWebsite?: string | null
+    signatureUrl?: string | null
     nyscState?: string | null
     nyscYear?: number | null
     showCgpa?: boolean
@@ -62928,6 +63039,7 @@ export namespace Prisma {
     twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
     personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
     nyscState?: NullableStringFieldUpdateOperationsInput | string | null
     nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
     showCgpa?: BoolFieldUpdateOperationsInput | boolean
@@ -63001,6 +63113,7 @@ export namespace Prisma {
     twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
     personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
     nyscState?: NullableStringFieldUpdateOperationsInput | string | null
     nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
     showCgpa?: BoolFieldUpdateOperationsInput | boolean
@@ -63072,6 +63185,7 @@ export namespace Prisma {
     twitterUrl?: string | null
     githubUrl?: string | null
     personalWebsite?: string | null
+    signatureUrl?: string | null
     nyscState?: string | null
     nyscYear?: number | null
     showCgpa?: boolean
@@ -63145,6 +63259,7 @@ export namespace Prisma {
     twitterUrl?: string | null
     githubUrl?: string | null
     personalWebsite?: string | null
+    signatureUrl?: string | null
     nyscState?: string | null
     nyscYear?: number | null
     showCgpa?: boolean
@@ -63254,6 +63369,7 @@ export namespace Prisma {
     twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
     personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
     nyscState?: NullableStringFieldUpdateOperationsInput | string | null
     nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
     showCgpa?: BoolFieldUpdateOperationsInput | boolean
@@ -63327,6 +63443,7 @@ export namespace Prisma {
     twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
     personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
     nyscState?: NullableStringFieldUpdateOperationsInput | string | null
     nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
     showCgpa?: BoolFieldUpdateOperationsInput | boolean
@@ -63451,6 +63568,7 @@ export namespace Prisma {
     twitterUrl?: string | null
     githubUrl?: string | null
     personalWebsite?: string | null
+    signatureUrl?: string | null
     nyscState?: string | null
     nyscYear?: number | null
     showCgpa?: boolean
@@ -63524,6 +63642,7 @@ export namespace Prisma {
     twitterUrl?: string | null
     githubUrl?: string | null
     personalWebsite?: string | null
+    signatureUrl?: string | null
     nyscState?: string | null
     nyscYear?: number | null
     showCgpa?: boolean
@@ -63654,6 +63773,7 @@ export namespace Prisma {
     twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
     personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
     nyscState?: NullableStringFieldUpdateOperationsInput | string | null
     nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
     showCgpa?: BoolFieldUpdateOperationsInput | boolean
@@ -63727,6 +63847,7 @@ export namespace Prisma {
     twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
     personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
     nyscState?: NullableStringFieldUpdateOperationsInput | string | null
     nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
     showCgpa?: BoolFieldUpdateOperationsInput | boolean
@@ -63798,6 +63919,7 @@ export namespace Prisma {
     twitterUrl?: string | null
     githubUrl?: string | null
     personalWebsite?: string | null
+    signatureUrl?: string | null
     nyscState?: string | null
     nyscYear?: number | null
     showCgpa?: boolean
@@ -63871,6 +63993,7 @@ export namespace Prisma {
     twitterUrl?: string | null
     githubUrl?: string | null
     personalWebsite?: string | null
+    signatureUrl?: string | null
     nyscState?: string | null
     nyscYear?: number | null
     showCgpa?: boolean
@@ -63947,6 +64070,7 @@ export namespace Prisma {
     twitterUrl?: string | null
     githubUrl?: string | null
     personalWebsite?: string | null
+    signatureUrl?: string | null
     nyscState?: string | null
     nyscYear?: number | null
     showCgpa?: boolean
@@ -64020,6 +64144,7 @@ export namespace Prisma {
     twitterUrl?: string | null
     githubUrl?: string | null
     personalWebsite?: string | null
+    signatureUrl?: string | null
     nyscState?: string | null
     nyscYear?: number | null
     showCgpa?: boolean
@@ -64107,6 +64232,7 @@ export namespace Prisma {
     twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
     personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
     nyscState?: NullableStringFieldUpdateOperationsInput | string | null
     nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
     showCgpa?: BoolFieldUpdateOperationsInput | boolean
@@ -64180,6 +64306,7 @@ export namespace Prisma {
     twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
     personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
     nyscState?: NullableStringFieldUpdateOperationsInput | string | null
     nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
     showCgpa?: BoolFieldUpdateOperationsInput | boolean
@@ -64262,6 +64389,7 @@ export namespace Prisma {
     twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
     personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
     nyscState?: NullableStringFieldUpdateOperationsInput | string | null
     nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
     showCgpa?: BoolFieldUpdateOperationsInput | boolean
@@ -64335,6 +64463,7 @@ export namespace Prisma {
     twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
     personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
     nyscState?: NullableStringFieldUpdateOperationsInput | string | null
     nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
     showCgpa?: BoolFieldUpdateOperationsInput | boolean
@@ -64406,6 +64535,7 @@ export namespace Prisma {
     twitterUrl?: string | null
     githubUrl?: string | null
     personalWebsite?: string | null
+    signatureUrl?: string | null
     nyscState?: string | null
     nyscYear?: number | null
     showCgpa?: boolean
@@ -64479,6 +64609,7 @@ export namespace Prisma {
     twitterUrl?: string | null
     githubUrl?: string | null
     personalWebsite?: string | null
+    signatureUrl?: string | null
     nyscState?: string | null
     nyscYear?: number | null
     showCgpa?: boolean
@@ -64566,6 +64697,7 @@ export namespace Prisma {
     twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
     personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
     nyscState?: NullableStringFieldUpdateOperationsInput | string | null
     nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
     showCgpa?: BoolFieldUpdateOperationsInput | boolean
@@ -64639,6 +64771,7 @@ export namespace Prisma {
     twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
     personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
     nyscState?: NullableStringFieldUpdateOperationsInput | string | null
     nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
     showCgpa?: BoolFieldUpdateOperationsInput | boolean
@@ -64710,6 +64843,7 @@ export namespace Prisma {
     twitterUrl?: string | null
     githubUrl?: string | null
     personalWebsite?: string | null
+    signatureUrl?: string | null
     nyscState?: string | null
     nyscYear?: number | null
     showCgpa?: boolean
@@ -64783,6 +64917,7 @@ export namespace Prisma {
     twitterUrl?: string | null
     githubUrl?: string | null
     personalWebsite?: string | null
+    signatureUrl?: string | null
     nyscState?: string | null
     nyscYear?: number | null
     showCgpa?: boolean
@@ -64870,6 +65005,7 @@ export namespace Prisma {
     twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
     personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
     nyscState?: NullableStringFieldUpdateOperationsInput | string | null
     nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
     showCgpa?: BoolFieldUpdateOperationsInput | boolean
@@ -64943,6 +65079,7 @@ export namespace Prisma {
     twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
     personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
     nyscState?: NullableStringFieldUpdateOperationsInput | string | null
     nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
     showCgpa?: BoolFieldUpdateOperationsInput | boolean

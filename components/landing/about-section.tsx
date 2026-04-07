@@ -114,7 +114,7 @@ export function AboutSection() {
                   {/* Caption strip */}
                   <div className="flex items-center gap-2.5 border-t border-border/60 bg-card px-4 py-3">
                     <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary/10">
-                      <Image src="/images/gsu-logo.svg" alt="GSU" width={16} height={16} className="invert dark:invert-0" />
+                      <Image src="/images/gsu-alumni-logo.png" alt="GSU" width={16} height={16} className="object-contain" />
                     </div>
                     <div>
                       <p className="text-xs font-bold text-foreground">Est. 2004</p>

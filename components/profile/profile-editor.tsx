@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { BadgeCheck, BriefcaseBusiness, GraduationCap, Lock, Plus, Save, Sparkles, Wrench } from "lucide-react";
@@ -44,6 +45,8 @@ type ProfileEditorData = {
   graduationYear: string | null;
   degreeClass: string | null;
   accountStatus: string | null;
+  avatarUrl: string | null;
+  signatureUrl: string | null;
   email: string | null;
   phone: string | null;
   dateOfBirth: string | null;
@@ -429,6 +432,42 @@ export function ProfileEditor({ initialData }: ProfileEditorProps) {
         </div>
 
         <div className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>ID Assets</CardTitle>
+              <CardDescription>Preview your card image assets and open the ID card studio.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <p className="text-xs text-muted-foreground">Profile Image</p>
+                <div className="flex justify-center">
+                  <div className="size-24 overflow-hidden rounded-full border bg-muted/30">
+                    {form.avatarUrl ? (
+                      <img src={form.avatarUrl} alt="Profile avatar" className="h-full w-full object-cover object-center" />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center text-[10px] text-muted-foreground">No Image</div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <p className="text-xs text-muted-foreground">Signature</p>
+                <div className="overflow-hidden rounded-md border bg-muted/30 p-2">
+                  {form.signatureUrl ? (
+                    <img src={form.signatureUrl} alt="Signature preview" className="h-14 w-full object-contain" />
+                  ) : (
+                    <div className="flex h-14 items-center justify-center text-[10px] text-muted-foreground">No Signature</div>
+                  )}
+                </div>
+              </div>
+
+              <Button asChild className="w-full">
+                <Link href="/profile/id-card">Open ID Card Studio</Link>
+              </Button>
+            </CardContent>
+          </Card>
+
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2"><Lock className="size-4 text-primary" />Admin-Managed</CardTitle>

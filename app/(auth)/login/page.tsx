@@ -9,7 +9,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { cn } from "@/lib/utils";
-import { signIn } from "@/lib/auth-client";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -35,30 +34,24 @@ export default function LoginPage() {
     setIsLoading(true);
     try {
       const identifier = registrationNo.trim();
-      const result = identifier.includes("@")
-        ? await signIn.email({
-            email: identifier.toLowerCase(),
-            password,
-            rememberMe: true,
-          })
-        : await fetch("/api/auth/sign-in/registration", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              registrationNo: identifier,
-              password,
-              rememberMe: true,
-            }),
-          }).then(async (response) => {
-            if (!response.ok) {
-              const payload = (await response.json()) as { message?: string };
-              return { error: { message: payload.message ?? "Invalid credentials." } };
-            }
-            const data = (await response.json()) as {
-              user?: { role?: string; defaultPassword?: boolean };
-            };
-            return { data };
-          });
+      const result = await fetch("/api/auth/sign-in/registration", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          registrationNo: identifier,
+          password,
+          rememberMe: true,
+        }),
+      }).then(async (response) => {
+        if (!response.ok) {
+          const payload = (await response.json()) as { message?: string };
+          return { error: { message: payload.message ?? "Invalid credentials." } };
+        }
+        const data = (await response.json()) as {
+          user?: { role?: string; defaultPassword?: boolean };
+        };
+        return { data };
+      });
 
       if (result.error) {
         setError(result.error.message || "Invalid credentials.");

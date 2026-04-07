@@ -27,11 +27,11 @@ export function Footer() {
 						<Link href="/" className="mb-4 flex items-center gap-2.5">
 							<div className="flex size-9 items-center justify-center rounded-xl bg-primary/10">
 								<Image
-									src="/images/gsu-logo.svg"
+									src="/images/gsu-alumni-logo.png"
 									alt="GSU Logo"
 									width={22}
 									height={22}
-									className="invert dark:invert-0"
+									className="object-contain"
 								/>
 							</div>
 							<div>

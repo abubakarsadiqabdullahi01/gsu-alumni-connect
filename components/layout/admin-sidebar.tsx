@@ -64,21 +64,23 @@ export function AdminSidebar() {
       {/* Header */}
       <SidebarHeader className="p-4">
         <Link href="/admin" className="flex items-center gap-3">
-          <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary">
+          <div className="flex size-9 shrink-0 items-center justify-center rounded-lg">
             <Image
-              src="/images/gsu-logo.svg"
+              src="/images/gsu-alumni-logo.png"
               alt="GSU"
-              width={18}
-              height={18}
+              width={26}
+              height={26}
+              className="object-contain"
             />
           </div>
-          <div className="flex flex-col group-data-[collapsible=icon]:hidden">
-            <span className="text-[13px] font-bold leading-tight">
-              Admin Panel
+          <div className="flex min-w-0 flex-col group-data-[collapsible=icon]:hidden">
+            <span className="truncate text-[13px] font-extrabold leading-tight tracking-[0.02em] text-sidebar-foreground">
+              GSU Alumni Association
             </span>
-            <span className="text-[10px] text-sidebar-foreground/50">
-              GSU Alumni Connect
+            <span className="text-[10px] font-semibold tracking-[0.12em] text-sidebar-foreground/60 uppercase">
+              Administration Console
             </span>
+            <span className="mt-1 h-px w-24 rounded-full bg-gradient-to-r from-emerald-500/90 via-teal-400/70 to-transparent" />
           </div>
         </Link>
       </SidebarHeader>

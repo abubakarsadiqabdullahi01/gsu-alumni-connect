@@ -48,11 +48,11 @@ export function Navbar() {
             }`}
           >
             <Image
-              src="/images/gsu-logo.svg"
+              src="/images/gsu-alumni-logo.png"
               alt="GSU Logo"
               width={26}
               height={26}
-              className={`transition-all ${scrolled ? "invert dark:invert-0" : ""}`}
+              className="transition-all object-contain"
             />
           </div>
           <div className="flex flex-col">
@@ -134,11 +134,11 @@ export function Navbar() {
               <div className="flex items-center gap-3 border-b px-5 py-4">
                 <div className="flex size-8 items-center justify-center rounded-lg bg-primary/10">
                   <Image
-                    src="/images/gsu-logo.svg"
+                    src="/images/gsu-alumni-logo.png"
                     alt="GSU"
                     width={20}
                     height={20}
-                    className="invert dark:invert-0"
+                    className="object-contain"
                   />
                 </div>
                 <div>

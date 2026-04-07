@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   Briefcase,
@@ -66,6 +66,8 @@ type ProfileState = {
   nyscYear: string;
 };
 
+type AssetType = "avatar" | "signature";
+
 function StepWelcome() {
   return (
     <div className="text-center">
@@ -83,10 +85,21 @@ function StepWelcome() {
 function StepPersonalInfo({
   profile,
   onChange,
+  avatarPreviewUrl,
+  signaturePreviewUrl,
+  onSelectAsset,
+  isSubmitting,
 }: {
   profile: ProfileState;
   onChange: (field: keyof ProfileState, value: string) => void;
+  avatarPreviewUrl: string;
+  signaturePreviewUrl: string;
+  onSelectAsset: (assetType: AssetType, file: File | null) => void;
+  isSubmitting: boolean;
 }) {
+  const currentYear = new Date().getFullYear();
+  const nyscYears = Array.from({ length: currentYear - 2002 + 1 }, (_, index) => String(currentYear - index));
+
   return (
     <div className="space-y-4">
       <div>
@@ -143,14 +156,14 @@ function StepPersonalInfo({
         />
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div className="space-y-2">
+      <div className="grid gap-4 md:grid-cols-2">
+        <div className="min-w-0 space-y-2">
           <Label className="text-[12px]">NYSC State</Label>
           <Select
             value={profile.nyscState}
             onValueChange={(value) => onChange("nyscState", value)}
           >
-            <SelectTrigger>
+            <SelectTrigger className="w-full min-w-[220px]">
               <SelectValue placeholder="Select state" />
             </SelectTrigger>
             <SelectContent>
@@ -162,18 +175,18 @@ function StepPersonalInfo({
             </SelectContent>
           </Select>
         </div>
-        <div className="space-y-2">
+        <div className="min-w-0 space-y-2">
           <Label className="text-[12px]">NYSC Year</Label>
           <Select
             value={profile.nyscYear}
             onValueChange={(value) => onChange("nyscYear", value)}
           >
-            <SelectTrigger>
+            <SelectTrigger className="w-full min-w-[220px]">
               <SelectValue placeholder="Select year" />
             </SelectTrigger>
             <SelectContent>
-              {[2026, 2025, 2024, 2023, 2022, 2021, 2020].map((year) => (
-                <SelectItem key={year} value={String(year)}>
+              {nyscYears.map((year) => (
+                <SelectItem key={year} value={year}>
                   {year}
                 </SelectItem>
               ))}
@@ -181,6 +194,51 @@ function StepPersonalInfo({
           </Select>
         </div>
       </div>
+
+      <Card>
+        <CardContent className="space-y-4 p-4">
+          <div>
+            <h3 className="text-sm font-semibold">ID Card Assets</h3>
+            <p className="text-[12px] text-muted-foreground">Upload passport photo and signature for ID card generation.</p>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-2">
+              <Label className="text-[12px]">Profile Photo</Label>
+              <Input
+                type="file"
+                accept="image/jpeg,image/jpg,image/png,image/webp"
+                disabled={isSubmitting}
+                onChange={(e) => onSelectAsset("avatar", e.target.files?.[0] ?? null)}
+              />
+              {avatarPreviewUrl ? (
+                <div className="flex justify-center">
+                  <div className="size-28 overflow-hidden rounded-full border">
+                    <img src={avatarPreviewUrl} alt="Avatar preview" className="h-full w-full object-cover object-center" />
+                  </div>
+                </div>
+              ) : null}
+              <p className="text-[11px] text-muted-foreground">Selected photo will upload when you activate account.</p>
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-[12px]">Signature Image</Label>
+              <Input
+                type="file"
+                accept="image/jpeg,image/jpg,image/png,image/webp"
+                disabled={isSubmitting}
+                onChange={(e) => onSelectAsset("signature", e.target.files?.[0] ?? null)}
+              />
+              {signaturePreviewUrl ? (
+                <div className="overflow-hidden rounded-md border bg-muted/30 p-2">
+                  <img src={signaturePreviewUrl} alt="Signature preview" className="h-16 w-full object-contain" />
+                </div>
+              ) : null}
+              <p className="text-[11px] text-muted-foreground">Selected signature will upload when you activate account.</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
@@ -330,6 +388,12 @@ export default function OnboardingPage() {
   const [currentStep, setCurrentStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState("");
+  const [signatureUrl, setSignatureUrl] = useState("");
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [signatureFile, setSignatureFile] = useState<File | null>(null);
+  const [avatarPreviewUrl, setAvatarPreviewUrl] = useState("");
+  const [signaturePreviewUrl, setSignaturePreviewUrl] = useState("");
 
   const [profile, setProfile] = useState<ProfileState>({
     email: "",
@@ -376,10 +440,70 @@ export default function OnboardingPage() {
     setPasswordFields((prev) => ({ ...prev, [field]: value }));
   };
 
+  useEffect(() => {
+    return () => {
+      if (avatarPreviewUrl) URL.revokeObjectURL(avatarPreviewUrl);
+      if (signaturePreviewUrl) URL.revokeObjectURL(signaturePreviewUrl);
+    };
+  }, [avatarPreviewUrl, signaturePreviewUrl]);
+
+  const handleSelectAsset = (assetType: AssetType, file: File | null) => {
+    if (assetType === "avatar") {
+      if (avatarPreviewUrl) URL.revokeObjectURL(avatarPreviewUrl);
+      setAvatarFile(file);
+      setAvatarPreviewUrl(file ? URL.createObjectURL(file) : "");
+      return;
+    }
+
+    if (signaturePreviewUrl) URL.revokeObjectURL(signaturePreviewUrl);
+    setSignatureFile(file);
+    setSignaturePreviewUrl(file ? URL.createObjectURL(file) : "");
+  };
+
+  const uploadAssetAndGetUrl = async (assetType: AssetType, file: File) => {
+    try {
+      const formData = new FormData();
+      formData.set("assetType", assetType);
+      formData.set("file", file);
+
+      const response = await fetch("/api/upload/id-assets", {
+        method: "POST",
+        body: formData,
+      });
+      const result = (await response.json()) as { error?: string; url?: string };
+      if (!response.ok || !result.url) {
+        setError(result.error ?? `Failed to upload ${assetType}.`);
+        return null;
+      }
+      return result.url;
+    } catch {
+      setError(`Something went wrong while uploading ${assetType}.`);
+      return null;
+    }
+  };
+
   const handleComplete = async () => {
     setError("");
     setIsSubmitting(true);
     try {
+      let nextAvatarUrl = avatarUrl;
+      let nextSignatureUrl = signatureUrl;
+
+      if (avatarFile) {
+        const uploadedAvatar = await uploadAssetAndGetUrl("avatar", avatarFile);
+        if (!uploadedAvatar) return;
+        nextAvatarUrl = uploadedAvatar;
+      }
+
+      if (signatureFile) {
+        const uploadedSignature = await uploadAssetAndGetUrl("signature", signatureFile);
+        if (!uploadedSignature) return;
+        nextSignatureUrl = uploadedSignature;
+      }
+
+      setAvatarUrl(nextAvatarUrl);
+      setSignatureUrl(nextSignatureUrl);
+
       const response = await fetch("/api/onboarding/complete", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -422,7 +546,18 @@ export default function OnboardingPage() {
 
   const renderCurrentStep = () => {
     if (currentStep === 0) return <StepWelcome />;
-    if (currentStep === 1) return <StepPersonalInfo profile={profile} onChange={handleProfileChange} />;
+    if (currentStep === 1) {
+      return (
+        <StepPersonalInfo
+          profile={profile}
+          onChange={handleProfileChange}
+          avatarPreviewUrl={avatarPreviewUrl}
+          signaturePreviewUrl={signaturePreviewUrl}
+          onSelectAsset={handleSelectAsset}
+          isSubmitting={isSubmitting}
+        />
+      );
+    }
     if (currentStep === 2) return <StepEmployment />;
     if (currentStep === 3) return <StepEducationSkills />;
     if (currentStep === 4) return <StepPrivacy privacy={privacy} onToggle={handleTogglePrivacy} />;

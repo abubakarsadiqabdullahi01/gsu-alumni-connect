@@ -15,7 +15,6 @@ import {
   UserCircle,
   Settings,
   MapPin,
-  LogOut,
   Award,
   CalendarDays,
   Activity,
@@ -34,7 +33,7 @@ import {
   SidebarMenuItem,
   SidebarSeparator,
 } from "@/components/ui/sidebar";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
@@ -96,11 +95,12 @@ function initialsFromName(name: string): string {
 type AppSidebarProps = {
   userName: string;
   registrationNo: string;
+  userImage?: string | null;
   isAdmin: boolean;
   features: FeatureVisibility;
 };
 
-export function AppSidebar({ userName, registrationNo, isAdmin, features }: AppSidebarProps) {
+export function AppSidebar({ userName, registrationNo, userImage, isAdmin, features }: AppSidebarProps) {
   const pathname = usePathname();
   const userInitials = initialsFromName(userName);
   const unreadNotifications = useUnreadNotificationsCount();
@@ -113,21 +113,23 @@ export function AppSidebar({ userName, registrationNo, isAdmin, features }: AppS
       {/* Header */}
       <SidebarHeader className="p-4">
         <Link href="/dashboard" className="flex items-center gap-3">
-          <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary">
+          <div className="flex size-9 shrink-0 items-center justify-center rounded-lg">
             <Image
-              src="/images/gsu-logo.svg"
+              src="/images/gsu-alumni-logo.png"
               alt="GSU"
-              width={18}
-              height={18}
+              width={26}
+              height={26}
+              className="object-contain"
             />
           </div>
-          <div className="flex flex-col group-data-[collapsible=icon]:hidden">
-            <span className="text-[13px] font-bold leading-tight">
-              Alumni Connect
+          <div className="flex min-w-0 flex-col group-data-[collapsible=icon]:hidden">
+            <span className="truncate text-[13px] font-extrabold leading-tight tracking-[0.02em] text-sidebar-foreground">
+              GSU Alumni Association
             </span>
-            <span className="text-[10px] text-sidebar-foreground/50">
-              Gombe State University
+            <span className="text-[10px] font-semibold tracking-[0.12em] text-sidebar-foreground/60 uppercase">
+              Member Portal
             </span>
+            <span className="mt-1 h-px w-24 rounded-full bg-gradient-to-r from-emerald-500/90 via-teal-400/70 to-transparent" />
           </div>
         </Link>
       </SidebarHeader>
@@ -261,6 +263,7 @@ export function AppSidebar({ userName, registrationNo, isAdmin, features }: AppS
                 suppressHydrationWarning
               >
                 <Avatar className="size-8 shrink-0">
+                  {userImage ? <AvatarImage src={userImage} alt={userName} /> : null}
                   <AvatarFallback className="bg-primary/15 text-xs font-bold text-primary">
                     {userInitials}
                   </AvatarFallback>
@@ -283,6 +286,7 @@ export function AppSidebar({ userName, registrationNo, isAdmin, features }: AppS
                 suppressHydrationWarning
               >
                 <Avatar className="size-8 shrink-0">
+                  {userImage ? <AvatarImage src={userImage} alt={userName} /> : null}
                   <AvatarFallback className="bg-primary/15 text-xs font-bold text-primary">
                     {userInitials}
                   </AvatarFallback>

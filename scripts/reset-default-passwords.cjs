@@ -33,12 +33,35 @@ async function hashPassword(password) {
 
 async function main() {
   const dryRun = process.argv.includes("--dry-run");
+  const connectionString = process.env.DIRECT_URL || process.env.DATABASE_URL;
+
+  if (!connectionString) {
+    throw new Error("DIRECT_URL or DATABASE_URL must be set in .env.local/.env");
+  }
+
+  const isLocalDatabase = /localhost|127\.0\.0\.1/i.test(connectionString);
+  const url = new URL(connectionString);
+  const safeTarget = `${url.hostname}${url.pathname}`;
+
+  console.log(`[reset-default-passwords] Target DB: ${safeTarget}`);
+
   const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    ssl: false,
+    connectionString,
+    ssl: isLocalDatabase ? false : { rejectUnauthorized: false },
   });
   const adapter = new PrismaPg(pool);
   const prisma = new PrismaClient({ adapter });
+
+  const tableCheck = await prisma.$queryRawUnsafe(
+    `select coalesce(to_regclass('public."user"')::text, '') as user_table`
+  );
+
+  if (!tableCheck?.[0]?.user_table) {
+    throw new Error(
+      `Target database does not contain table public.user (${safeTarget}). ` +
+      `Check DIRECT_URL/DATABASE_URL and run migrations on the correct database.`
+    );
+  }
 
   const users = await prisma.user.findMany({
     where: { defaultPassword: true },

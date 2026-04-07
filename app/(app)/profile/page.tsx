@@ -64,8 +64,10 @@ export default async function ProfilePage() {
           accountStatus: true,
           email: true,
           phone: true,
+          image: true,
         },
       },
+      signatureUrl: true,
     },
   });
 
@@ -100,6 +102,8 @@ export default async function ProfilePage() {
             accountStatus: graduate.user.accountStatus,
             email: graduate.user.email,
             phone: graduate.user.phone,
+            avatarUrl: graduate.user.image,
+            signatureUrl: graduate.signatureUrl,
             dateOfBirth: asDateInput(graduate.dateOfBirth),
             bio: graduate.bio,
             linkedinUrl: graduate.linkedinUrl,

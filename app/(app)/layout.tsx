@@ -15,6 +15,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         defaultPassword: true,
         name: true,
         registrationNo: true,
+        image: true,
       },
     }),
     getOrCreateAdminSettings(),
@@ -30,6 +31,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       <AppSidebar
         userName={user?.name ?? session.user.name ?? "User"}
         registrationNo={user?.registrationNo ?? "N/A"}
+        userImage={user?.image ?? null}
         isAdmin={session.user.role === "admin"}
         features={{
           featureJobBoard: settings.featureJobBoard,

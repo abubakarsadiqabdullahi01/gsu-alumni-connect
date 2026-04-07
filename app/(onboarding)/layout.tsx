@@ -23,7 +23,7 @@ export default async function OnboardingLayout({
       {/* Minimal header */}
       <header className="flex items-center gap-3 border-b px-6 py-4">
         <div className="flex size-8 items-center justify-center rounded-lg bg-primary">
-          <Image src="/images/gsu-logo.svg" alt="GSU" width={18} height={18} />
+          <Image src="/images/gsu-alumni-logo.png" alt="GSU" width={18} height={18} className="object-contain" />
         </div>
         <div>
           <p className="text-[13px] font-bold leading-tight">GSU Alumni Connect</p>

@@ -50,7 +50,7 @@ export default function AuthLayout({
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3">
             <div className="flex size-10 items-center justify-center rounded-xl bg-white/10 backdrop-blur-sm">
-              <Image src="/images/gsu-logo.svg" alt="GSU" width={26} height={26} />
+              <Image src="/images/gsu-alumni-logo.png" alt="GSU" width={26} height={26} className="object-contain" />
             </div>
             <div>
               <p className="text-[13px] font-bold leading-tight text-white">
@@ -115,7 +115,7 @@ export default function AuthLayout({
         {/* Mobile logo */}
         <div className="relative z-10 mb-10 flex items-center gap-2.5 lg:hidden">
           <div className="flex size-9 items-center justify-center rounded-xl bg-primary/10">
-            <Image src="/images/gsu-logo.svg" alt="GSU" width={22} height={22} className="invert dark:invert-0" />
+            <Image src="/images/gsu-alumni-logo.png" alt="GSU" width={22} height={22} className="object-contain" />
           </div>
           <div>
             <p className="text-[13px] font-bold leading-tight">GSU Alumni Connect</p>

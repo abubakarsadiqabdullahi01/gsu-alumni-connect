@@ -23,10 +23,13 @@ const registrationSignInPlugin = {
         }),
       },
       async (ctx) => {
-        const registrationNo = normalizeRegistrationNo(ctx.body.registrationNo);
+        const identifier = ctx.body.registrationNo.trim();
+        const isEmail = identifier.includes("@");
 
         const user = await prisma.user.findUnique({
-          where: { registrationNo },
+          where: isEmail
+            ? { email: identifier.toLowerCase() }
+            : { registrationNo: normalizeRegistrationNo(identifier) },
         });
 
         if (!user) {
@@ -50,10 +53,7 @@ const registrationSignInPlugin = {
           });
         }
 
-        const valid = await ctx.context.password.verify({
-          hash: account.password,
-          password: ctx.body.password,
-        });
+        const valid = await verifyPassword(ctx.body.password, account.password);
 
         if (!valid) {
           throw new APIError("UNAUTHORIZED", {

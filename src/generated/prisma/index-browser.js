@@ -210,6 +210,7 @@ exports.Prisma.GraduateScalarFieldEnum = {
   twitterUrl: 'twitterUrl',
   githubUrl: 'githubUrl',
   personalWebsite: 'personalWebsite',
+  signatureUrl: 'signatureUrl',
   nyscState: 'nyscState',
   nyscYear: 'nyscYear',
   showCgpa: 'showCgpa',

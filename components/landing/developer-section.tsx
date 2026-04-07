@@ -56,7 +56,7 @@ export function DeveloperSection() {
                         <div className="absolute -inset-px rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-500" />
                         <div className="relative size-32 overflow-hidden rounded-2xl sm:size-36">
                           <Image
-                              src="/images/developer.jpeg"
+                              src="/images/developer01.png"
                               alt="Abubakar Sadiq Abdullahi – Developer, GSU Class of 2025"
                               width={144}
                               height={144}
@@ -108,8 +108,9 @@ export function DeveloperSection() {
                         <h3 className="text-2xl font-extrabold tracking-tight text-foreground lg:text-3xl">
                           Abubakar Sadiq Abdullahi
                         </h3>
-                        <p className="mt-1 text-sm font-semibold text-primary">
-                          Developer · GSU Class of 2025
+                        <p className="text-[10px] mt-1 font-semibold text-primary"> - abdullahiabubakarsadiq3107@gmail.com</p>
+                        <p className="mt-1 text-[12px] font-semibold text-primary">
+                          - Developer · GSU Class of 2025
                         </p>
 
                         {/* Gradient rule */}

@@ -39,7 +39,7 @@ export default async function HomePage() {
         <FeaturesSection />
         <StatsSection />
         <LeadershipSection />
-        <DeveloperSection />
+        {/*<DeveloperSection />*/}
         <CtaSection />
       </main>
       <Footer />

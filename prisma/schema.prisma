@@ -311,6 +311,7 @@ model Graduate {
   twitterUrl      String?   @map("twitter_url") // [USER]
   githubUrl       String?   @map("github_url") // [USER]
   personalWebsite String?   @map("personal_website") // [USER]
+  signatureUrl    String?   @map("signature_url") // [USER] ID card signature image
   nyscState       String?   @map("nysc_state") // [USER] NYSC posting state
   nyscYear        Int?      @map("nysc_year") // [USER]
 
