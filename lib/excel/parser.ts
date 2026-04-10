@@ -1,5 +1,9 @@
 import * as XLSX from "xlsx";
-import { getDepartmentName } from "./department-map";
+import {
+  extractProgramCodesFromRegistrationNo,
+  getDepartmentName,
+  getFacultyName,
+} from "./department-map";
 
 // ── Era detection ──────────────────────────────────────────────────────────────
 export type Era = "LEGACY" | "MID_ERA" | "MODERN";
@@ -41,14 +45,6 @@ const DEGREE_MAP: Record<string, string> = {
 };
 
 // ── Faculty lookup ─────────────────────────────────────────────────────────────
-const FACULTY_MAP: Record<string, string> = {
-  AS: "Arts & Social Sciences",
-  ED: "Education",
-  MD: "Medicine",
-  PH: "Pharmacy",
-  SC: "Science",
-};
-
 // ── Public types ───────────────────────────────────────────────────────────────
 export interface ParsedRow {
   registrationNo: string;
@@ -91,15 +87,33 @@ export interface FileParseResult {
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
 function detectEra(sheetName: string): Era {
-  const year = parseInt(sheetName.split("-")[0], 10);
-  if (year >= 2009 && year <= 2012) return "LEGACY";
-  if (year >= 2013 && year <= 2019) return "MID_ERA";
+  const yearMatches = sheetName.match(/\d{4}/g) ?? [];
+  const years = yearMatches
+    .map((y) => parseInt(y, 10))
+    .filter((y) => !Number.isNaN(y));
+
+  if (years.length === 0) return "MODERN";
+
+  const latestYear = Math.max(...years);
+  if (latestYear <= 2012) return "LEGACY";
+  if (latestYear <= 2019) return "MID_ERA";
   return "MODERN";
 }
 
 function findCol(headers: string[], variants: string[]): string | undefined {
   const upper = variants.map((v) => v.toUpperCase().trim());
   return headers.find((h) => upper.includes(h.toUpperCase().trim()));
+}
+
+function looksLikeHeaderRow(cells: unknown[]): boolean {
+  const headers = cells.map((c) => String(c ?? "").trim()).filter(Boolean);
+  if (headers.length === 0) return false;
+
+  const hasRegNo = Boolean(findCol(headers, REG_NO_V));
+  const hasName = Boolean(findCol(headers, NAME_V) || findCol(headers, SURNAME_V));
+  const hasProgramHint = Boolean(findCol(headers, COURSE_V) || findCol(headers, FACULTY_V));
+
+  return hasRegNo && hasName && hasProgramHint;
 }
 
 function normaliseRegNo(raw: unknown): string {
@@ -115,6 +129,11 @@ function normaliseName(raw: unknown): string {
   return String(raw ?? "").trim().replace(/\s+/g, " ");
 }
 
+function normaliseOptional(raw: unknown): string | undefined {
+  const value = String(raw ?? "").trim();
+  return value.length ? value : undefined;
+}
+
 // ── Sheet parser ───────────────────────────────────────────────────────────────
 function parseSheet(ws: XLSX.WorkSheet, sheetName: string): SheetParseResult {
   const era = detectEra(sheetName);
@@ -123,14 +142,24 @@ function parseSheet(ws: XLSX.WorkSheet, sheetName: string): SheetParseResult {
   const seenInSheet = new Set<string>();
   const duplicatesInSheet: string[] = [];
 
-  // LEGACY sheets have 3 header rows to skip
-  const skipRows = era === "LEGACY" ? 3 : 0;
-
-  const raw = XLSX.utils.sheet_to_json<unknown[]>(ws, {
+  const rawAll = XLSX.utils.sheet_to_json<unknown[]>(ws, {
     header: 1,
     defval: "",
-    range: skipRows,
+    range: 0,
   });
+
+  // First try to locate the real header row from content; fallback to era rule.
+  let headerRowIndex = -1;
+  const probeLimit = Math.min(rawAll.length, 12);
+  for (let i = 0; i < probeLimit; i++) {
+    if (looksLikeHeaderRow((rawAll[i] as unknown[]) ?? [])) {
+      headerRowIndex = i;
+      break;
+    }
+  }
+
+  const skipRows = headerRowIndex >= 0 ? headerRowIndex : era === "LEGACY" ? 3 : 0;
+  const raw = rawAll.slice(skipRows);
 
   if (raw.length < 2) {
     return { sheetName, era, rows, errors, duplicatesInSheet, totalRows: 0, validRows: 0 };
@@ -193,10 +222,14 @@ function parseSheet(ws: XLSX.WorkSheet, sheetName: string): SheetParseResult {
       continue;
     }
 
-    // Faculty code from reg no pattern UG{YY}/{FAC_CODE}{DEPT}/{NUM}
-    const facFromRegNo = regNo.split("/")[1]?.replace(/[^A-Z]/gi, "").substring(0, 2).toUpperCase() ?? "";
-    const facultyCode = (facultyCol ? r[facultyCol] : "") || facFromRegNo;
-    const facultyName = FACULTY_MAP[facultyCode] ?? facultyCode;
+    // Derive codes from reg no pattern UG{YY}/{FAC}{DEPT}/{NUM}, e.g. UG19/SCCS/1073
+    const fromRegNo = extractProgramCodesFromRegistrationNo(regNo);
+    const facultyCode =
+      (facultyCol ? normaliseOptional(r[facultyCol]) : undefined) ?? fromRegNo.facultyCode;
+    const courseCode =
+      (courseCol ? normaliseOptional(r[courseCol]) : undefined) ?? fromRegNo.courseCode;
+    const facultyName = getFacultyName(facultyCode) || undefined;
+    const departmentName = getDepartmentName(courseCode) || undefined;
 
     // CGPA
     let cgpa: number | null = null;
@@ -215,8 +248,8 @@ function parseSheet(ws: XLSX.WorkSheet, sheetName: string): SheetParseResult {
       lga:           lgaCol     ? r[lgaCol]      : undefined,
       facultyCode,
       facultyName,
-      courseCode:    courseCol  ? r[courseCol]   : undefined,
-      departmentName: getDepartmentName(courseCol ? r[courseCol] : undefined),
+      courseCode,
+      departmentName,
       cgpa,
       degreeClass:   classCol   ? normaliseDegreeClass(r[classCol]) : undefined,
       jambNumber:    jambCol    ? r[jambCol]     : undefined,

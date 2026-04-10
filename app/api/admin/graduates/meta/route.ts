@@ -20,20 +20,19 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const [graduates] = await Promise.all([
-      prisma.graduate.findMany({
-        select: {
-          departmentName: true,
-          facultyCode: true,
-          graduationYear: true,
-        },
-        where: {
-          departmentName: { not: null },
-          facultyCode: { not: null },
-        },
-        distinct: ['departmentName', 'facultyCode', 'graduationYear'],
-      }),
-    ]);
+    const graduates = await prisma.graduate.findMany({
+      select: {
+        departmentName: true,
+        facultyCode: true,
+        graduationYear: true,
+      },
+      where: {
+        departmentName: { not: null },
+        facultyCode: { not: null },
+        graduationYear: { not: null },
+      },
+      distinct: ['departmentName', 'facultyCode', 'graduationYear'],
+    });
 
     const departments = Array.from(
       new Set(graduates.map(g => g.departmentName).filter(Boolean))
@@ -51,10 +50,24 @@ export async function GET(request: NextRequest) {
       return bYear - aYear;
     }) as string[];
 
+    const departmentsByFaculty = faculties.reduce<Record<string, string[]>>((acc, faculty) => {
+      acc[faculty] = Array.from(
+        new Set(
+          graduates
+            .filter((g) => g.facultyCode === faculty)
+            .map((g) => g.departmentName)
+            .filter(Boolean)
+        )
+      ).sort() as string[];
+      return acc;
+    }, {});
+
     return NextResponse.json({
       departments,
       faculties,
       years,
+      departmentsByFaculty,
+      combinations: graduates,
     });
   } catch (error) {
     console.error('[AdminGraduatesMeta] Error:', error);

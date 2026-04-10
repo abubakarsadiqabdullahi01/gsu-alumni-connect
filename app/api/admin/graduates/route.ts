@@ -53,15 +53,15 @@ export async function GET(request: NextRequest) {
       ];
     }
 
-    if (faculty) {
+    if (faculty && faculty !== 'all') {
       where.facultyCode = faculty;
     }
 
-    if (department) {
-      where.departmentName = { contains: department, mode: 'insensitive' };
+    if (department && department !== 'all') {
+      where.departmentName = { equals: department, mode: 'insensitive' };
     }
 
-    if (graduationYear) {
+    if (graduationYear && graduationYear !== 'all') {
       where.graduationYear = graduationYear;
     }
 
@@ -113,7 +113,6 @@ export async function GET(request: NextRequest) {
       id: grad.id,
       registrationNo: grad.registrationNo,
       fullName: grad.fullName,
-      email: grad.user.email || '',
       facultyCode: grad.facultyCode,
       facultyName: grad.facultyName,
       departmentName: grad.departmentName,
@@ -122,9 +121,14 @@ export async function GET(request: NextRequest) {
       cgpa: grad.cgpa,
       stateOfOrigin: grad.stateOfOrigin,
       profilePhotoUrl: grad.user.image,
-      accountStatus: grad.user.accountStatus,
       profileCompleted: grad.profileCompleted,
       createdAt: grad.createdAt,
+      user: {
+        email: grad.user.email || '',
+        phone: grad.user.phone || undefined,
+        image: grad.user.image || undefined,
+        accountStatus: grad.user.accountStatus || 'PENDING',
+      },
     }));
 
     const totalPages = Math.ceil(total / limit);
