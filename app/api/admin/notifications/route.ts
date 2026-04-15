@@ -1,25 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-
-async function requireAdmin(request: Request) {
-  const session = await auth.api.getSession({ headers: request.headers });
-  if (!session) {
-    return { error: NextResponse.json({ error: "Unauthorized" }, { status: 401 }) };
-  }
-  if (session.user.role !== "admin") {
-    return { error: NextResponse.json({ error: "Forbidden" }, { status: 403 }) };
-  }
-  return { session };
-}
+import { requireAdmin, isSessionOk } from "@/lib/api-middleware";
+import {
+  bumpNotificationsCacheVersion,
+  readNotificationsCache,
+  writeNotificationsCache,
+} from "@/lib/cache/notifications-cache";
 
 export async function GET(request: NextRequest) {
   try {
-    const guard = await requireAdmin(request);
-    if (guard.error) return guard.error;
+    const result = await requireAdmin(request.headers, "AdminNotificationsAPI");
+    if (!isSessionOk(result)) return result.error;
 
     const me = await prisma.graduate.findUnique({
-      where: { userId: guard.session.user.id },
+      where: { userId: result.session.user.id },
       select: { id: true },
     });
 
@@ -37,6 +31,24 @@ export async function GET(request: NextRequest) {
     const page = Math.max(1, Number.parseInt(params.get("page") ?? "1", 10) || 1);
     const pageSize = Math.min(30, Math.max(6, Number.parseInt(params.get("pageSize") ?? "12", 10) || 12));
     const skip = (page - 1) * pageSize;
+
+    const cached = await readNotificationsCache<{
+      notifications: Array<{
+        id: string;
+        type: string;
+        title: string;
+        body: string;
+        actionUrl: string | null;
+        isRead: boolean;
+        readAt: Date | null;
+        createdAt: Date;
+      }>;
+      stats: { unread: number; read: number; total: number };
+      pagination: { page: number; pageSize: number; total: number; totalPages: number };
+    }>(me.id, "admin", page, pageSize, status, q);
+    if (cached) {
+      return NextResponse.json(cached);
+    }
 
     const where = {
       graduateId: me.id,
@@ -74,7 +86,7 @@ export async function GET(request: NextRequest) {
       prisma.notification.count({ where: { graduateId: me.id, isRead: true } }),
     ]);
 
-    return NextResponse.json({
+    const payload = {
       notifications,
       stats: {
         unread: unreadCount,
@@ -87,7 +99,10 @@ export async function GET(request: NextRequest) {
         total,
         totalPages: Math.max(1, Math.ceil(total / pageSize)),
       },
-    });
+    };
+
+    void writeNotificationsCache(me.id, "admin", page, pageSize, status, q, payload);
+    return NextResponse.json(payload);
   } catch (error) {
     console.error("[AdminNotificationsAPI][GET] Error:", error);
     return NextResponse.json({ error: "Failed to load notifications." }, { status: 500 });
@@ -96,11 +111,11 @@ export async function GET(request: NextRequest) {
 
 export async function PATCH(request: NextRequest) {
   try {
-    const guard = await requireAdmin(request);
-    if (guard.error) return guard.error;
+    const result = await requireAdmin(request.headers, "AdminNotificationsAPI");
+    if (!isSessionOk(result)) return result.error;
 
     const me = await prisma.graduate.findUnique({
-      where: { userId: guard.session.user.id },
+      where: { userId: result.session.user.id },
       select: { id: true },
     });
 
@@ -122,6 +137,7 @@ export async function PATCH(request: NextRequest) {
       },
     });
 
+    void bumpNotificationsCacheVersion(me.id, "admin");
     return NextResponse.json({ updated: updated.count });
   } catch (error) {
     console.error("[AdminNotificationsAPI][PATCH] Error:", error);

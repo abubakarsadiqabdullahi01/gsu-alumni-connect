@@ -539,6 +539,36 @@ exports.Prisma.UploadAuditLogScalarFieldEnum = {
   completedAt: 'completedAt'
 };
 
+exports.Prisma.ImportJobScalarFieldEnum = {
+  id: 'id',
+  uploadedById: 'uploadedById',
+  fileName: 'fileName',
+  fileUrl: 'fileUrl',
+  selectedSheets: 'selectedSheets',
+  totalRows: 'totalRows',
+  processedRows: 'processedRows',
+  createdRows: 'createdRows',
+  updatedRows: 'updatedRows',
+  failedRows: 'failedRows',
+  status: 'status',
+  lastRow: 'lastRow',
+  heartbeatAt: 'heartbeatAt',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ImportJobErrorScalarFieldEnum = {
+  id: 'id',
+  jobId: 'jobId',
+  rowNumber: 'rowNumber',
+  registrationNo: 'registrationNo',
+  message: 'message',
+  payload: 'payload',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -694,6 +724,15 @@ exports.UploadStatus = exports.$Enums.UploadStatus = {
   FAILED: 'FAILED'
 };
 
+exports.ImportJobStatus = exports.$Enums.ImportJobStatus = {
+  QUEUED: 'QUEUED',
+  RUNNING: 'RUNNING',
+  PARTIAL_SUCCESS: 'PARTIAL_SUCCESS',
+  COMPLETED: 'COMPLETED',
+  FAILED: 'FAILED',
+  CANCELLED: 'CANCELLED'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   Session: 'Session',
@@ -726,7 +765,9 @@ exports.Prisma.ModelName = {
   Notification: 'Notification',
   ActivityFeedItem: 'ActivityFeedItem',
   AdminSetting: 'AdminSetting',
-  UploadAuditLog: 'UploadAuditLog'
+  UploadAuditLog: 'UploadAuditLog',
+  ImportJob: 'ImportJob',
+  ImportJobError: 'ImportJobError'
 };
 
 /**

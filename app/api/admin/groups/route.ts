@@ -1,6 +1,14 @@
-﻿import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { GroupType, type Prisma } from "@/src/generated/prisma";
+import { redisGetJson, redisSetJson } from "@/lib/cache/redis-cache";
+import { getAdminCacheVersion } from "@/lib/cache/admin-cache-version";
+
+const ADMIN_GROUPS_CACHE_TTL_SECONDS = Math.max(
+  1,
+  Number.parseInt(process.env.ADMIN_GROUPS_CACHE_TTL_SECONDS ?? "20", 10) || 20
+);
 
 export async function GET(req: NextRequest) {
   try {
@@ -20,7 +28,39 @@ export async function GET(req: NextRequest) {
     const type = (params.get("type") ?? "all").trim();
     const source = (params.get("source") ?? "all").trim();
 
-    const where = {
+    const cacheVersion = await getAdminCacheVersion("groups");
+    const cacheKey = `admin:groups:v${cacheVersion}:${session.user.id}:p${page}:ps${pageSize}:q:${encodeURIComponent(q)}:t:${encodeURIComponent(type)}:s:${encodeURIComponent(source)}`;
+    const cached = await redisGetJson<{
+      groups: Array<{
+        id: string;
+        name: string;
+        slug: string;
+        description: string | null;
+        type: string;
+        isAuto: boolean;
+        createdAt: Date;
+        memberCount: number;
+        postCount: number;
+      }>;
+      stats: {
+        totalGroups: number;
+        autoGroups: number;
+        customGroups: number;
+        totalMembers: number;
+        totalPosts: number;
+      };
+      pagination: {
+        page: number;
+        pageSize: number;
+        total: number;
+        totalPages: number;
+      };
+    }>(cacheKey);
+    if (cached) {
+      return NextResponse.json(cached);
+    }
+
+    const where: Prisma.AlumniGroupWhereInput = {
       ...(q
         ? {
             OR: [
@@ -30,7 +70,9 @@ export async function GET(req: NextRequest) {
             ],
           }
         : {}),
-      ...(type !== "all" ? { type: type as any } : {}),
+      ...(type !== "all" && Object.values(GroupType).includes(type as GroupType)
+        ? { type: type as GroupType }
+        : {}),
       ...(source === "auto" ? { isAuto: true } : {}),
       ...(source === "custom" ? { isAuto: false } : {}),
     };
@@ -65,7 +107,7 @@ export async function GET(req: NextRequest) {
       prisma.groupPost.count({ where: { isDeleted: false } }),
     ]);
 
-    return NextResponse.json({
+    const payload = {
       groups: groups.map((group) => ({
         ...group,
         memberCount: group._count.members,
@@ -84,10 +126,12 @@ export async function GET(req: NextRequest) {
         total,
         totalPages: Math.max(1, Math.ceil(total / pageSize)),
       },
-    });
+    };
+
+    void redisSetJson(cacheKey, payload, ADMIN_GROUPS_CACHE_TTL_SECONDS);
+    return NextResponse.json(payload);
   } catch (error) {
     console.error("[AdminGroupsAPI][GET] Error:", error);
     return NextResponse.json({ error: "Failed to load groups." }, { status: 500 });
   }
 }
-

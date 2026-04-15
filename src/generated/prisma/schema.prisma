@@ -168,6 +168,15 @@ enum UploadStatus {
   FAILED
 }
 
+enum ImportJobStatus {
+  QUEUED
+  RUNNING
+  PARTIAL_SUCCESS
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
 // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // 3. BETTER AUTH CORE TABLES
 //    DO NOT RENAME â€” Better Auth CLI maps to these exact names
@@ -207,6 +216,9 @@ model User {
   // â”€â”€ App relations â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   graduate Graduate?
 
+  // ✅ PRODUCTION: Performance indexes for import bulk operations
+  @@index([registrationNo]) // Critical: User lookup by registration number
+  @@index([email]) // Standard: Email lookups
   @@map("user")
 }
 
@@ -560,6 +572,8 @@ model GroupMember {
   lastReadAt DateTime?       @map("last_read_at")
 
   @@unique([groupId, graduateId])
+  @@index([groupId]) // ✅ PRODUCTION: Speed up group member lookups
+  @@index([graduateId]) // ✅ PRODUCTION: Speed up member lookups by graduate
   @@map("group_member")
 }
 
@@ -915,4 +929,45 @@ model UploadAuditLog {
 
   @@index([uploadedByUserId])
   @@map("upload_audit_log")
+}
+
+model ImportJob {
+  id             String          @id @default(uuid())
+  uploadedById   String          @map("uploaded_by_id")
+  fileName       String          @map("file_name")
+  fileUrl        String          @map("file_url")
+  selectedSheets String[]        @default([]) @map("selected_sheets")
+  totalRows      Int             @default(0) @map("total_rows")
+  processedRows  Int             @default(0) @map("processed_rows")
+  createdRows    Int             @default(0) @map("created_rows")
+  updatedRows    Int             @default(0) @map("updated_rows")
+  failedRows     Int             @default(0) @map("failed_rows")
+  status         ImportJobStatus @default(QUEUED)
+  lastRow        Int             @default(0) @map("last_row")
+  heartbeatAt    DateTime?       @map("heartbeat_at")
+  startedAt      DateTime?       @map("started_at")
+  completedAt    DateTime?       @map("completed_at")
+  createdAt      DateTime        @default(now()) @map("created_at")
+  updatedAt      DateTime        @updatedAt @map("updated_at")
+
+  errors ImportJobError[]
+
+  @@index([status, createdAt])
+  @@index([uploadedById, createdAt(sort: Desc)])
+  @@map("import_job")
+}
+
+model ImportJobError {
+  id             String   @id @default(uuid())
+  jobId          String   @map("job_id")
+  rowNumber      Int      @map("row_number")
+  registrationNo String?  @map("registration_no")
+  message        String
+  payload        Json?
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  job ImportJob @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  @@index([jobId, rowNumber])
+  @@map("import_job_error")
 }

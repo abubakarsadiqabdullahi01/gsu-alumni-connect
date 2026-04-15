@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { parseExcelFile, type FileParseResult } from "@/lib/excel/parser";
 
 interface Props {
-  onParsed: (result: FileParseResult) => void;
+  onParsed: (result: FileParseResult, file: File) => void;
 }
 
 export function ExcelUploadZone({ onParsed }: Props) {
@@ -43,7 +43,7 @@ export function ExcelUploadZone({ onParsed }: Props) {
     setError(null);
     try {
       const result = await parseExcelFile(file);
-      onParsed(result);
+      onParsed(result, file);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to parse file. Please check the format.");
     } finally {

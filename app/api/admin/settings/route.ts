@@ -1,25 +1,14 @@
 ﻿import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { requireAdmin, isSessionOk } from "@/lib/api-middleware";
 import { DEFAULT_ADMIN_SETTINGS } from "@/lib/platform-settings";
 
 const DEFAULT_SETTINGS = DEFAULT_ADMIN_SETTINGS;
 
-async function requireAdmin(request: Request) {
-  const session = await auth.api.getSession({ headers: request.headers });
-  if (!session) {
-    return { error: NextResponse.json({ error: "Unauthorized" }, { status: 401 }) };
-  }
-  if (session.user.role !== "admin") {
-    return { error: NextResponse.json({ error: "Forbidden" }, { status: 403 }) };
-  }
-  return { session };
-}
-
 export async function GET(request: NextRequest) {
   try {
-    const guard = await requireAdmin(request);
-    if (guard.error) return guard.error;
+    const result = await requireAdmin(request.headers, "AdminSettingsAPI");
+    if (!isSessionOk(result)) return result.error;
 
     const settings = await prisma.adminSetting.upsert({
       where: { id: "main" },
@@ -39,8 +28,8 @@ export async function GET(request: NextRequest) {
 
 export async function PATCH(request: NextRequest) {
   try {
-    const guard = await requireAdmin(request);
-    if (guard.error) return guard.error;
+    const result = await requireAdmin(request.headers, "AdminSettingsAPI");
+    if (!isSessionOk(result)) return result.error;
 
     const payload = (await request.json()) as Partial<typeof DEFAULT_SETTINGS>;
 
@@ -71,6 +60,6 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json({ settings });
   } catch (error) {
     console.error("[AdminSettingsAPI][PATCH] Error:", error);
-    return NextResponse.json({ error: "Failed to save admin settings." }, { status: 500 });
+    return NextResponse.json({ error: "Failed to update admin settings." }, { status: 500 });
   }
 }

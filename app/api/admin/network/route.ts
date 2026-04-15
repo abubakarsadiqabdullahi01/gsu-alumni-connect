@@ -1,8 +1,14 @@
-﻿import { NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { redisGetJson, redisSetJson } from "@/lib/cache/redis-cache";
+import { getAdminCacheVersion } from "@/lib/cache/admin-cache-version";
 
 const MONTHS_TO_SHOW = 12;
+const ADMIN_NETWORK_CACHE_TTL_SECONDS = Math.max(
+  1,
+  Number.parseInt(process.env.ADMIN_NETWORK_CACHE_TTL_SECONDS ?? "30", 10) || 30
+);
 
 function monthKey(date: Date) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
@@ -24,6 +30,24 @@ export async function GET(request: Request) {
     }
     if (session.user.role !== "admin") {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    const cacheVersion = await getAdminCacheVersion("network");
+    const cacheKey = `admin:network:v${cacheVersion}:${session.user.id}`;
+    const cached = await redisGetJson<{
+      stats: {
+        totalConnections: number;
+        acceptedConnections: number;
+        pendingConnections: number;
+        blockedConnections: number;
+        avgConnectionsPerUser: number;
+      };
+      connectionsGrowth: Array<{ month: string; connections: number }>;
+      connectionsByFaculty: Array<{ faculty: string; connections: number }>;
+      topConnectors: Array<{ id: string; name: string; department: string; connections: number }>;
+    }>(cacheKey);
+    if (cached) {
+      return NextResponse.json(cached);
     }
 
     const [totalConnections, acceptedConnections, pendingConnections, blockedConnections, totalGraduates, acceptedRows] = await Promise.all([
@@ -121,7 +145,7 @@ export async function GET(request: Request) {
       })
       .filter((x): x is NonNullable<typeof x> => Boolean(x));
 
-    return NextResponse.json({
+    const payload = {
       stats: {
         totalConnections,
         acceptedConnections,
@@ -132,7 +156,10 @@ export async function GET(request: Request) {
       connectionsGrowth,
       connectionsByFaculty,
       topConnectors,
-    });
+    };
+
+    void redisSetJson(cacheKey, payload, ADMIN_NETWORK_CACHE_TTL_SECONDS);
+    return NextResponse.json(payload);
   } catch (error) {
     console.error("[AdminNetworkAPI][GET] Error:", error);
     return NextResponse.json({ error: "Failed to load network analytics." }, { status: 500 });

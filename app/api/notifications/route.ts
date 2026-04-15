@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import {
+  bumpNotificationsCacheVersion,
+  readNotificationsCache,
+  writeNotificationsCache,
+} from "@/lib/cache/notifications-cache";
 
 export async function GET(req: NextRequest) {
   try {
@@ -23,6 +28,24 @@ export async function GET(req: NextRequest) {
     const page = Math.max(1, Number.parseInt(params.get("page") ?? "1", 10) || 1);
     const pageSize = Math.min(30, Math.max(6, Number.parseInt(params.get("pageSize") ?? "12", 10) || 12));
     const skip = (page - 1) * pageSize;
+
+    const cached = await readNotificationsCache<{
+      notifications: Array<{
+        id: string;
+        type: string;
+        title: string;
+        body: string;
+        actionUrl: string | null;
+        isRead: boolean;
+        readAt: Date | null;
+        createdAt: Date;
+      }>;
+      stats: { unread: number; read: number; total: number };
+      pagination: { page: number; pageSize: number; total: number; totalPages: number };
+    }>(me.id, "user", page, pageSize, status, q);
+    if (cached) {
+      return NextResponse.json(cached);
+    }
 
     const where = {
       graduateId: me.id,
@@ -60,7 +83,7 @@ export async function GET(req: NextRequest) {
       prisma.notification.count({ where: { graduateId: me.id, isRead: true } }),
     ]);
 
-    return NextResponse.json({
+    const payload = {
       notifications,
       stats: {
         unread: unreadCount,
@@ -73,7 +96,10 @@ export async function GET(req: NextRequest) {
         total,
         totalPages: Math.max(1, Math.ceil(total / pageSize)),
       },
-    });
+    };
+
+    void writeNotificationsCache(me.id, "user", page, pageSize, status, q, payload);
+    return NextResponse.json(payload);
   } catch (error) {
     console.error("[NotificationsAPI][GET] Error:", error);
     return NextResponse.json({ error: "Failed to load notifications." }, { status: 500 });
@@ -109,10 +135,10 @@ export async function PATCH(req: NextRequest) {
       },
     });
 
+    void bumpNotificationsCacheVersion(me.id, "user");
     return NextResponse.json({ updated: updated.count });
   } catch (error) {
     console.error("[NotificationsAPI][PATCH] Error:", error);
     return NextResponse.json({ error: "Failed to update notifications." }, { status: 500 });
   }
 }
-

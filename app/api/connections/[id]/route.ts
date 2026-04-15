@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { bumpAdminCacheVersion } from "@/lib/cache/admin-cache-version";
 
 type Action = "accept" | "decline" | "cancel" | "block";
 
@@ -56,6 +57,7 @@ export async function PATCH(
         where: { id: connection.id },
         data: { status: "ACCEPTED" },
       });
+      void bumpAdminCacheVersion("network");
       return NextResponse.json({ success: true, status: "ACCEPTED" });
     }
 
@@ -67,6 +69,7 @@ export async function PATCH(
         where: { id: connection.id },
         data: { status: "DECLINED" },
       });
+      void bumpAdminCacheVersion("network");
       return NextResponse.json({ success: true, status: "DECLINED" });
     }
 
@@ -75,6 +78,7 @@ export async function PATCH(
         return NextResponse.json({ error: "Cannot cancel this request." }, { status: 400 });
       }
       await prisma.connection.delete({ where: { id: connection.id } });
+      void bumpAdminCacheVersion("network");
       return NextResponse.json({ success: true, status: "CANCELLED" });
     }
 
@@ -83,6 +87,7 @@ export async function PATCH(
         where: { id: connection.id },
         data: { status: "BLOCKED" },
       });
+      void bumpAdminCacheVersion("network");
       return NextResponse.json({ success: true, status: "BLOCKED" });
     }
 
@@ -129,10 +134,10 @@ export async function DELETE(
     }
 
     await prisma.connection.delete({ where: { id: connection.id } });
+    void bumpAdminCacheVersion("network");
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("[ConnectionsDelete] Error:", error);
     return NextResponse.json({ error: "Failed to remove connection." }, { status: 500 });
   }
 }
-

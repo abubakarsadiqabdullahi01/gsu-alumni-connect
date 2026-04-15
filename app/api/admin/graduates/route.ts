@@ -1,6 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { auth } from '@/lib/auth';
+import type { Prisma } from "@/src/generated/prisma";
+import { redisGetJson, redisSetJson } from "@/lib/cache/redis-cache";
+import { getAdminCacheVersion } from "@/lib/cache/admin-cache-version";
+
+const ADMIN_GRADUATES_CACHE_TTL_SECONDS = Math.max(
+  1,
+  Number.parseInt(process.env.ADMIN_GRADUATES_CACHE_TTL_SECONDS ?? "20", 10) || 20
+);
 
 /**
  * GET /api/admin/graduates
@@ -42,8 +50,46 @@ export async function GET(request: NextRequest) {
     const sortBy = searchParams.get('sortBy') || 'createdAt';
     const sortOrder = searchParams.get('sortOrder') || 'desc';
 
+    const cacheVersion = await getAdminCacheVersion("graduates");
+    const cacheKey = `admin:graduates:v${cacheVersion}:${session.user.id}:p${page}:l${limit}:q:${encodeURIComponent(search ?? "")}:f:${encodeURIComponent(faculty ?? "all")}:d:${encodeURIComponent(department ?? "all")}:y:${encodeURIComponent(graduationYear ?? "all")}:sb:${encodeURIComponent(sortBy)}:so:${encodeURIComponent(sortOrder)}`;
+    const cached = await redisGetJson<{
+      data: Array<{
+        id: string;
+        registrationNo: string;
+        fullName: string;
+        facultyCode: string | null;
+        facultyName: string | null;
+        departmentName: string | null;
+        graduationYear: string | null;
+        degreeClass: string | null;
+        cgpa: number | null;
+        stateOfOrigin: string | null;
+        profilePhotoUrl: string | null;
+        profileCompleted: boolean;
+        createdAt: Date;
+        user: {
+          email: string;
+          phone?: string;
+          image?: string;
+          accountStatus: string;
+        };
+      }>;
+      pagination: {
+        page: number;
+        limit: number;
+        total: number;
+        totalPages: number;
+        hasNextPage: boolean;
+        hasPrevPage: boolean;
+      };
+    }>(cacheKey);
+
+    if (cached) {
+      return NextResponse.json(cached);
+    }
+
     // ── Build where clause ──────────────────────────────────────────────────
-    const where: any = {};
+    const where: Prisma.GraduateWhereInput = {};
 
     if (search) {
       where.OR = [
@@ -66,13 +112,14 @@ export async function GET(request: NextRequest) {
     }
 
     // ── Build order clause ──────────────────────────────────────────────────
-    const orderBy: any = {};
+    const validSortOrder = (sortOrder === 'asc' || sortOrder === 'desc' ? sortOrder : 'desc') as 'asc' | 'desc';
+    const orderBy: Prisma.GraduateOrderByWithRelationInput = {};
     if (sortBy === 'name') {
-      orderBy.fullName = sortOrder;
+      orderBy.fullName = validSortOrder;
     } else if (sortBy === 'graduationYear') {
-      orderBy.graduationYear = sortOrder;
+      orderBy.graduationYear = validSortOrder;
     } else {
-      orderBy.createdAt = sortOrder;
+      orderBy.createdAt = validSortOrder;
     }
 
     // ── Execute query (optimized) ───────────────────────────────────────────
@@ -109,7 +156,7 @@ export async function GET(request: NextRequest) {
     ]);
 
     // Transform the response to match Graduate interface
-    const transformedGraduates = graduates.map((grad: any) => ({
+    const transformedGraduates = graduates.map((grad) => ({
       id: grad.id,
       registrationNo: grad.registrationNo,
       fullName: grad.fullName,
@@ -133,7 +180,7 @@ export async function GET(request: NextRequest) {
 
     const totalPages = Math.ceil(total / limit);
 
-    return NextResponse.json({
+    const payload = {
       data: transformedGraduates,
       pagination: {
         page,
@@ -143,7 +190,10 @@ export async function GET(request: NextRequest) {
         hasNextPage: page < totalPages,
         hasPrevPage: page > 1,
       },
-    });
+    };
+
+    void redisSetJson(cacheKey, payload, ADMIN_GRADUATES_CACHE_TTL_SECONDS);
+    return NextResponse.json(payload);
   } catch (error) {
     console.error('[API] /api/admin/graduates error:', error);
     return NextResponse.json(

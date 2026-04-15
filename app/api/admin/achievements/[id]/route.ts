@@ -1,6 +1,7 @@
-﻿import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { bumpAdminCacheVersion } from "@/lib/cache/admin-cache-version";
 
 type RouteCtx = {
   params: Promise<{ id: string }>;
@@ -55,12 +56,13 @@ export async function PATCH(req: NextRequest, ctx: RouteCtx) {
           graduateId: existing.graduateId,
           type: "ADMIN_BROADCAST",
           title: "Achievement verified",
-          body: `Your achievement \"${existing.title}\" has been verified by admin.`,
+          body: `Your achievement "${existing.title}" has been verified by admin.`,
           actionUrl: "/achievements",
           metadata: { achievementId: existing.id, action: "verify" },
         },
       });
 
+      void bumpAdminCacheVersion("achievements");
       return NextResponse.json({ achievement });
     }
 
@@ -83,12 +85,13 @@ export async function PATCH(req: NextRequest, ctx: RouteCtx) {
           graduateId: existing.graduateId,
           type: "ADMIN_BROADCAST",
           title: "Achievement moved to pending review",
-          body: `Your achievement \"${existing.title}\" was moved back to pending review.`,
+          body: `Your achievement "${existing.title}" was moved back to pending review.`,
           actionUrl: "/achievements",
           metadata: { achievementId: existing.id, action: "unverify" },
         },
       });
 
+      void bumpAdminCacheVersion("achievements");
       return NextResponse.json({ achievement });
     }
 
@@ -99,12 +102,13 @@ export async function PATCH(req: NextRequest, ctx: RouteCtx) {
         graduateId: existing.graduateId,
         type: "ADMIN_BROADCAST",
         title: "Achievement not approved",
-        body: `Your achievement \"${existing.title}\" was not approved and has been removed.`,
+        body: `Your achievement "${existing.title}" was not approved and has been removed.`,
         actionUrl: "/achievements",
         metadata: { achievementId: existing.id, action: "reject" },
       },
     });
 
+    void bumpAdminCacheVersion("achievements");
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("[AdminAchievementsAPI][PATCH] Error:", error);

@@ -1,6 +1,7 @@
-﻿import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { bumpAdminCacheVersion } from "@/lib/cache/admin-cache-version";
 
 type RouteCtx = {
   params: Promise<{ postId: string }>;
@@ -45,10 +46,10 @@ export async function PATCH(req: NextRequest, ctx: RouteCtx) {
       select: { id: true, isDeleted: true, isPinned: true },
     });
 
+    void bumpAdminCacheVersion("groups");
     return NextResponse.json({ post: updated });
   } catch (error) {
     console.error("[AdminGroupsAPI][PATCH_POST] Error:", error);
     return NextResponse.json({ error: "Failed to update post." }, { status: 500 });
   }
 }
-

@@ -1,29 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { requireAdmin, isSessionOk } from "@/lib/api-middleware";
+import { bumpNotificationsCacheVersion } from "@/lib/cache/notifications-cache";
 
 type RouteCtx = {
   params: Promise<{ id: string }>;
 };
 
-async function requireAdmin(request: Request) {
-  const session = await auth.api.getSession({ headers: request.headers });
-  if (!session) {
-    return { error: NextResponse.json({ error: "Unauthorized" }, { status: 401 }) };
-  }
-  if (session.user.role !== "admin") {
-    return { error: NextResponse.json({ error: "Forbidden" }, { status: 403 }) };
-  }
-  return { session };
-}
-
 export async function PATCH(request: NextRequest, ctx: RouteCtx) {
   try {
-    const guard = await requireAdmin(request);
-    if (guard.error) return guard.error;
+    const result = await requireAdmin(request.headers, "AdminNotificationIDAPI");
+    if (!isSessionOk(result)) return result.error;
 
     const me = await prisma.graduate.findUnique({
-      where: { userId: guard.session.user.id },
+      where: { userId: result.session.user.id },
       select: { id: true },
     });
     if (!me) {
@@ -63,6 +53,7 @@ export async function PATCH(request: NextRequest, ctx: RouteCtx) {
       },
     });
 
+    void bumpNotificationsCacheVersion(me.id, "admin");
     return NextResponse.json({ notification });
   } catch (error) {
     console.error("[AdminNotificationsAPI][PATCH:id] Error:", error);

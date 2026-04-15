@@ -1,6 +1,7 @@
-﻿import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { bumpAdminCacheVersion } from "@/lib/cache/admin-cache-version";
 
 type RouteCtx = {
   params: Promise<{ id: string }>;
@@ -192,6 +193,7 @@ export async function PATCH(req: NextRequest, ctx: RouteCtx) {
       ],
     });
 
+    void bumpAdminCacheVersion("mentorship");
     return NextResponse.json({ mentorship: updated });
   } catch (error) {
     console.error("[AdminMentorshipAPI][PATCH] Error:", error);

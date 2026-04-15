@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { bumpAdminCacheVersion } from "@/lib/cache/admin-cache-version";
 
 type RouteCtx = {
   params: Promise<{ id: string }>;
@@ -198,6 +199,7 @@ export async function PATCH(req: NextRequest, ctx: RouteCtx) {
       },
     });
 
+    void bumpAdminCacheVersion("jobs");
     return NextResponse.json({ job: updated });
   } catch (error) {
     console.error("[AdminJobsAPI][PATCH] Error:", error);
@@ -247,6 +249,7 @@ export async function DELETE(req: NextRequest, ctx: RouteCtx) {
       },
     });
 
+    void bumpAdminCacheVersion("jobs");
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("[AdminJobsAPI][DELETE] Error:", error);

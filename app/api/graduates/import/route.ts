@@ -7,6 +7,7 @@ import type { ParsedRow } from "@/lib/excel/parser";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+export const maxDuration = 300;
 
 // ✅ ENTERPRISE CONFIG: Batch size and performance tuning
 const BATCH_SIZE = 50;           // Process 50 rows per batch to avoid memory bloat
@@ -15,6 +16,8 @@ const PARALLEL_BATCHES = 3;      // Process multiple batches in parallel
 const QUERY_TIMEOUT = 30000;     // 30 second timeout for critical operations
 const MAX_RETRIES = 3;           // ✅ Retry failed queries up to 3 times
 const RETRY_DELAY_MS = 1000;     // ✅ Wait 1 second before retrying
+const STALE_UPLOAD_MINUTES = 15; // Mark old PROCESSING logs as failed
+const MAX_FAILURE_NOTES = 50;    // Persist only first 50 row-level failure notes
 
 // ✅ Helper: Retry with exponential backoff for connection errors
 async function executeWithRetry<T>(
@@ -282,6 +285,26 @@ export async function POST(req: NextRequest) {
     await writer.write(encoder.encode(`data: ${JSON.stringify(event)}\n\n`));
   };
 
+  // Auto-close stale uploads that were likely terminated mid-run (timeout/crash).
+  const staleBefore = new Date(Date.now() - STALE_UPLOAD_MINUTES * 60 * 1000);
+  await executeWithRetry(
+    () =>
+      prisma.uploadAuditLog.updateMany({
+        where: {
+          uploadedByUserId: adminUserId,
+          status: "PROCESSING",
+          startedAt: { lt: staleBefore },
+        },
+        data: {
+          status: "FAILED",
+          completedAt: new Date(),
+          notes:
+            "Auto-closed stale import run. The request likely ended before completion (e.g., timeout or disconnect).",
+        },
+      }),
+    "Close stale processing uploads"
+  );
+
   // ✅ ENTERPRISE: Wrap audit log creation with retry logic
   const auditLog = await executeWithRetry(
     () => prisma.uploadAuditLog.create({
@@ -325,17 +348,20 @@ export async function POST(req: NextRequest) {
     if (row.stateOfOrigin) slugsToPrewarm.add(slugify(`${row.stateOfOrigin} State Alumni`));
   }
 
-  prewarmGroupCache(slugsToPrewarm)
-    .catch(err => console.error("[import] Cache prewarm error:", err));
-
-
   groupCache.clear();
+  await executeWithRetry(
+    () => prewarmGroupCache(slugsToPrewarm),
+    "Prewarm group cache"
+  ).catch((err) => {
+    console.error("[import] Cache prewarm error:", err);
+  });
 
   (async () => {
     let totalCreated = 0;
     let totalUpdated = 0;
     let totalSkipped = 0;
     let totalFailed = 0;
+    const failureNotes: string[] = [];
 
     const sheetsProcessed: Array<{
       sheet: string;
@@ -355,194 +381,200 @@ export async function POST(req: NextRequest) {
         const row = sheetRows[i];
 
         try {
-          const existing = existingByReg.get(row.registrationNo);
-          const degreeClass = toDegreeClass(row.degreeClass);
-          const sex = toSex(row.sex);
+          await executeWithRetry(async () => {
+            const existing = existingByReg.get(row.registrationNo);
+            const degreeClass = toDegreeClass(row.degreeClass);
+            const sex = toSex(row.sex);
 
-          if (existing) {
-            await prisma.graduate.upsert({
-              where: { userId: existing.id },
-              create: {
-                userId: existing.id,
-                registrationNo: row.registrationNo,
-                fullName: row.fullName,
-                surname: row.surname ?? null,
-                otherNames: row.otherNames ?? null,
-                sex: sex ?? null,
-                stateOfOrigin: row.stateOfOrigin ?? null,
-                lga: row.lga ?? null,
-                facultyCode: row.facultyCode ?? null,
-                facultyName: row.facultyName ?? null,
-                courseCode: row.courseCode ?? null,
-                departmentName: row.departmentName ?? null,
-                cgpa: row.cgpa ?? null,
-                degreeClass: degreeClass ?? null,
-                graduationYear: row.sourceSheet,
-                entryYear: extractEntryYear(row.registrationNo),
-                jambNumber: row.jambNumber ?? null,
-                sourceSheet: row.sourceSheet,
-              },
-              update: {
-                fullName: row.fullName,
-                ...(row.surname !== undefined && { surname: row.surname }),
-                ...(row.otherNames !== undefined && { otherNames: row.otherNames }),
-                ...(sex !== undefined && { sex }),
-                ...(row.stateOfOrigin !== undefined && {
-                  stateOfOrigin: row.stateOfOrigin,
-                }),
-                ...(row.lga !== undefined && { lga: row.lga }),
-                ...(row.facultyCode !== undefined && { facultyCode: row.facultyCode }),
-                ...(row.facultyName !== undefined && { facultyName: row.facultyName }),
-                ...(row.courseCode !== undefined && { courseCode: row.courseCode }),
-                ...(row.departmentName !== undefined && {
-                  departmentName: row.departmentName,
-                }),
-                ...(row.cgpa != null && { cgpa: row.cgpa }),
-                ...(degreeClass !== undefined && { degreeClass }),
-                graduationYear: row.sourceSheet,
-                sourceSheet: row.sourceSheet,
-                ...(row.jambNumber !== undefined && { jambNumber: row.jambNumber }),
-              },
-            });
-            updated++;
-          } else {
-            const defaultPwd = generateDefaultPassword(row.registrationNo);
-            const passwordHash = await hashPassword(defaultPwd);
-            const entryYear = extractEntryYear(row.registrationNo);
+            if (existing) {
+              await prisma.graduate.upsert({
+                where: { userId: existing.id },
+                create: {
+                  userId: existing.id,
+                  registrationNo: row.registrationNo,
+                  fullName: row.fullName,
+                  surname: row.surname ?? null,
+                  otherNames: row.otherNames ?? null,
+                  sex: sex ?? null,
+                  stateOfOrigin: row.stateOfOrigin ?? null,
+                  lga: row.lga ?? null,
+                  facultyCode: row.facultyCode ?? null,
+                  facultyName: row.facultyName ?? null,
+                  courseCode: row.courseCode ?? null,
+                  departmentName: row.departmentName ?? null,
+                  cgpa: row.cgpa ?? null,
+                  degreeClass: degreeClass ?? null,
+                  graduationYear: row.sourceSheet,
+                  entryYear: extractEntryYear(row.registrationNo),
+                  jambNumber: row.jambNumber ?? null,
+                  sourceSheet: row.sourceSheet,
+                },
+                update: {
+                  fullName: row.fullName,
+                  ...(row.surname !== undefined && { surname: row.surname }),
+                  ...(row.otherNames !== undefined && { otherNames: row.otherNames }),
+                  ...(sex !== undefined && { sex }),
+                  ...(row.stateOfOrigin !== undefined && {
+                    stateOfOrigin: row.stateOfOrigin,
+                  }),
+                  ...(row.lga !== undefined && { lga: row.lga }),
+                  ...(row.facultyCode !== undefined && { facultyCode: row.facultyCode }),
+                  ...(row.facultyName !== undefined && { facultyName: row.facultyName }),
+                  ...(row.courseCode !== undefined && { courseCode: row.courseCode }),
+                  ...(row.departmentName !== undefined && {
+                    departmentName: row.departmentName,
+                  }),
+                  ...(row.cgpa != null && { cgpa: row.cgpa }),
+                  ...(degreeClass !== undefined && { degreeClass }),
+                  graduationYear: row.sourceSheet,
+                  sourceSheet: row.sourceSheet,
+                  ...(row.jambNumber !== undefined && { jambNumber: row.jambNumber }),
+                },
+              });
+              updated++;
+            } else {
+              const defaultPwd = generateDefaultPassword(row.registrationNo);
+              const passwordHash = await hashPassword(defaultPwd);
+              const entryYear = extractEntryYear(row.registrationNo);
 
-            // Transaction-local cache for groups created/upserted in this tx
-            const txGroupCache = new Map<string, string>();
+              // Transaction-local cache for groups created/upserted in this tx
+              const txGroupCache = new Map<string, string>();
 
-            const createdResult = await prisma.$transaction(
-              async (tx) => {
-                const user = await tx.user.create({
-                  data: {
-                    name: row.fullName,
-                    email: null,
-                    registrationNo: row.registrationNo,
-                    defaultPassword: true,
-                    accountStatus: "PENDING",
-                  },
-                });
-
-                await tx.account.create({
-                  data: {
-                    accountId: user.id,
-                    providerId: "credential",
-                    userId: user.id,
-                    password: passwordHash,
-                  },
-                });
-
-                const graduate = await tx.graduate.create({
-                  data: {
-                    userId: user.id,
-                    registrationNo: row.registrationNo,
-                    fullName: row.fullName,
-                    surname: row.surname ?? null,
-                    otherNames: row.otherNames ?? null,
-                    sex: sex ?? null,
-                    stateOfOrigin: row.stateOfOrigin ?? null,
-                    lga: row.lga ?? null,
-                    facultyCode: row.facultyCode ?? null,
-                    facultyName: row.facultyName ?? null,
-                    courseCode: row.courseCode ?? null,
-                    departmentName: row.departmentName ?? null,
-                    cgpa: row.cgpa ?? null,
-                    degreeClass: degreeClass ?? null,
-                    graduationYear: row.sourceSheet,
-                    entryYear,
-                    jambNumber: row.jambNumber ?? null,
-                    sourceSheet: row.sourceSheet,
-                  },
-                });
-
-                if (entryYear) {
-                  const id = await upsertAutoGroup(
-                    tx,
-                    txGroupCache,
-                    `cohort-${entryYear}`,
-                    `${entryYear} Set`,
-                    "COHORT",
-                    { cohortYear: String(entryYear) }
-                  );
-                  await addToGroup(tx, id, graduate.id);
-                }
-
-                if (row.departmentName) {
-                  const id = await upsertAutoGroup(
-                    tx,
-                    txGroupCache,
-                    `dept-${row.courseCode ?? slugify(row.departmentName)}`,
-                    `${row.departmentName} Alumni`,
-                    "DEPARTMENT",
-                    { courseCode: row.courseCode, facultyCode: row.facultyCode }
-                  );
-                  await addToGroup(tx, id, graduate.id);
-                }
-
-                if (row.facultyName) {
-                  const id = await upsertAutoGroup(
-                    tx,
-                    txGroupCache,
-                    `faculty-${row.facultyCode ?? slugify(row.facultyName)}`,
-                    `Faculty of ${row.facultyName} Alumni`,
-                    "FACULTY",
-                    { facultyCode: row.facultyCode }
-                  );
-                  await addToGroup(tx, id, graduate.id);
-                }
-
-                if (row.stateOfOrigin) {
-                  const id = await upsertAutoGroup(
-                    tx,
-                    txGroupCache,
-                    `state-${slugify(row.stateOfOrigin)}`,
-                    `${row.stateOfOrigin} State Alumni`,
-                    "STATE",
-                    { stateCode: slugify(row.stateOfOrigin) }
-                  );
-                  await addToGroup(tx, id, graduate.id);
-                }
-
-                await tx.activityFeedItem.create({
-                  data: {
-                    graduateId: graduate.id,
-                    actionType: "JOINED_PLATFORM",
-                    headline: `${row.fullName} (${row.registrationNo}) joined the alumni community`,
-                    isPublic: true,
-                    metadata: { sourceSheet: row.sourceSheet },
-                  },
-                });
-
-                if (degreeClass === "FIRST_CLASS") {
-                  await tx.profileBadge.create({
+              const createdResult = await prisma.$transaction(
+                async (tx) => {
+                  const user = await tx.user.create({
                     data: {
-                      graduateId: graduate.id,
-                      badgeType: "FIRST_CLASS_HONOURS",
+                      name: row.fullName,
+                      email: null,
+                      registrationNo: row.registrationNo,
+                      defaultPassword: true,
+                      accountStatus: "PENDING",
                     },
                   });
+
+                  await tx.account.create({
+                    data: {
+                      accountId: user.id,
+                      providerId: "credential",
+                      userId: user.id,
+                      password: passwordHash,
+                    },
+                  });
+
+                  const graduate = await tx.graduate.create({
+                    data: {
+                      userId: user.id,
+                      registrationNo: row.registrationNo,
+                      fullName: row.fullName,
+                      surname: row.surname ?? null,
+                      otherNames: row.otherNames ?? null,
+                      sex: sex ?? null,
+                      stateOfOrigin: row.stateOfOrigin ?? null,
+                      lga: row.lga ?? null,
+                      facultyCode: row.facultyCode ?? null,
+                      facultyName: row.facultyName ?? null,
+                      courseCode: row.courseCode ?? null,
+                      departmentName: row.departmentName ?? null,
+                      cgpa: row.cgpa ?? null,
+                      degreeClass: degreeClass ?? null,
+                      graduationYear: row.sourceSheet,
+                      entryYear,
+                      jambNumber: row.jambNumber ?? null,
+                      sourceSheet: row.sourceSheet,
+                    },
+                  });
+
+                  if (entryYear) {
+                    const id = await upsertAutoGroup(
+                      tx,
+                      txGroupCache,
+                      `cohort-${entryYear}`,
+                      `${entryYear} Set`,
+                      "COHORT",
+                      { cohortYear: String(entryYear) }
+                    );
+                    await addToGroup(tx, id, graduate.id);
+                  }
+
+                  if (row.departmentName) {
+                    const id = await upsertAutoGroup(
+                      tx,
+                      txGroupCache,
+                      `dept-${row.courseCode ?? slugify(row.departmentName)}`,
+                      `${row.departmentName} Alumni`,
+                      "DEPARTMENT",
+                      { courseCode: row.courseCode, facultyCode: row.facultyCode }
+                    );
+                    await addToGroup(tx, id, graduate.id);
+                  }
+
+                  if (row.facultyName) {
+                    const id = await upsertAutoGroup(
+                      tx,
+                      txGroupCache,
+                      `faculty-${row.facultyCode ?? slugify(row.facultyName)}`,
+                      `Faculty of ${row.facultyName} Alumni`,
+                      "FACULTY",
+                      { facultyCode: row.facultyCode }
+                    );
+                    await addToGroup(tx, id, graduate.id);
+                  }
+
+                  if (row.stateOfOrigin) {
+                    const id = await upsertAutoGroup(
+                      tx,
+                      txGroupCache,
+                      `state-${slugify(row.stateOfOrigin)}`,
+                      `${row.stateOfOrigin} State Alumni`,
+                      "STATE",
+                      { stateCode: slugify(row.stateOfOrigin) }
+                    );
+                    await addToGroup(tx, id, graduate.id);
+                  }
+
+                  await tx.activityFeedItem.create({
+                    data: {
+                      graduateId: graduate.id,
+                      actionType: "JOINED_PLATFORM",
+                      headline: `${row.fullName} (${row.registrationNo}) joined the alumni community`,
+                      isPublic: true,
+                      metadata: { sourceSheet: row.sourceSheet },
+                    },
+                  });
+
+                  if (degreeClass === "FIRST_CLASS") {
+                    await tx.profileBadge.create({
+                      data: {
+                        graduateId: graduate.id,
+                        badgeType: "FIRST_CLASS_HONOURS",
+                      },
+                    });
+                  }
+
+                  return { userId: user.id };
+                },
+                {
+                  maxWait: 10000,
+                  timeout: 15000,
                 }
+              );
 
-                return { userId: user.id };
-              },
-              {
-                maxWait: 10000,    // ✅ Increase max wait time to 10 seconds
-                timeout: 15000,    // ✅ Increase transaction timeout to 15 seconds
-              }
-            );
+              existingByReg.set(row.registrationNo, {
+                id: createdResult.userId,
+                registrationNo: row.registrationNo,
+                graduate: { id: "" },
+              });
 
-            existingByReg.set(row.registrationNo, {
-              id: createdResult.userId,
-              registrationNo: row.registrationNo,
-              graduate: { id: "" },
-            });
-
-            created++;
-          }
+              created++;
+            }
+          }, `Import row ${row.registrationNo}`);
         } catch (err) {
           console.error(`[import] ${row.registrationNo}:`, err);
           failed++;
+          if (failureNotes.length < MAX_FAILURE_NOTES) {
+            const message = err instanceof Error ? err.message : "Unknown error";
+            failureNotes.push(`${sheetName}/${row.registrationNo}: ${message}`);
+          }
         }
 
         if ((i + 1) % 25 === 0 || i === sheetRows.length - 1) {
@@ -578,6 +610,10 @@ export async function POST(req: NextRequest) {
           status: "COMPLETED",
           completedAt: new Date(),
           sheetsProcessed,
+          notes:
+            failureNotes.length > 0
+              ? `Failed rows (${failureNotes.length}${totalFailed > MAX_FAILURE_NOTES ? ` of ${totalFailed}` : ""}):\n${failureNotes.join("\n")}`
+              : null,
         },
       }),
       "Update audit log with results"

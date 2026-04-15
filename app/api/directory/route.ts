@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { redisGetJson, redisSetJson } from "@/lib/cache/redis-cache";
+
+const DIRECTORY_CACHE_TTL_SECONDS = Math.max(
+  1,
+  Number.parseInt(process.env.DIRECTORY_CACHE_TTL_SECONDS ?? "15", 10) || 15
+);
 
 export async function GET(req: NextRequest) {
   try {
@@ -21,6 +27,35 @@ export async function GET(req: NextRequest) {
       where: { userId: session.user.id },
       select: { id: true },
     });
+
+    const cacheKey = `directory:${session.user.id}:${encodeURIComponent(q)}:${encodeURIComponent(department)}:${encodeURIComponent(year)}:${page}:${pageSize}`;
+    const cached = await redisGetJson<{
+      items: Array<{
+        id: string;
+        fullName: string;
+        registrationNo: string;
+        departmentName: string | null;
+        facultyName: string | null;
+        graduationYear: string | null;
+        degreeClass: string | null;
+        stateOfOrigin: string | null;
+        bio: string | null;
+        openToOpportunities: boolean;
+        availableForMentorship: boolean;
+        user: { image: string | null };
+        connectionStatus: string | null;
+      }>;
+      pagination: {
+        page: number;
+        pageSize: number;
+        total: number;
+        totalPages: number;
+      };
+    }>(cacheKey);
+
+    if (cached) {
+      return NextResponse.json(cached);
+    }
 
     const where = {
       showInDirectory: true,
@@ -102,7 +137,7 @@ export async function GET(req: NextRequest) {
       connectionStatus: statusByGraduateId.get(item.id) ?? null,
     }));
 
-    return NextResponse.json({
+    const payload = {
       items,
       pagination: {
         page,
@@ -110,7 +145,10 @@ export async function GET(req: NextRequest) {
         total,
         totalPages: Math.max(1, Math.ceil(total / pageSize)),
       },
-    });
+    };
+
+    void redisSetJson(cacheKey, payload, DIRECTORY_CACHE_TTL_SECONDS);
+    return NextResponse.json(payload);
   } catch (error) {
     console.error("[DirectoryAPI] Error:", error);
     return NextResponse.json({ error: "Failed to load directory." }, { status: 500 });

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { bumpAdminCacheVersion } from "@/lib/cache/admin-cache-version";
 
 export async function POST(req: NextRequest) {
   try {
@@ -58,6 +59,7 @@ export async function POST(req: NextRequest) {
           select: { id: true, status: true },
         });
 
+        void bumpAdminCacheVersion("network");
         return NextResponse.json({
           success: true,
           status: revived.status,
@@ -89,6 +91,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
+    void bumpAdminCacheVersion("network");
     return NextResponse.json({
       success: true,
       status: connection.status,

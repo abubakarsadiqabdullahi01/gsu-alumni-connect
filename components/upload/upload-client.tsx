@@ -9,109 +9,202 @@ import type { FileParseResult } from "@/lib/excel/parser";
 
 type Stage = "upload" | "preview" | "processing" | "complete";
 
+type ImportJobStatus =
+  | "QUEUED"
+  | "RUNNING"
+  | "PARTIAL_SUCCESS"
+  | "COMPLETED"
+  | "FAILED"
+  | "CANCELLED";
+
+interface ImportJobView {
+  status: ImportJobStatus;
+  totalRows: number;
+  processedRows: number;
+  createdRows: number;
+  updatedRows: number;
+  failedRows: number;
+}
+
 export function UploadClient() {
   const [stage, setStage] = useState<Stage>("upload");
   const [parseResult, setParseResult] = useState<FileParseResult | null>(null);
+  const [sourceFile, setSourceFile] = useState<File | null>(null);
   const [progressUpdates, setProgressUpdates] = useState<ProgressUpdate[]>([]);
   const [isStarting, setIsStarting] = useState(false);
+  const [processingTotal, setProcessingTotal] = useState<number>(0);
 
   const totalRecords =
-    parseResult?.sheets.reduce((s, sh) => s + sh.validRows, 0) ?? 0;
+    parseResult?.sheets.reduce((sum, sheet) => sum + sheet.validRows, 0) ?? 0;
 
-  const handleParsed = (result: FileParseResult) => {
+  const handleParsed = (result: FileParseResult, file: File) => {
     setParseResult(result);
+    setSourceFile(file);
     setStage("preview");
   };
 
   const handleImport = async (selectedSheets: string[]) => {
-    if (!parseResult) return;
+    if (!parseResult || !sourceFile) return;
     setIsStarting(true);
 
-    const rows = parseResult.sheets
-      .filter((s) => selectedSheets.includes(s.sheetName))
-      .flatMap((s) => s.rows);
+    const selectedRows = parseResult.sheets
+      .filter((sheet) => selectedSheets.includes(sheet.sheetName))
+      .reduce((sum, sheet) => sum + sheet.validRows, 0);
 
-    const initial: ProgressUpdate[] = parseResult.sheets
-      .filter((s) => selectedSheets.includes(s.sheetName))
-      .map((s) => ({
-        sheet: s.sheetName,
+    const label =
+      selectedSheets.length === 1
+        ? selectedSheets[0]
+        : `${selectedSheets.length} selected sheets`;
+
+    setProgressUpdates([
+      {
+        sheet: label,
         processed: 0,
-        total: s.validRows,
+        total: selectedRows,
         created: 0,
         updated: 0,
         skipped: 0,
         failed: 0,
-        status: "processing" as const,
-      }));
-
-    setProgressUpdates(initial);
-    setIsStarting(false);
+        status: "processing",
+      },
+    ]);
+    setProcessingTotal(selectedRows);
     setStage("processing");
 
     try {
-      const res = await fetch("/api/graduates/import", {
+      const form = new FormData();
+      form.append("file", sourceFile);
+
+      const uploadRes = await fetch("/api/upload/import-file", {
+        method: "POST",
+        body: form,
+      });
+      if (!uploadRes.ok) {
+        throw new Error(
+          `Import file upload failed: ${uploadRes.status} ${uploadRes.statusText}`
+        );
+      }
+      const uploadData = (await uploadRes.json()) as { url?: string };
+      if (!uploadData.url) {
+        throw new Error("Import file upload did not return a file URL.");
+      }
+
+      const createRes = await fetch("/api/import-jobs", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          rows,
-          sheets: selectedSheets,
           fileName: parseResult.fileName,
+          fileUrl: uploadData.url,
+          totalRows: selectedRows,
+          selectedSheets,
         }),
       });
-
-      if (!res.body) throw new Error("No streaming body");
-
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
-      let buffer = "";
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split("\n");
-        buffer = lines.pop() ?? "";
-
-        for (const line of lines) {
-          if (!line.startsWith("data: ")) continue;
-          try {
-            const data = JSON.parse(line.slice(6)) as ProgressUpdate;
-            setProgressUpdates((prev) =>
-              prev.map((p) => (p.sheet === data.sheet ? data : p))
-            );
-          } catch {
-            // malformed chunk — skip
-          }
+      let jobId: string | undefined;
+      if (createRes.status === 409) {
+        const conflictData = (await createRes.json()) as {
+          job?: { id?: string };
+        };
+        jobId = conflictData.job?.id;
+        if (!jobId) {
+          throw new Error("Import job conflict returned without active job id.");
         }
+      } else if (!createRes.ok) {
+        throw new Error(
+          `Import job creation failed: ${createRes.status} ${createRes.statusText}`
+        );
+      } else {
+        const createData = (await createRes.json()) as {
+          job?: { id?: string };
+        };
+        jobId = createData.job?.id;
       }
+      if (!jobId) throw new Error("Import job creation response missing job id.");
 
-      const finalChunk = buffer.trim();
-      if (finalChunk.startsWith("data: ")) {
-        try {
-          const data = JSON.parse(finalChunk.slice(6)) as ProgressUpdate;
-          setProgressUpdates((prev) =>
-            prev.map((p) => (p.sheet === data.sheet ? data : p))
-          );
-        } catch {
-          // ignore trailing malformed fragment
+      let terminal = false;
+      let pollDelayMs = 3_000;
+      let lastProcessedRows = -1;
+      const pollStartedAt = Date.now();
+      const maxPollingDurationMs = 30 * 60 * 1_000;
+      while (!terminal) {
+        await new Promise((resolve) => setTimeout(resolve, pollDelayMs));
+
+        if (Date.now() - pollStartedAt > maxPollingDurationMs) {
+          throw new Error("Import polling timed out. Refresh and check job status.");
         }
+
+        const statusRes = await fetch(`/api/import-jobs/${jobId}`, {
+          method: "GET",
+          cache: "no-store",
+        });
+        if (!statusRes.ok) {
+          throw new Error(
+            `Import status polling failed: ${statusRes.status} ${statusRes.statusText}`
+          );
+        }
+
+        const statusData = (await statusRes.json()) as { job?: ImportJobView };
+        const job = statusData.job;
+        if (!job) throw new Error("Import status response missing job payload.");
+
+        const total = job.totalRows || selectedRows;
+        const uiStatus: ProgressUpdate["status"] =
+          job.status === "COMPLETED" || job.status === "PARTIAL_SUCCESS"
+            ? "done"
+            : job.status === "FAILED" || job.status === "CANCELLED"
+              ? "error"
+              : "processing";
+
+        setProgressUpdates([
+          {
+            sheet: label,
+            processed: Math.min(job.processedRows, total),
+            total,
+            created: job.createdRows,
+            updated: job.updatedRows,
+            skipped: 0,
+            failed: job.failedRows,
+            status: uiStatus,
+          },
+        ]);
+
+        if (job.processedRows > lastProcessedRows) {
+          pollDelayMs = 3_000;
+          lastProcessedRows = job.processedRows;
+        } else if (job.status === "QUEUED" || job.status === "RUNNING") {
+          pollDelayMs = Math.min(10_000, pollDelayMs + 1_000);
+        }
+
+        terminal =
+          job.status === "COMPLETED" ||
+          job.status === "PARTIAL_SUCCESS" ||
+          job.status === "FAILED" ||
+          job.status === "CANCELLED";
       }
     } catch (err) {
       console.error("[upload-client] import error:", err);
-      // Mark all sheets as errored
       setProgressUpdates((prev) =>
-        prev.map((p) => ({ ...p, status: "error" as const }))
+        prev.map((p) => {
+          const remaining = Math.max(0, p.total - p.processed);
+          return {
+            ...p,
+            processed: p.total,
+            failed: p.failed + remaining,
+            status: "error" as const,
+          };
+        })
       );
     }
 
+    setIsStarting(false);
     setStage("complete");
   };
 
   const handleReset = () => {
     setStage("upload");
     setParseResult(null);
+    setSourceFile(null);
     setProgressUpdates([]);
+    setProcessingTotal(0);
   };
 
   return (
@@ -128,7 +221,7 @@ export function UploadClient() {
       )}
 
       {stage === "processing" && (
-        <UploadProgress updates={progressUpdates} totalRecords={totalRecords} />
+        <UploadProgress updates={progressUpdates} totalRecords={processingTotal || totalRecords} />
       )}
 
       {stage === "complete" && parseResult && (
@@ -142,5 +235,3 @@ export function UploadClient() {
     </>
   );
 }
-
-// ── End of upload client ──────────────────────────────────────────────────────

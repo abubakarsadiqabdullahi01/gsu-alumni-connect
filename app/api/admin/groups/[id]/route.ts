@@ -1,6 +1,7 @@
-﻿import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { bumpAdminCacheVersion } from "@/lib/cache/admin-cache-version";
 
 type RouteCtx = {
   params: Promise<{ id: string }>;
@@ -133,10 +134,10 @@ export async function DELETE(req: NextRequest, ctx: RouteCtx) {
     }
 
     await prisma.alumniGroup.delete({ where: { id: group.id } });
+    void bumpAdminCacheVersion("groups");
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("[AdminGroupsAPI][DELETE] Error:", error);
     return NextResponse.json({ error: "Failed to delete group." }, { status: 500 });
   }
 }
-

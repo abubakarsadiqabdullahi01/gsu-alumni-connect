@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { bumpNotificationsCacheVersion } from "@/lib/cache/notifications-cache";
 
 type RouteCtx = {
   params: Promise<{ id: string }>;
@@ -54,6 +55,7 @@ export async function PATCH(req: NextRequest, ctx: RouteCtx) {
       },
     });
 
+    void bumpNotificationsCacheVersion(me.id, "user");
     return NextResponse.json({ notification });
   } catch (error) {
     console.error("[NotificationsAPI][PATCH:id] Error:", error);

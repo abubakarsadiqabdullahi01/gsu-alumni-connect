@@ -1,6 +1,14 @@
-﻿import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { MentorshipStatus, type Prisma } from "@/src/generated/prisma";
+import { redisGetJson, redisSetJson } from "@/lib/cache/redis-cache";
+import { getAdminCacheVersion } from "@/lib/cache/admin-cache-version";
+
+const ADMIN_MENTORSHIP_CACHE_TTL_SECONDS = Math.max(
+  1,
+  Number.parseInt(process.env.ADMIN_MENTORSHIP_CACHE_TTL_SECONDS ?? "20", 10) || 20
+);
 
 export async function GET(req: NextRequest) {
   try {
@@ -19,8 +27,58 @@ export async function GET(req: NextRequest) {
     const q = (params.get("q") ?? "").trim();
     const status = (params.get("status") ?? "all").trim();
 
-    const where = {
-      ...(status !== "all" ? { status: status as any } : {}),
+    const cacheVersion = await getAdminCacheVersion("mentorship");
+    const cacheKey = `admin:mentorship:v${cacheVersion}:${session.user.id}:p${page}:ps${pageSize}:q:${encodeURIComponent(q)}:st:${encodeURIComponent(status)}`;
+    const cached = await redisGetJson<{
+      mentorships: Array<{
+        id: string;
+        subject: string;
+        message: string;
+        notes: string | null;
+        status: string;
+        createdAt: Date;
+        acceptedAt: Date | null;
+        completedAt: Date | null;
+        mentor: {
+          id: string;
+          fullName: string;
+          registrationNo: string;
+          facultyName: string | null;
+          departmentName: string | null;
+          user: { email: string; phone: string | null };
+        };
+        mentee: {
+          id: string;
+          fullName: string;
+          registrationNo: string;
+          facultyName: string | null;
+          departmentName: string | null;
+          user: { email: string; phone: string | null };
+        };
+      }>;
+      stats: {
+        totalPairs: number;
+        pending: number;
+        active: number;
+        completed: number;
+        cancelled: number;
+        declined: number;
+      };
+      pagination: {
+        page: number;
+        pageSize: number;
+        total: number;
+        totalPages: number;
+      };
+    }>(cacheKey);
+    if (cached) {
+      return NextResponse.json(cached);
+    }
+
+    const where: Prisma.MentorshipWhereInput = {
+      ...(status !== "all" && Object.values(MentorshipStatus).includes(status as MentorshipStatus)
+        ? { status: status as MentorshipStatus }
+        : {}),
       ...(q
         ? {
             OR: [
@@ -81,7 +139,7 @@ export async function GET(req: NextRequest) {
       prisma.mentorship.count({ where: { status: "DECLINED" } }),
     ]);
 
-    return NextResponse.json({
+    const payload = {
       mentorships: rows,
       stats: {
         totalPairs,
@@ -97,7 +155,10 @@ export async function GET(req: NextRequest) {
         total,
         totalPages: Math.max(1, Math.ceil(total / pageSize)),
       },
-    });
+    };
+
+    void redisSetJson(cacheKey, payload, ADMIN_MENTORSHIP_CACHE_TTL_SECONDS);
+    return NextResponse.json(payload);
   } catch (error) {
     console.error("[AdminMentorshipAPI][GET] Error:", error);
     return NextResponse.json({ error: "Failed to load mentorship records." }, { status: 500 });

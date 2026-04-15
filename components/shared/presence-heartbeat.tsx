@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 
 const HEARTBEAT_ENDPOINT = "/api/presence/heartbeat";
-const HEARTBEAT_INTERVAL_MS = 60_000;
+const HEARTBEAT_INTERVAL_MS = 120_000;
 
 async function sendHeartbeat() {
   try {
