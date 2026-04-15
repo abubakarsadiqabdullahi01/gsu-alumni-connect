@@ -27,8 +27,8 @@ const pool = new Pool({
   // ✅ Maximum statement timeout (some db providers)
   statement_timeout: 30000,        // 30 seconds per statement
   // ✅ Keep-alive settings to prevent network timeouts
-  keepalives: true,
-  keepalives_idle: 30,             // Send keep-alive every 30 seconds
+  keepAlive: true,
+  keepAliveInitialDelayMillis: 30000,  // Send keep-alive every 30 seconds
 });
 
 const adapter = new PrismaPg(pool);
