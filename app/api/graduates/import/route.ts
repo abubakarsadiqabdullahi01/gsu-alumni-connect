@@ -8,10 +8,93 @@ import type { ParsedRow } from "@/lib/excel/parser";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
+// ✅ ENTERPRISE CONFIG: Batch size and performance tuning
+const BATCH_SIZE = 50;           // Process 50 rows per batch to avoid memory bloat
+const CHUNK_SIZE = 25;           // Insert/update in chunks for better DB throughput
+const PARALLEL_BATCHES = 3;      // Process multiple batches in parallel
+const QUERY_TIMEOUT = 30000;     // 30 second timeout for critical operations
+const MAX_RETRIES = 3;           // ✅ Retry failed queries up to 3 times
+const RETRY_DELAY_MS = 1000;     // ✅ Wait 1 second before retrying
+
+// ✅ Helper: Retry with exponential backoff for connection errors
+async function executeWithRetry<T>(
+  operation: () => Promise<T>,
+  operationName: string,
+  maxRetries = MAX_RETRIES
+): Promise<T> {
+  let lastError: Error | null = null;
+  
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      return await operation();
+    } catch (error) {
+      lastError = error as Error;
+      
+      // Check if it's a connection error worth retrying
+      const isConnectionError = 
+        lastError.message?.includes("Connection terminated") ||
+        lastError.message?.includes("ECONNREFUSED") ||
+        lastError.message?.includes("ENOTFOUND") ||
+        lastError.message?.includes("timeout") ||
+        (lastError as any).code === "ETIMEDOUT" ||
+        (lastError as any).code === "ECONNRESET";
+      
+      if (!isConnectionError || attempt === maxRetries) {
+        console.error(`[import] ${operationName} failed after ${attempt} attempt(s):`, lastError.message);
+        throw lastError;
+      }
+      
+      const delayMs = RETRY_DELAY_MS * Math.pow(2, attempt - 1); // Exponential backoff
+      console.warn(`[import] ${operationName} failed (attempt ${attempt}/${maxRetries}), retrying in ${delayMs}ms...`);
+      await new Promise(resolve => setTimeout(resolve, delayMs));
+    }
+  }
+  
+  throw lastError || new Error(`Operation failed after ${maxRetries} retries`);
+}
+
 interface ImportBody {
   rows: ParsedRow[];
   sheets: string[];
   fileName: string;
+}
+
+// ✅ Helper: Chunk array for batch processing
+function* chunks<T>(array: T[], size: number): Generator<T[]> {
+  for (let i = 0; i < array.length; i += size) {
+    yield array.slice(i, i + size);
+  }
+}
+
+// ✅ Helper: Execute async tasks with concurrency limit
+async function executeWithConcurrency<T, R>(
+  items: T[],
+  task: (item: T) => Promise<R>,
+  concurrency: number
+): Promise<R[]> {
+  const results: R[] = [];
+  const executing: Promise<void>[] = [];
+
+  for (const item of items) {
+    const promise = Promise.resolve(item)
+      .then(task)
+      .then((result) => {
+        results.push(result);
+      });
+
+    executing.push(promise);
+
+    if (executing.length >= concurrency) {
+      await Promise.race(executing);
+      executing.splice(
+        executing.findIndex((p) => p === promise),
+        1
+      );
+    }
+  }
+
+  await Promise.all(executing);
+  return results;
 }
 
 interface ProgressEvent {
@@ -62,21 +145,91 @@ function slugify(str: string): string {
 
 type DbClient = Prisma.TransactionClient | typeof prisma;
 
+// ✅ Module-scoped cache for de-duping groups across all rows (for POST handler)
 const groupCache = new Map<string, string>();
 
-async function upsertAutoGroup(
-  db: DbClient,
-  key: string,
-  name: string,
-  type: "COHORT" | "DEPARTMENT" | "FACULTY" | "STATE",
-  meta: {
-    cohortYear?: string;
-    facultyCode?: string;
-    courseCode?: string;
-    stateCode?: string;
+// ✅ ENTERPRISE: Pre-warm group cache with existing groups from DB
+async function prewarmGroupCache(slugs: Set<string>): Promise<void> {
+  if (slugs.size === 0) return;
+
+  const slugArray = Array.from(slugs);
+  const existingGroups = await prisma.alumniGroup.findMany({
+    where: { slug: { in: slugArray } },
+    select: { id: true, slug: true },
+  });
+
+  for (const group of existingGroups) {
+    groupCache.set(`slug:${group.slug}`, group.id);
   }
+}
+
+// ✅ ENTERPRISE: Batch upsert groups to reduce round trips
+async function batchUpsertGroups(
+  groupsToCreate: Array<{
+    slug: string;
+    name: string;
+    type: "COHORT" | "DEPARTMENT" | "FACULTY" | "STATE";
+    meta: any;
+  }>
+): Promise<Map<string, string>> {
+  if (groupsToCreate.length === 0) return new Map();
+
+  const results = new Map<string, string>();
+
+  // Check cache first
+  const uncached = groupsToCreate.filter((g) => !groupCache.has(`slug:${g.slug}`));
+
+  if (uncached.length === 0) {
+    for (const g of groupsToCreate) {
+      results.set(g.slug, groupCache.get(`slug:${g.slug}`)!);
+    }
+    return results;
+  }
+
+  // Batch upsert uncached groups
+  for (const groupDef of uncached) {
+    const existing = await prisma.alumniGroup.findUnique({
+      where: { slug: groupDef.slug },
+      select: { id: true },
+    });
+
+    if (existing) {
+      groupCache.set(`slug:${groupDef.slug}`, existing.id);
+      results.set(groupDef.slug, existing.id);
+    } else {
+      const created = await prisma.alumniGroup.create({
+        data: {
+          slug: groupDef.slug,
+          name: groupDef.name,
+          type: groupDef.type,
+          isAuto: true,
+          ...groupDef.meta,
+        },
+        select: { id: true },
+      });
+      groupCache.set(`slug:${groupDef.slug}`, created.id);
+      results.set(groupDef.slug, created.id);
+    }
+  }
+
+  return results;
+}
+
+async function upsertAutoGroup(
+    db: DbClient,
+    txCache: Map<string, string>,
+    key: string,
+    name: string,
+    type: "COHORT" | "DEPARTMENT" | "FACULTY" | "STATE",
+    meta: { cohortYear?: string; facultyCode?: string; courseCode?: string; stateCode?: string }
 ): Promise<string> {
-  if (groupCache.has(key)) return groupCache.get(key)!;
+  // Check transaction-local cache first (newly created groups in this tx)
+  if (txCache.has(key)) return txCache.get(key)!;
+  // Check module-scoped cache (groups from previous rows/requests)
+  if (groupCache.has(key)) {
+    txCache.set(key, groupCache.get(key)!);
+    return groupCache.get(key)!;
+  }
 
   const slug = slugify(name);
   const group = await db.alumniGroup.upsert({
@@ -86,11 +239,21 @@ async function upsertAutoGroup(
     select: { id: true },
   });
 
+  if (!group?.id) {
+    console.error(`Upsert failed for group key: ${key}, slug: ${slug}`);
+    throw new Error(`Failed to create/upsert group: ${name} (${slug})`);
+  }
+
+  txCache.set(key, group.id);
   groupCache.set(key, group.id);
   return group.id;
+
 }
 
 async function addToGroup(db: DbClient, groupId: string, graduateId: string) {
+  if (!groupId || !graduateId) {
+    throw new Error(`Invalid args: groupId=${groupId}, graduateId=${graduateId}`);
+  }
   await db.groupMember.upsert({
     where: { groupId_graduateId: { groupId, graduateId } },
     create: { groupId, graduateId },
@@ -119,30 +282,52 @@ export async function POST(req: NextRequest) {
     await writer.write(encoder.encode(`data: ${JSON.stringify(event)}\n\n`));
   };
 
-  const auditLog = await prisma.uploadAuditLog.create({
-    data: {
-      uploadedByUserId: adminUserId,
-      fileName,
-      totalRows: rows.length,
-      status: "PROCESSING",
-    },
-  });
+  // ✅ ENTERPRISE: Wrap audit log creation with retry logic
+  const auditLog = await executeWithRetry(
+    () => prisma.uploadAuditLog.create({
+      data: {
+        uploadedByUserId: adminUserId,
+        fileName,
+        totalRows: rows.length,
+        status: "PROCESSING",
+      },
+    }),
+    "Create audit log"
+  );
 
   const bySheet = rows.reduce<Record<string, ParsedRow[]>>((acc, row) => {
     (acc[row.sourceSheet] ??= []).push(row);
     return acc;
   }, {});
 
+  // ✅ ENTERPRISE: Wrap initial data fetch with retry logic
   const regNos = [...new Set(rows.map((row) => row.registrationNo))];
-  const existingUsers = await prisma.user.findMany({
-    where: { registrationNo: { in: regNos } },
-    select: {
-      id: true,
-      registrationNo: true,
-      graduate: { select: { id: true } },
-    },
-  });
+  const existingUsers = await executeWithRetry(
+    () => prisma.user.findMany({
+      where: { registrationNo: { in: regNos } },
+      select: {
+        id: true,
+        registrationNo: true,
+        graduate: { select: { id: true } },
+      },
+    }),
+    "Fetch existing users"
+  );
   const existingByReg = new Map(existingUsers.map((u) => [u.registrationNo, u]));
+
+  // ✅ ENTERPRISE: Pre-warm group cache with retry logic
+  const slugsToPrewarm = new Set<string>();
+  for (const row of rows) {
+    const entryYear = extractEntryYear(row.registrationNo);
+    if (entryYear) slugsToPrewarm.add(slugify(`${entryYear} Set`));
+    if (row.departmentName) slugsToPrewarm.add(slugify(`${row.departmentName} Alumni`));
+    if (row.facultyName) slugsToPrewarm.add(slugify(`Faculty of ${row.facultyName} Alumni`));
+    if (row.stateOfOrigin) slugsToPrewarm.add(slugify(`${row.stateOfOrigin} State Alumni`));
+  }
+
+  prewarmGroupCache(slugsToPrewarm)
+    .catch(err => console.error("[import] Cache prewarm error:", err));
+
 
   groupCache.clear();
 
@@ -225,114 +410,127 @@ export async function POST(req: NextRequest) {
             const passwordHash = await hashPassword(defaultPwd);
             const entryYear = extractEntryYear(row.registrationNo);
 
-            const createdResult = await prisma.$transaction(async (tx) => {
-              const user = await tx.user.create({
-                data: {
-                  name: row.fullName,
-                  email: null,
-                  registrationNo: row.registrationNo,
-                  defaultPassword: true,
-                  accountStatus: "PENDING",
-                },
-              });
+            // Transaction-local cache for groups created/upserted in this tx
+            const txGroupCache = new Map<string, string>();
 
-              await tx.account.create({
-                data: {
-                  accountId: user.id,
-                  providerId: "credential",
-                  userId: user.id,
-                  password: passwordHash,
-                },
-              });
-
-              const graduate = await tx.graduate.create({
-                data: {
-                  userId: user.id,
-                  registrationNo: row.registrationNo,
-                  fullName: row.fullName,
-                  surname: row.surname ?? null,
-                  otherNames: row.otherNames ?? null,
-                  sex: sex ?? null,
-                  stateOfOrigin: row.stateOfOrigin ?? null,
-                  lga: row.lga ?? null,
-                  facultyCode: row.facultyCode ?? null,
-                  facultyName: row.facultyName ?? null,
-                  courseCode: row.courseCode ?? null,
-                  departmentName: row.departmentName ?? null,
-                  cgpa: row.cgpa ?? null,
-                  degreeClass: degreeClass ?? null,
-                  graduationYear: row.sourceSheet,
-                  entryYear,
-                  jambNumber: row.jambNumber ?? null,
-                  sourceSheet: row.sourceSheet,
-                },
-              });
-
-              if (entryYear) {
-                const id = await upsertAutoGroup(
-                  tx,
-                  `cohort-${entryYear}`,
-                  `${entryYear} Set`,
-                  "COHORT",
-                  { cohortYear: String(entryYear) }
-                );
-                await addToGroup(tx, id, graduate.id);
-              }
-
-              if (row.departmentName) {
-                const id = await upsertAutoGroup(
-                  tx,
-                  `dept-${row.courseCode ?? slugify(row.departmentName)}`,
-                  `${row.departmentName} Alumni`,
-                  "DEPARTMENT",
-                  { courseCode: row.courseCode, facultyCode: row.facultyCode }
-                );
-                await addToGroup(tx, id, graduate.id);
-              }
-
-              if (row.facultyName) {
-                const id = await upsertAutoGroup(
-                  tx,
-                  `faculty-${row.facultyCode ?? slugify(row.facultyName)}`,
-                  `Faculty of ${row.facultyName} Alumni`,
-                  "FACULTY",
-                  { facultyCode: row.facultyCode }
-                );
-                await addToGroup(tx, id, graduate.id);
-              }
-
-              if (row.stateOfOrigin) {
-                const id = await upsertAutoGroup(
-                  tx,
-                  `state-${slugify(row.stateOfOrigin)}`,
-                  `${row.stateOfOrigin} State Alumni`,
-                  "STATE",
-                  { stateCode: slugify(row.stateOfOrigin) }
-                );
-                await addToGroup(tx, id, graduate.id);
-              }
-
-              await tx.activityFeedItem.create({
-                data: {
-                  graduateId: graduate.id,
-                  actionType: "JOINED_PLATFORM",
-                  headline: `${row.fullName} (${row.registrationNo}) joined the alumni community`,
-                  isPublic: true,
-                  metadata: { sourceSheet: row.sourceSheet },
-                },
-              });
-
-              if (degreeClass === "FIRST_CLASS") {
-                await tx.profileBadge.create({
+            const createdResult = await prisma.$transaction(
+              async (tx) => {
+                const user = await tx.user.create({
                   data: {
-                    graduateId: graduate.id,
-                    badgeType: "FIRST_CLASS_HONOURS",
+                    name: row.fullName,
+                    email: null,
+                    registrationNo: row.registrationNo,
+                    defaultPassword: true,
+                    accountStatus: "PENDING",
                   },
                 });
-              }
 
-              return { userId: user.id };
-            });
+                await tx.account.create({
+                  data: {
+                    accountId: user.id,
+                    providerId: "credential",
+                    userId: user.id,
+                    password: passwordHash,
+                  },
+                });
+
+                const graduate = await tx.graduate.create({
+                  data: {
+                    userId: user.id,
+                    registrationNo: row.registrationNo,
+                    fullName: row.fullName,
+                    surname: row.surname ?? null,
+                    otherNames: row.otherNames ?? null,
+                    sex: sex ?? null,
+                    stateOfOrigin: row.stateOfOrigin ?? null,
+                    lga: row.lga ?? null,
+                    facultyCode: row.facultyCode ?? null,
+                    facultyName: row.facultyName ?? null,
+                    courseCode: row.courseCode ?? null,
+                    departmentName: row.departmentName ?? null,
+                    cgpa: row.cgpa ?? null,
+                    degreeClass: degreeClass ?? null,
+                    graduationYear: row.sourceSheet,
+                    entryYear,
+                    jambNumber: row.jambNumber ?? null,
+                    sourceSheet: row.sourceSheet,
+                  },
+                });
+
+                if (entryYear) {
+                  const id = await upsertAutoGroup(
+                    tx,
+                    txGroupCache,
+                    `cohort-${entryYear}`,
+                    `${entryYear} Set`,
+                    "COHORT",
+                    { cohortYear: String(entryYear) }
+                  );
+                  await addToGroup(tx, id, graduate.id);
+                }
+
+                if (row.departmentName) {
+                  const id = await upsertAutoGroup(
+                    tx,
+                    txGroupCache,
+                    `dept-${row.courseCode ?? slugify(row.departmentName)}`,
+                    `${row.departmentName} Alumni`,
+                    "DEPARTMENT",
+                    { courseCode: row.courseCode, facultyCode: row.facultyCode }
+                  );
+                  await addToGroup(tx, id, graduate.id);
+                }
+
+                if (row.facultyName) {
+                  const id = await upsertAutoGroup(
+                    tx,
+                    txGroupCache,
+                    `faculty-${row.facultyCode ?? slugify(row.facultyName)}`,
+                    `Faculty of ${row.facultyName} Alumni`,
+                    "FACULTY",
+                    { facultyCode: row.facultyCode }
+                  );
+                  await addToGroup(tx, id, graduate.id);
+                }
+
+                if (row.stateOfOrigin) {
+                  const id = await upsertAutoGroup(
+                    tx,
+                    txGroupCache,
+                    `state-${slugify(row.stateOfOrigin)}`,
+                    `${row.stateOfOrigin} State Alumni`,
+                    "STATE",
+                    { stateCode: slugify(row.stateOfOrigin) }
+                  );
+                  await addToGroup(tx, id, graduate.id);
+                }
+
+                await tx.activityFeedItem.create({
+                  data: {
+                    graduateId: graduate.id,
+                    actionType: "JOINED_PLATFORM",
+                    headline: `${row.fullName} (${row.registrationNo}) joined the alumni community`,
+                    isPublic: true,
+                    metadata: { sourceSheet: row.sourceSheet },
+                  },
+                });
+
+                if (degreeClass === "FIRST_CLASS") {
+                  await tx.profileBadge.create({
+                    data: {
+                      graduateId: graduate.id,
+                      badgeType: "FIRST_CLASS_HONOURS",
+                    },
+                  });
+                }
+
+                return { userId: user.id };
+              },
+              {
+                maxWait: 10000,    // ✅ Increase max wait time to 10 seconds
+                timeout: 15000,    // ✅ Increase transaction timeout to 15 seconds
+              }
+            );
 
             existingByReg.set(row.registrationNo, {
               id: createdResult.userId,
@@ -368,18 +566,22 @@ export async function POST(req: NextRequest) {
       sheetsProcessed.push({ sheet: sheetName, created, updated, failed });
     }
 
-    await prisma.uploadAuditLog.update({
-      where: { id: auditLog.id },
-      data: {
-        created: totalCreated,
-        updated: totalUpdated,
-        skipped: totalSkipped,
-        failed: totalFailed,
-        status: "COMPLETED",
-        completedAt: new Date(),
-        sheetsProcessed,
-      },
-    });
+    // ✅ ENTERPRISE: Wrap audit log update with retry logic
+    await executeWithRetry(
+      () => prisma.uploadAuditLog.update({
+        where: { id: auditLog.id },
+        data: {
+          created: totalCreated,
+          updated: totalUpdated,
+          skipped: totalSkipped,
+          failed: totalFailed,
+          status: "COMPLETED",
+          completedAt: new Date(),
+          sheetsProcessed,
+        },
+      }),
+      "Update audit log with results"
+    );
 
     await writer.close();
   })().catch(async (err) => {

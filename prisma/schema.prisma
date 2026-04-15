@@ -208,6 +208,9 @@ model User {
   graduate Graduate?
 
   @@map("user")
+  // ✅ PRODUCTION: Performance indexes for import bulk operations
+  @@index([registrationNo])  // Critical: User lookup by registration number
+  @@index([email])           // Standard: Email lookups
 }
 
 model Session {
@@ -560,6 +563,8 @@ model GroupMember {
   lastReadAt DateTime?       @map("last_read_at")
 
   @@unique([groupId, graduateId])
+  @@index([groupId])      // ✅ PRODUCTION: Speed up group member lookups
+  @@index([graduateId])   // ✅ PRODUCTION: Speed up member lookups by graduate
   @@map("group_member")
 }
 
