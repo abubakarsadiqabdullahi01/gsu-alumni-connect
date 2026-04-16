@@ -124,7 +124,10 @@ export function UploadClient() {
       let pollDelayMs = 3_000;
       let lastProcessedRows = -1;
       const pollStartedAt = Date.now();
-      const maxPollingDurationMs = 30 * 60 * 1_000;
+      // Increased to 2 hours - optimized import should complete in ~70 seconds, 
+      // but database connection timeouts can cause delays. Give plenty of buffer.
+      const maxPollingDurationMs = 120 * 60 * 1_000;
+      let pollAttempts = 0;
       while (!terminal) {
         await new Promise((resolve) => setTimeout(resolve, pollDelayMs));
 
@@ -132,17 +135,47 @@ export function UploadClient() {
           throw new Error("Import polling timed out. Refresh and check job status.");
         }
 
-        const statusRes = await fetch(`/api/import-jobs/${jobId}`, {
-          method: "GET",
-          cache: "no-store",
-        });
-        if (!statusRes.ok) {
+        let statusRes;
+        let retryCount = 0;
+        const maxRetries = 3;
+        
+        // Retry logic for transient connection failures
+        while (retryCount < maxRetries) {
+          try {
+            statusRes = await fetch(`/api/import-jobs/${jobId}`, {
+              method: "GET",
+              cache: "no-store",
+              signal: AbortSignal.timeout(60_000), // 60 second timeout per request
+            });
+            
+            // If 503 (database temporarily unavailable), retry
+            if (statusRes.status === 503) {
+              retryCount++;
+              if (retryCount < maxRetries) {
+                console.warn(`[Import] Database temporarily unavailable, retrying (${retryCount}/${maxRetries})...`);
+                await new Promise((resolve) => setTimeout(resolve, 2000 + retryCount * 1000)); // 2s, 3s, 4s
+                continue;
+              }
+            }
+            break;
+          } catch (error) {
+            retryCount++;
+            if (retryCount < maxRetries) {
+              console.warn(`[Import] Fetch error (${retryCount}/${maxRetries}), retrying...`, error);
+              await new Promise((resolve) => setTimeout(resolve, 2000 + retryCount * 1000));
+              continue;
+            }
+            throw error;
+          }
+        }
+        
+        if (!statusRes!.ok) {
           throw new Error(
-            `Import status polling failed: ${statusRes.status} ${statusRes.statusText}`
+            `Import status polling failed: ${statusRes!.status} ${statusRes!.statusText}`
           );
         }
 
-        const statusData = (await statusRes.json()) as { job?: ImportJobView };
+        const statusData = (await statusRes!.json()) as { job?: ImportJobView };
         const job = statusData.job;
         if (!job) throw new Error("Import status response missing job payload.");
 

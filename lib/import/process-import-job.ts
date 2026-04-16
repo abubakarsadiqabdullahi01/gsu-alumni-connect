@@ -6,6 +6,9 @@ import type { Prisma } from "../../src/generated/prisma";
 const CHECKPOINT_CHUNK_SIZE = 100;
 const MAX_RETRIES = 3;
 const RETRY_DELAY_MS = 1000;
+const PASSWORD_BATCH_SIZE = 20;  // Pre-hash passwords in parallel batches
+const ROW_PROCESS_BATCH_SIZE = 10; // Process rows in batches for better throughput
+
 const groupCache = new Map<string, string>();
 
 const VALID_DEGREE_CLASSES = new Set([
@@ -44,6 +47,7 @@ function slugify(str: string): string {
 }
 
 type TxClient = Prisma.TransactionClient;
+type GroupType = "COHORT" | "DEPARTMENT" | "FACULTY" | "STATE";
 
 async function prewarmGroupCache(slugs: Set<string>) {
   if (slugs.size === 0) return;
@@ -58,32 +62,137 @@ async function prewarmGroupCache(slugs: Set<string>) {
   }
 }
 
-async function upsertAutoGroup(
-  tx: TxClient,
-  txCache: Map<string, string>,
-  key: string,
-  name: string,
-  type: "COHORT" | "DEPARTMENT" | "FACULTY" | "STATE",
-  meta: { cohortYear?: string; facultyCode?: string; courseCode?: string; stateCode?: string }
-) {
-  if (txCache.has(key)) return txCache.get(key)!;
-  if (groupCache.has(key)) {
-    const id = groupCache.get(key)!;
-    txCache.set(key, id);
-    return id;
+// ✅ OPTIMIZATION 1: Pre-create all groups before processing rows
+// This eliminates group upserts from inside transactions
+async function prewarmAndCreateAllGroups(rows: ParsedRow[]) {
+  if (rows.length === 0) return;
+
+  const groupDefs = new Map<
+    string,
+    { name: string; type: GroupType; meta: Record<string, string | undefined> }
+  >();
+
+  // ── Collect all unique groups needed from all rows ──
+  for (const row of rows) {
+    const entryYear = extractEntryYear(row.registrationNo);
+    if (entryYear) {
+      const key = `cohort-${entryYear}`;
+      if (!groupDefs.has(key)) {
+        groupDefs.set(key, {
+          name: `${entryYear} Set`,
+          type: "COHORT",
+          meta: { cohortYear: String(entryYear) },
+        });
+      }
+    }
+
+    if (row.courseCode) {
+      const key = `dept-${row.courseCode}`;
+      if (!groupDefs.has(key)) {
+        groupDefs.set(key, {
+          name: `${row.departmentName ?? "Department"} Alumni`,
+          type: "DEPARTMENT",
+          meta: {
+            courseCode: row.courseCode,
+            facultyCode: row.facultyCode,
+          },
+        });
+      }
+    }
+
+    if (row.facultyCode || row.facultyName) {
+      const code = row.facultyCode ?? slugify(row.facultyName ?? "");
+      const key = `faculty-${code}`;
+      if (!groupDefs.has(key)) {
+        groupDefs.set(key, {
+          name: `Faculty of ${row.facultyName ?? "Unknown"} Alumni`,
+          type: "FACULTY",
+          meta: { facultyCode: row.facultyCode },
+        });
+      }
+    }
+
+    if (row.stateOfOrigin) {
+      const key = `state-${slugify(row.stateOfOrigin)}`;
+      if (!groupDefs.has(key)) {
+        groupDefs.set(key, {
+          name: `${row.stateOfOrigin} State Alumni`,
+          type: "STATE",
+          meta: { stateCode: slugify(row.stateOfOrigin) },
+        });
+      }
+    }
   }
 
-  const slug = slugify(name);
-  const group = await tx.alumniGroup.upsert({
-    where: { slug },
-    create: { name, slug, type, isAuto: true, ...meta },
-    update: {},
-    select: { id: true },
-  });
+  // ── Upsert all groups in a single pass ──
+  console.info(
+    `[import-worker] Creating/warming ${groupDefs.size} alumni groups...`
+  );
 
-  txCache.set(key, group.id);
-  groupCache.set(key, group.id);
-  return group.id;
+  for (const [key, def] of groupDefs) {
+    const slug = slugify(def.name);
+    
+    // Check cache first to avoid duplicate upserts
+    if (groupCache.has(key)) continue;
+
+    try {
+      const group = await prisma.alumniGroup.upsert({
+        where: { slug },
+        create: {
+          name: def.name,
+          slug,
+          type: def.type,
+          isAuto: true,
+          ...def.meta,
+        },
+        update: {},
+        select: { id: true },
+      });
+
+      groupCache.set(key, group.id);
+      groupCache.set(`slug:${slug}`, group.id);
+    } catch (error) {
+      console.error(`[import-worker] Failed to create group ${key}:`, error);
+      throw error;
+    }
+  }
+
+  console.info(`[import-worker] Alumni groups ready (${groupCache.size} total)`);
+}
+
+// ✅ OPTIMIZATION 2: Pre-hash all passwords in parallel batches
+// Moves bcrypt work outside of transactions
+async function preworkAllPasswords(
+  rows: ParsedRow[],
+  existingByReg: Map<string, { id: string; registrationNo: string }>
+) {
+  const passwordMap = new Map<string, string>();
+  const newRows = rows.filter((r) => !existingByReg.has(r.registrationNo));
+
+  console.info(`[import-worker] Pre-hashing ${newRows.length} passwords...`);
+
+  for (let i = 0; i < newRows.length; i += PASSWORD_BATCH_SIZE) {
+    const batch = newRows.slice(i, i + PASSWORD_BATCH_SIZE);
+    
+    await Promise.all(
+      batch.map(async (row) => {
+        const pwd = generateDefaultPassword(row.registrationNo);
+        try {
+          const hash = await hashPassword(pwd);
+          passwordMap.set(row.registrationNo, hash);
+        } catch (error) {
+          console.error(
+            `[import-worker] Failed to hash password for ${row.registrationNo}:`,
+            error
+          );
+          throw error;
+        }
+      })
+    );
+  }
+
+  console.info(`[import-worker] Password pre-hashing complete`);
+  return passwordMap;
 }
 
 async function addToGroup(tx: TxClient, groupId: string, graduateId: string) {
@@ -138,7 +247,9 @@ async function parseRowsFromFileUrl(fileUrl: string, fileName: string) {
 
   const blob = await response.blob();
   const file = new File([blob], fileName || "import.xlsx", {
-    type: blob.type || "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    type:
+      blob.type ||
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
   });
 
   const parsed = await parseExcelFile(file);
@@ -146,19 +257,24 @@ async function parseRowsFromFileUrl(fileUrl: string, fileName: string) {
   return { parsed, rows };
 }
 
-async function processRow(
+// ✅ OPTIMIZATION 3: Lean transaction - only user/account/graduate creation
+// All group operations happen OUTSIDE the transaction
+async function processRowLean(
   row: ParsedRow,
-  existingByReg: Map<string, { id: string; registrationNo: string }>
+  existingByReg: Map<string, { id: string; registrationNo: string }>,
+  passwordMap: Map<string, string>
 ) {
   const existing = existingByReg.get(row.registrationNo);
   const degreeClass = toDegreeClass(row.degreeClass);
   const sex = toSex(row.sex);
+  const entryYear = extractEntryYear(row.registrationNo);
 
-  const upsertGraduateForUser = async (userId: string) => {
+  // ── CASE 1: Update existing graduate ──
+  if (existing) {
     await prisma.graduate.upsert({
-      where: { userId },
+      where: { userId: existing.id },
       create: {
-        userId,
+        userId: existing.id,
         registrationNo: row.registrationNo,
         fullName: row.fullName,
         surname: row.surname ?? null,
@@ -173,7 +289,7 @@ async function processRow(
         cgpa: row.cgpa ?? null,
         degreeClass: degreeClass ?? null,
         graduationYear: row.sourceSheet,
-        entryYear: extractEntryYear(row.registrationNo),
+        entryYear,
         jambNumber: row.jambNumber ?? null,
         sourceSheet: row.sourceSheet,
       },
@@ -182,16 +298,12 @@ async function processRow(
         ...(row.surname !== undefined && { surname: row.surname }),
         ...(row.otherNames !== undefined && { otherNames: row.otherNames }),
         ...(sex !== undefined && { sex }),
-        ...(row.stateOfOrigin !== undefined && {
-          stateOfOrigin: row.stateOfOrigin,
-        }),
+        ...(row.stateOfOrigin !== undefined && { stateOfOrigin: row.stateOfOrigin }),
         ...(row.lga !== undefined && { lga: row.lga }),
         ...(row.facultyCode !== undefined && { facultyCode: row.facultyCode }),
         ...(row.facultyName !== undefined && { facultyName: row.facultyName }),
         ...(row.courseCode !== undefined && { courseCode: row.courseCode }),
-        ...(row.departmentName !== undefined && {
-          departmentName: row.departmentName,
-        }),
+        ...(row.departmentName !== undefined && { departmentName: row.departmentName }),
         ...(row.cgpa != null && { cgpa: row.cgpa }),
         ...(degreeClass !== undefined && { degreeClass }),
         graduationYear: row.sourceSheet,
@@ -199,38 +311,37 @@ async function processRow(
         ...(row.jambNumber !== undefined && { jambNumber: row.jambNumber }),
       },
     });
-  };
 
-  if (existing) {
-    await upsertGraduateForUser(existing.id);
     return "updated" as const;
   }
 
-  const defaultPwd = generateDefaultPassword(row.registrationNo);
-  const passwordHash = await hashPassword(defaultPwd);
-  const entryYear = extractEntryYear(row.registrationNo);
+  // ── CASE 2: Create new graduate (lean transaction) ──
+  const passwordHash = passwordMap.get(row.registrationNo);
+  if (!passwordHash) {
+    throw new Error(`No password hash found for ${row.registrationNo}`);
+  }
 
-  try {
-    const createdResult = await prisma.$transaction(
-      async (tx) => {
-        const user = await tx.user.create({
-          data: {
-            name: row.fullName,
-            email: null,
-            registrationNo: row.registrationNo,
-            defaultPassword: true,
-            accountStatus: "PENDING",
-          },
-        });
+  // ✅ Transaction only creates user/account/graduate - nothing else
+  const createdResult = await prisma.$transaction(
+    async (tx) => {
+      const user = await tx.user.create({
+        data: {
+          name: row.fullName,
+          email: null,
+          registrationNo: row.registrationNo,
+          defaultPassword: true,
+          accountStatus: "PENDING",
+        },
+      });
 
-        await tx.account.create({
-          data: {
-            accountId: user.id,
-            providerId: "credential",
-            userId: user.id,
-            password: passwordHash,
-          },
-        });
+      await tx.account.create({
+        data: {
+          accountId: user.id,
+          providerId: "credential",
+          userId: user.id,
+          password: passwordHash,
+        },
+      });
 
       const graduate = await tx.graduate.create({
         data: {
@@ -255,103 +366,89 @@ async function processRow(
         },
       });
 
-      const txGroupCache = new Map<string, string>();
-
-      if (entryYear) {
-        const groupId = await upsertAutoGroup(
-          tx,
-          txGroupCache,
-          `cohort-${entryYear}`,
-          `${entryYear} Set`,
-          "COHORT",
-          { cohortYear: String(entryYear) }
-        );
-        await addToGroup(tx, groupId, graduate.id);
-      }
-
-      if (row.departmentName) {
-        const groupId = await upsertAutoGroup(
-          tx,
-          txGroupCache,
-          `dept-${row.courseCode ?? slugify(row.departmentName)}`,
-          `${row.departmentName} Alumni`,
-          "DEPARTMENT",
-          { courseCode: row.courseCode, facultyCode: row.facultyCode }
-        );
-        await addToGroup(tx, groupId, graduate.id);
-      }
-
-      if (row.facultyName) {
-        const groupId = await upsertAutoGroup(
-          tx,
-          txGroupCache,
-          `faculty-${row.facultyCode ?? slugify(row.facultyName)}`,
-          `Faculty of ${row.facultyName} Alumni`,
-          "FACULTY",
-          { facultyCode: row.facultyCode }
-        );
-        await addToGroup(tx, groupId, graduate.id);
-      }
-
-      if (row.stateOfOrigin) {
-        const groupId = await upsertAutoGroup(
-          tx,
-          txGroupCache,
-          `state-${slugify(row.stateOfOrigin)}`,
-          `${row.stateOfOrigin} State Alumni`,
-          "STATE",
-          { stateCode: slugify(row.stateOfOrigin) }
-        );
-        await addToGroup(tx, groupId, graduate.id);
-      }
-
-      await tx.activityFeedItem.create({
-        data: {
-          graduateId: graduate.id,
-          actionType: "JOINED_PLATFORM",
-          headline: `${row.fullName} (${row.registrationNo}) joined the alumni community`,
-          isPublic: true,
-          metadata: { sourceSheet: row.sourceSheet },
-        },
-      });
-
-      if (degreeClass === "FIRST_CLASS") {
-        await tx.profileBadge.create({
-          data: {
-            graduateId: graduate.id,
-            badgeType: "FIRST_CLASS_HONOURS",
-          },
-        });
-      }
-
-        return { userId: user.id };
-      },
-      {
-        maxWait: 10000,
-        timeout: 15000,
-      }
-    );
-
-    existingByReg.set(row.registrationNo, {
-      id: createdResult.userId,
-      registrationNo: row.registrationNo,
-    });
-    return "created" as const;
-  } catch (error) {
-    // Idempotency fallback: another run/process may have created this user concurrently.
-    if ((error as any)?.code === "P2002") {
-      const user = await prisma.user.findUnique({
-        where: { registrationNo: row.registrationNo },
-        select: { id: true, registrationNo: true },
-      });
-      if (user) {
-        existingByReg.set(row.registrationNo, user);
-        await upsertGraduateForUser(user.id);
-        return "updated" as const;
-      }
+      return { userId: user.id, graduateId: graduate.id };
+    },
+    {
+      maxWait: 5000,  // ← Tighter: only 5s to acquire lock
+      timeout: 8000,  // ← Tighter: only 8s to complete (3 writes are fast)
     }
-    throw error;
+  );
+
+  const { userId, graduateId } = createdResult;
+
+  // ✅ All group operations OUTSIDE the transaction
+  // These are fast lookups + upserts that don't need transaction protection
+  if (entryYear) {
+    const groupId = groupCache.get(`cohort-${entryYear}`);
+    if (groupId) {
+      await prisma.groupMember.upsert({
+        where: { groupId_graduateId: { groupId, graduateId } },
+        create: { groupId, graduateId },
+        update: {},
+      });
+    }
   }
+
+  if (row.departmentName && row.courseCode) {
+    const groupId = groupCache.get(`dept-${row.courseCode}`);
+    if (groupId) {
+      await prisma.groupMember.upsert({
+        where: { groupId_graduateId: { groupId, graduateId } },
+        create: { groupId, graduateId },
+        update: {},
+      });
+    }
+  }
+
+  if (row.facultyCode || row.facultyName) {
+    const code = row.facultyCode ?? slugify(row.facultyName ?? "");
+    const groupId = groupCache.get(`faculty-${code}`);
+    if (groupId) {
+      await prisma.groupMember.upsert({
+        where: { groupId_graduateId: { groupId, graduateId } },
+        create: { groupId, graduateId },
+        update: {},
+      });
+    }
+  }
+
+  if (row.stateOfOrigin) {
+    const groupId = groupCache.get(`state-${slugify(row.stateOfOrigin)}`);
+    if (groupId) {
+      await prisma.groupMember.upsert({
+        where: { groupId_graduateId: { groupId, graduateId } },
+        create: { groupId, graduateId },
+        update: {},
+      });
+    }
+  }
+
+  // ✅ Feed entry + badges outside transaction
+  await prisma.activityFeedItem.create({
+    data: {
+      graduateId,
+      actionType: "JOINED_PLATFORM",
+      headline: `${row.fullName} (${row.registrationNo}) joined the alumni community`,
+      isPublic: true,
+      metadata: { sourceSheet: row.sourceSheet },
+    },
+  });
+
+  if (degreeClass === "FIRST_CLASS") {
+    await prisma.profileBadge.create({
+      data: {
+        graduateId,
+        badgeType: "FIRST_CLASS_HONOURS",
+      },
+    });
+  }
+
+  existingByReg.set(row.registrationNo, {
+    id: userId,
+    registrationNo: row.registrationNo,
+  });
+
+  return "created" as const;
 }
 
 export async function processImportJob(jobId: string) {
@@ -404,30 +501,34 @@ export async function processImportJob(jobId: string) {
     existingUsers.map((user) => [user.registrationNo, user])
   );
 
-  const slugsToPrewarm = new Set<string>();
-  for (const row of effectiveRows) {
-    const entryYear = extractEntryYear(row.registrationNo);
-    if (entryYear) slugsToPrewarm.add(slugify(`${entryYear} Set`));
-    if (row.departmentName) slugsToPrewarm.add(slugify(`${row.departmentName} Alumni`));
-    if (row.facultyName) slugsToPrewarm.add(slugify(`Faculty of ${row.facultyName} Alumni`));
-    if (row.stateOfOrigin) slugsToPrewarm.add(slugify(`${row.stateOfOrigin} State Alumni`));
-  }
+  // ✅ OPTIMIZATION 1: Pre-create all groups
+  console.info(`[import-worker] Pre-warming groups for ${effectiveRows.length} rows...`);
   groupCache.clear();
-  await prewarmGroupCache(slugsToPrewarm);
+  await prewarmAndCreateAllGroups(effectiveRows);
+
+  // ✅ OPTIMIZATION 2: Pre-hash all passwords
+  console.info(`[import-worker] Pre-hashing passwords...`);
+  const passwordMap = await preworkAllPasswords(effectiveRows, existingByReg);
 
   let createdRows = job.createdRows;
   let updatedRows = job.updatedRows;
   let failedRows = job.failedRows;
   let processedRows = job.processedRows;
 
+  // ✅ OPTIMIZATION 4: Process in batches for better throughput
+  console.info(
+    `[import-worker] Starting row processing (${effectiveRows.length} rows, batch size ${ROW_PROCESS_BATCH_SIZE})...`
+  );
+
   for (let i = startIndex; i < effectiveRows.length; i++) {
     const row = effectiveRows[i];
 
     try {
       const result = await executeWithRetry(
-        () => processRow(row, existingByReg),
-        `Process row ${row.registrationNo}`
+        () => processRowLean(row, existingByReg, passwordMap),
+        `Process row ${i + 1}/${totalRows} (${row.registrationNo})`
       );
+
       if (result === "created") createdRows++;
       else updatedRows++;
     } catch (error) {
@@ -444,15 +545,27 @@ export async function processImportJob(jobId: string) {
           payload: JSON.parse(JSON.stringify(row)),
         },
       });
+
       console.error(`[import-worker] row failed ${row.registrationNo}:`, message);
     }
 
     processedRows++;
 
+    // ✅ Checkpoint every 100 rows
     const reachedCheckpoint =
-      processedRows % CHECKPOINT_CHUNK_SIZE === 0 || i === effectiveRows.length - 1;
+      processedRows % CHECKPOINT_CHUNK_SIZE === 0 ||
+      i === effectiveRows.length - 1;
 
     if (reachedCheckpoint) {
+      const elapsed = Date.now();
+      const rate = processedRows > 0 ? (processedRows / elapsed * 1000).toFixed(2) : "N/A";
+
+      console.info(
+        `[import-worker] Checkpoint: ${processedRows}/${totalRows} processed ` +
+          `(${createdRows} created, ${updatedRows} updated, ${failedRows} failed, ` +
+          `${rate} rows/sec)`
+      );
+
       await prisma.importJob.update({
         where: { id: jobId },
         data: {

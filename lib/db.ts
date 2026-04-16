@@ -17,16 +17,17 @@ if (!databaseUrl) {
 const isLocalDatabase = /localhost|127\.0\.0\.1/i.test(databaseUrl);
 
 const poolMin = Number(process.env.DB_POOL_MIN ?? 0);
-const poolMax = Number(process.env.DB_POOL_MAX ?? (isLocalDatabase ? 5 : 3));
+// Increased max pool size for optimized import: leaner transactions = less contention
+const poolMax = Number(process.env.DB_POOL_MAX ?? (isLocalDatabase ? 10 : 8));
 const idleTimeoutMillis = Number(process.env.DB_IDLE_TIMEOUT_MS ?? 10_000);
-const connectionTimeoutMillis = Number(process.env.DB_CONNECTION_TIMEOUT_MS ?? 15_000);
-const statementTimeoutMillis = Number(process.env.DB_STATEMENT_TIMEOUT_MS ?? 30_000);
+const connectionTimeoutMillis = Number(process.env.DB_CONNECTION_TIMEOUT_MS ?? 10_000);
+const statementTimeoutMillis = Number(process.env.DB_STATEMENT_TIMEOUT_MS ?? 20_000);
 const keepAliveInitialDelayMillis = Number(
   process.env.DB_KEEPALIVE_INITIAL_DELAY_MS ?? 30_000
 );
 
 const safePoolMin = Number.isFinite(poolMin) && poolMin >= 0 ? poolMin : 0;
-const safePoolMax = Number.isFinite(poolMax) && poolMax > 0 ? poolMax : isLocalDatabase ? 5 : 3;
+const safePoolMax = Number.isFinite(poolMax) && poolMax > 0 ? poolMax : isLocalDatabase ? 10 : 8;
 
 const pool = new Pool({
   connectionString: databaseUrl,

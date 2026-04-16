@@ -66,14 +66,24 @@ export interface ParsedRow {
   rowIndex: number;
 }
 
+export interface RejectedRow {
+  registrationNo?: string;
+  fullName?: string;
+  sourceSheet: string;
+  rowIndex: number;
+  reason: string;
+}
+
 export interface SheetParseResult {
   sheetName: string;
   era: Era;
   rows: ParsedRow[];
+  rejectedRows: RejectedRow[];
   errors: Array<{ row: number; reason: string }>;
   duplicatesInSheet: string[];
   totalRows: number;
   validRows: number;
+  rejectedCount: number;
 }
 
 export interface FileParseResult {
@@ -81,6 +91,13 @@ export interface FileParseResult {
   fileSize: number;
   sheets: SheetParseResult[];
   totalRecords: number;
+  totalRejected: number;
+  rejectionStats: {
+    missingRegistrationNumber: number;
+    invalidRegistrationNumber: number;
+    missingName: number;
+    duplicateInSheet: number;
+  };
   duplicateRegNos: string[];
   warnings: string[];
 }
@@ -138,6 +155,7 @@ function normaliseOptional(raw: unknown): string | undefined {
 function parseSheet(ws: XLSX.WorkSheet, sheetName: string): SheetParseResult {
   const era = detectEra(sheetName);
   const rows: ParsedRow[] = [];
+  const rejectedRows: RejectedRow[] = [];
   const errors: Array<{ row: number; reason: string }> = [];
   const seenInSheet = new Set<string>();
   const duplicatesInSheet: string[] = [];
@@ -162,7 +180,7 @@ function parseSheet(ws: XLSX.WorkSheet, sheetName: string): SheetParseResult {
   const raw = rawAll.slice(skipRows);
 
   if (raw.length < 2) {
-    return { sheetName, era, rows, errors, duplicatesInSheet, totalRows: 0, validRows: 0 };
+    return { sheetName, era, rows, rejectedRows: [], errors, duplicatesInSheet, totalRows: 0, validRows: 0, rejectedCount: 0 };
   }
 
   const headers = (raw[0] as unknown[]).map((h) => String(h ?? "").trim());
@@ -183,6 +201,7 @@ function parseSheet(ws: XLSX.WorkSheet, sheetName: string): SheetParseResult {
   const jambCol    = findCol(headers, JAMB_V);
 
   let totalRows = 0;
+  let rejectedCount = 0;
 
   for (let i = 0; i < dataRows.length; i++) {
     const cells = dataRows[i];
@@ -197,7 +216,15 @@ function parseSheet(ws: XLSX.WorkSheet, sheetName: string): SheetParseResult {
     totalRows++;
 
     if (regNo.length < 5) {
-      errors.push({ row: rowNum, reason: `Invalid registration number: "${regNo}"` });
+      const reason = `Invalid registration number: "${regNo}" (too short, minimum 5 characters)`;
+      rejectedRows.push({
+        registrationNo: regNo,
+        sourceSheet: sheetName,
+        rowIndex: rowNum,
+        reason
+      });
+      errors.push({ row: rowNum, reason });
+      rejectedCount++;
       continue;
     }
 
@@ -218,7 +245,15 @@ function parseSheet(ws: XLSX.WorkSheet, sheetName: string): SheetParseResult {
     }
 
     if (!fullName) {
+      const reason = `Missing name (fullName, surname, or otherNames required)`;
+      rejectedRows.push({
+        registrationNo: regNo,
+        sourceSheet: sheetName,
+        rowIndex: rowNum,
+        reason
+      });
       errors.push({ row: rowNum, reason: `Missing name for ${regNo}` });
+      rejectedCount++;
       continue;
     }
 
@@ -263,10 +298,12 @@ function parseSheet(ws: XLSX.WorkSheet, sheetName: string): SheetParseResult {
     sheetName,
     era,
     rows,
+    rejectedRows,
     errors,
     duplicatesInSheet,
     totalRows,
     validRows: rows.length,
+    rejectedCount,
   };
 }
 
@@ -303,11 +340,39 @@ export async function parseExcelFile(file: File): Promise<FileParseResult> {
     );
   }
 
+  // Collect rejection statistics
+  let totalRejected = 0;
+  let missingRegNo = 0;
+  let invalidRegNo = 0;
+  let missingName = 0;
+  let duplicateInSheet = 0;
+
+  for (const sheet of sheets) {
+    totalRejected += sheet.rejectedCount;
+    for (const rejected of sheet.rejectedRows) {
+      if (rejected.reason.includes("Invalid registration number")) {
+        invalidRegNo++;
+      } else if (rejected.reason.includes("Missing name")) {
+        missingName++;
+      } else if (rejected.reason.includes("too short")) {
+        invalidRegNo++;
+      }
+    }
+    duplicateInSheet += sheet.duplicatesInSheet.length;
+  }
+
   return {
     fileName: file.name,
     fileSize: file.size,
     sheets,
     totalRecords: allRegNos.length,
+    totalRejected,
+    rejectionStats: {
+      missingRegistrationNumber: 0, // Not tracked separately in current logic
+      invalidRegistrationNumber: invalidRegNo,
+      missingName,
+      duplicateInSheet,
+    },
     duplicateRegNos,
     warnings,
   };
