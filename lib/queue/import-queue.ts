@@ -23,14 +23,22 @@ function getRedisConnection() {
     const redis = new IORedis(getRedisUrl(), {
       maxRetriesPerRequest: null,
       enableReadyCheck: false,
-      connectTimeout: Number(process.env.IMPORT_QUEUE_REDIS_CONNECT_TIMEOUT_MS ?? "10000"),
+      connectTimeout: Number(process.env.IMPORT_QUEUE_REDIS_CONNECT_TIMEOUT_MS ?? "30000"),
+      socketTimeout: 45000,  // Add socket timeout to detect stale connections
       keepAlive: Number(process.env.IMPORT_QUEUE_REDIS_KEEPALIVE_MS ?? "30000"),
+      family: 4,  // Force IPv4
       retryStrategy: (attempt) => {
-        const base = Number(process.env.IMPORT_QUEUE_REDIS_RETRY_BASE_MS ?? "250");
-        const max = Number(process.env.IMPORT_QUEUE_REDIS_RETRY_MAX_MS ?? "8000");
-        return Math.min(base * 2 ** Math.min(attempt, 6), max);
+        const base = Number(process.env.IMPORT_QUEUE_REDIS_RETRY_BASE_MS ?? "500");
+        const max = Number(process.env.IMPORT_QUEUE_REDIS_RETRY_MAX_MS ?? "30000");
+        return Math.min(base * 2 ** Math.min(attempt, 5), max);
       },
-      reconnectOnError: () => true,
+      reconnectOnError: (err: any) => {
+        // Reconnect on any connection error
+        console.warn(`[import-queue] reconnectOnError: ${err.message}`);
+        return true;
+      },
+      // Add connection string parser options
+      lazyConnect: false,
     });
 
     redis.on("error", (err) => {
@@ -41,6 +49,12 @@ function getRedisConnection() {
     });
     redis.on("ready", () => {
       console.info("[import-queue] redis ready");
+    });
+    redis.on("connect", () => {
+      console.info("[import-queue] redis connected");
+    });
+    redis.on("close", () => {
+      console.warn("[import-queue] redis connection closed");
     });
 
     globalThis.__importQueueRedis__ = redis;

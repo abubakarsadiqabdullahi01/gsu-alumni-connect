@@ -1,0 +1,14 @@
+fix(connections,types): resolve TypeScript errors and connection issues
+
+- Fix node-fetch import using native globalThis.fetch (Node 18+)
+- Correct PrismaClient import path handling
+- Fix import-queue module path resolution
+- Add proper error type annotations
+- Remove invalid retryProcessDelay option from BullMQ
+- Fix Promise handling in Redis disconnect/reconnect
+- Increase Redis connect timeout (10s → 30s)
+- Add socket timeout for connection stability
+- Extend worker lock duration (5min → 10min)
+- Add lock renewal every 5 minutes
+- Update database SSL mode to verify-full
+- All TypeScript errors resolved

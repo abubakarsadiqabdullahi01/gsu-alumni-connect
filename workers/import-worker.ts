@@ -9,9 +9,9 @@ dotenv.config({ path: ".env.local" });
 dotenv.config();
 
 const concurrency = Number(process.env.IMPORT_WORKER_CONCURRENCY ?? "1");
-const lockDuration = Number(process.env.IMPORT_WORKER_LOCK_DURATION_MS ?? "300000");
-const stalledInterval = Number(process.env.IMPORT_WORKER_STALLED_INTERVAL_MS ?? "30000");
-const maxStalledCount = Number(process.env.IMPORT_WORKER_MAX_STALLED_COUNT ?? "5");
+const lockDuration = Number(process.env.IMPORT_WORKER_LOCK_DURATION_MS ?? "600000"); // Increased to 10 minutes
+const stalledInterval = Number(process.env.IMPORT_WORKER_STALLED_INTERVAL_MS ?? "60000"); // Check every minute
+const maxStalledCount = Number(process.env.IMPORT_WORKER_MAX_STALLED_COUNT ?? "3"); // Max 3 stalled checks
 
 const worker = new Worker(
   IMPORT_QUEUE_NAME,
@@ -27,11 +27,12 @@ const worker = new Worker(
   {
     connection: getImportQueueConnection(),
     concurrency: Number.isFinite(concurrency) && concurrency > 0 ? concurrency : 1,
-    lockDuration: Number.isFinite(lockDuration) && lockDuration > 0 ? lockDuration : 300000,
+    lockDuration: Number.isFinite(lockDuration) && lockDuration > 0 ? lockDuration : 600000,
+    lockRenewTime: 300000, // Renew lock every 5 minutes
     stalledInterval:
-      Number.isFinite(stalledInterval) && stalledInterval > 0 ? stalledInterval : 30000,
+      Number.isFinite(stalledInterval) && stalledInterval > 0 ? stalledInterval : 60000,
     maxStalledCount:
-      Number.isFinite(maxStalledCount) && maxStalledCount >= 0 ? maxStalledCount : 5,
+      Number.isFinite(maxStalledCount) && maxStalledCount >= 0 ? maxStalledCount : 3,
   }
 );
 
@@ -57,7 +58,21 @@ worker.on("error", (err) => {
 });
 
 worker.on("stalled", (jobId) => {
-  console.warn(`[import-worker] stalled job ${jobId}`);
+  console.warn(`[import-worker] stalled job ${jobId}, will be retried`);
+  // Force reconnection attempt
+  const conn = getImportQueueConnection();
+  if (conn && !conn.status.includes("ready")) {
+    console.warn(`[import-worker] redis not ready, attempting reconnect...`);
+    // Disconnect and reconnect separately
+    try {
+      conn.disconnect();
+    } catch (e) {
+      console.error("[import-worker] disconnect error:", e);
+    }
+    setTimeout(() => {
+      conn.connect().catch((e: Error) => console.error("[import-worker] reconnect error:", e));
+    }, 1000);
+  }
 });
 
 worker.on("active", (job) => {

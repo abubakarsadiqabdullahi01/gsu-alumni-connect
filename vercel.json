@@ -1,0 +1,7 @@
+{
+  "buildCommand": "pnpm run vercel-build",
+  "devCommand": "pnpm run dev",
+  "env": {
+    "NODE_OPTIONS": "--no-warnings"
+  }
+}

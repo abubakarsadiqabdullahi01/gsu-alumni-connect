@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "dev:fresh": "rd /s /q .next 2>nul & next dev",
+    "dev": "NODE_NO_WARNINGS=1 next dev",
+    "dev:fresh": "rd /s /q .next 2>nul & NODE_NO_WARNINGS=1 next dev",
     "build": "next build",
     "vercel-build": "node scripts/check-env.js && prisma generate && next build",
     "start": "next start",
@@ -26,6 +26,9 @@
     "import:monitor": "ts-node scripts/monitor-import.ts benchmark",
     "import:check-indexes": "ts-node scripts/monitor-import.ts check-indexes",
     "import:analyze": "ts-node scripts/monitor-import.ts analyze-queries",
+    "import:monitor-vercel": "tsx scripts/monitor-vercel-jobs.ts",
+    "queue:check": "tsx scripts/check-redis-queue.ts",
+    "test:connections": "tsx scripts/test-connections.ts",
     "prepare": "husky"
   },
   "dependencies": {
