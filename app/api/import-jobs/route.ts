@@ -120,5 +120,21 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  // 🚀 Self-trigger: Immediately kick off the cron to start processing
+  // This gives near-instant start (don't wait for next cron minute)
+  // Fire-and-forget: don't await, don't block the response
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://gsu-alumni-connect.vercel.app";
+  const cronSecret = process.env.CRON_SECRET;
+  if (cronSecret) {
+    fetch(`${baseUrl}/api/cron/process-import`, {
+      method: "GET",
+      headers: { authorization: `Bearer ${cronSecret}` },
+    }).catch((err) => {
+      console.warn("[import-jobs] self-trigger failed (will retry on next cron):", err);
+    });
+  } else {
+    console.warn("[import-jobs] CRON_SECRET not set, relying on scheduled cron");
+  }
+
   return NextResponse.json({ job }, { status: 201 });
 }
