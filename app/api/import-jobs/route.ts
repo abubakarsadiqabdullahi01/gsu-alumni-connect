@@ -61,21 +61,20 @@ export async function POST(req: NextRequest) {
   // Fire-and-forget — don't await. This avoids the 60-second cron delay.
   // The cron is still a safety net if this request fails.
   const cronSecret = process.env.CRON_SECRET?.trim();
-  const appUrl = (
-      process.env.NEXT_PUBLIC_APP_URL ??
-      process.env.VERCEL_URL ??
-      "http://localhost:3000"
-  ).replace(/\/$/, "");
 
-  // VERCEL_URL doesn't include protocol
-  const baseUrl = appUrl.startsWith("http") ? appUrl : `https://${appUrl}`;
+  // Resolve the correct base URL — never fall back to localhost in production
+  const appUrl =
+    process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ??
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null);
 
-  if (cronSecret) {
-    fetch(`${baseUrl}/api/cron/process-import`, {
+  if (!appUrl || appUrl.includes("localhost")) {
+    console.warn("[import-jobs] NEXT_PUBLIC_APP_URL not set or is localhost — skipping self-trigger");
+  } else if (cronSecret) {
+    fetch(`${appUrl}/api/cron/process-import`, {
       method: "GET",
       headers: { authorization: `Bearer ${cronSecret}` },
     }).catch((err) => {
-      console.warn(`[import-jobs] self-trigger failed (cron will recover): ${err?.message}`);
+      console.warn(`[import-jobs] self-trigger failed: ${err?.message}`);
     });
   } else {
     console.warn("[import-jobs] CRON_SECRET not set — skipping self-trigger, relying on cron");
