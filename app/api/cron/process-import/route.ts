@@ -3,85 +3,101 @@ import { prisma } from "@/lib/db";
 import { processImportJob } from "@/lib/import/process-import-job";
 
 export const runtime = "nodejs";
-export const maxDuration = 300; // Vercel Pro allows up to 300s
+export const maxDuration = 300;
 
 /**
- * Cron endpoint that processes one import job per invocation
- * Vercel will call this every minute (see vercel.json)
- * 
- * This is a safety net that:
- * - Processes stuck QUEUED jobs
- * - Recovers stalled RUNNING jobs (heartbeat > 2 min old)
- * - Handles jobs that weren't self-triggered for some reason
+ * Vercel Cron: called every minute by Vercel (see vercel.json)
+ * Also called immediately when a job is created (self-trigger in import-jobs/route.ts)
+ *
+ * Auth: Vercel sends `Authorization: Bearer <CRON_SECRET>` automatically.
+ * The self-trigger also sends the same header.
  */
 export async function GET(req: NextRequest) {
-  // Verify the request is from Vercel Cron (includes Authorization header)
-  const authHeader = req.headers.get("authorization");
-  const cronSecret = process.env.CRON_SECRET;
+  const cronSecret = process.env.CRON_SECRET?.trim();
 
+  // In production CRON_SECRET must be set. Block all requests without it.
   if (!cronSecret) {
-    console.error("[cron/process-import] CRON_SECRET not configured");
-    return NextResponse.json(
-      { error: "CRON_SECRET not configured" },
-      { status: 500 }
-    );
+    console.error("[cron/process-import] CRON_SECRET env var is not set");
+    return NextResponse.json({ error: "Server misconfiguration" }, { status: 500 });
   }
 
+  const authHeader = req.headers.get("authorization");
   if (authHeader !== `Bearer ${cronSecret}`) {
-    console.warn("[cron/process-import] unauthorized cron request");
+    console.warn("[cron/process-import] Unauthorized — bad or missing Authorization header");
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  // ── Find a job to process ──────────────────────────────────────────────────
+  // Pick QUEUED jobs OR RUNNING jobs whose heartbeat went stale (> 3 min ago).
+  // The stale check lets us recover from a crashed/timed-out invocation.
+  const staleThreshold = new Date(Date.now() - 3 * 60 * 1000);
+
+  const job = await prisma.importJob.findFirst({
+    where: {
+      OR: [
+        { status: "QUEUED" },
+        {
+          status: "RUNNING",
+          heartbeatAt: { lt: staleThreshold },
+        },
+      ],
+    },
+    orderBy: { createdAt: "asc" },
+  });
+
+  if (!job) {
+    return NextResponse.json({ message: "No pending jobs" });
+  }
+
+  // ── Atomically claim the job ───────────────────────────────────────────────
+  // Update to RUNNING immediately so concurrent cron invocations (or the
+  // self-trigger) don't also pick up the same job.
+  const claimed = await prisma.importJob.updateMany({
+    where: {
+      id: job.id,
+      // Guard: only claim if status hasn't changed since we read it above.
+      OR: [
+        { status: "QUEUED" },
+        {
+          status: "RUNNING",
+          heartbeatAt: { lt: staleThreshold },
+        },
+      ],
+    },
+    data: {
+      status: "RUNNING",
+      startedAt: job.startedAt ?? new Date(),
+      heartbeatAt: new Date(),
+    },
+  });
+
+  if (claimed.count === 0) {
+    // Another invocation already claimed this job — nothing to do.
+    console.info(`[cron/process-import] job ${job.id} already claimed by another invocation`);
+    return NextResponse.json({ message: "Job already claimed", jobId: job.id });
+  }
+
+  console.info(`[cron/process-import] claimed and processing job ${job.id}`);
+
   try {
-    // Pick the oldest job that is stuck
-    const stuckJob = await prisma.importJob.findFirst({
-      where: {
-        OR: [
-          // QUEUED job waiting to be picked up
-          { status: "QUEUED" },
-          // RUNNING job with stale heartbeat (not updated in 2 minutes)
-          {
-            status: "RUNNING",
-            heartbeatAt: {
-              lt: new Date(Date.now() - 2 * 60 * 1000),
-            },
-          },
-        ],
-      },
-      orderBy: { createdAt: "asc" },
-    });
+    await processImportJob(job.id);
+    console.info(`[cron/process-import] completed job ${job.id}`);
+    return NextResponse.json({ message: "Job completed", jobId: job.id });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.error(`[cron/process-import] job ${job.id} failed:`, message);
 
-    if (!stuckJob) {
-      console.info("[cron/process-import] no pending jobs");
-      return NextResponse.json({ message: "No pending jobs" });
-    }
-
-    console.info(`[cron/process-import] processing job ${stuckJob.id}`);
-
-    // Mark as RUNNING and update heartbeat to claim it
+    // Mark as FAILED so the watchdog doesn't loop forever retrying it.
     await prisma.importJob.update({
-      where: { id: stuckJob.id },
+      where: { id: job.id },
       data: {
-        status: "RUNNING",
+        status: "FAILED",
+        completedAt: new Date(),
         heartbeatAt: new Date(),
       },
-    });
+    }).catch(() => {});
 
-    // Process the job (may take up to 5 minutes)
-    await processImportJob(stuckJob.id);
-
-    console.info(`[cron/process-import] completed job ${stuckJob.id}`);
-    return NextResponse.json({ message: "Job completed", jobId: stuckJob.id });
-  } catch (err) {
-    console.error("[cron/process-import] error:", err);
-
-    // Don't fail the cron—just log and let the next run retry
-    return NextResponse.json(
-      {
-        message: "Job processing failed (will retry)",
-        error: String(err),
-      },
-      { status: 200 } // Still return 200 so Vercel doesn't disable the cron
-    );
+    // Return 200 so Vercel doesn't disable the cron due to repeated 5xx.
+    return NextResponse.json({ message: "Job failed — marked as FAILED", jobId: job.id, error: message });
   }
 }

@@ -1,0 +1,61 @@
+🚀 VERCEL PROJECT SETTINGS - UPDATE REQUIRED (1 MINUTE)
+
+═══════════════════════════════════════════════════════════════════════════
+
+YOUR CURRENT SITUATION
+═════════════════════════════════════════════════════════════════════════════
+
+Production Deployment:
+  ✅ Using: pnpm run vercel-build (CUSTOM - CORRECT)
+  └─ Checks env vars
+  └─ Generates Prisma
+  └─ Builds Next.js
+
+Project Settings:
+  ⚠️ Still showing: npm run build (DEFAULT - OUTDATED)
+  └─ This is just UI mismatch
+  └─ Easy fix: 1 click
+
+
+WHY THIS MATTERS FOR CRON:
+  The cron job will deploy correctly either way, but syncing the settings
+  ensures consistency and prevents confusion in the future.
+
+
+═══════════════════════════════════════════════════════════════════════════
+
+FIX IN 1 MINUTE
+═════════════════════════════════════════════════════════════════════════════
+
+1. Go to:
+   https://vercel.com/projects/gsu-alumni-connect/settings/build-and-deployment
+
+2. Find: "Build Command" field
+   Current value: [probably showing "npm run build" or "next build"]
+
+3. Click on the field and change to:
+   pnpm run vercel-build
+
+4. Click: "Save" button
+
+5. Done! ✅
+
+
+═══════════════════════════════════════════════════════════════════════════
+
+WHAT THIS DOES
+═════════════════════════════════════════════════════════════════════════════
+
+When you deploy (git push):
+  ✅ Vercel will use: pnpm run vercel-build
+  ✅ Which runs: check-env.js → prisma generate → next build
+  ✅ This ensures environment validation before build
+  ✅ Cron job registers automatically
+
+
+═══════════════════════════════════════════════════════════════════════════
+
+SCREENSHOT LOCATION:
+  Framework Settings section → Build Command field
+
+═══════════════════════════════════════════════════════════════════════════

@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "NODE_NO_WARNINGS=1 next dev",
-    "dev:fresh": "rd /s /q .next 2>nul & NODE_NO_WARNINGS=1 next dev",
+    "dev": "cross-env NODE_NO_WARNINGS=1 next dev",
+    "dev:fresh": "rd /s /q .next 2>nul & cross-env NODE_NO_WARNINGS=1 next dev",
     "build": "next build",
     "vercel-build": "node scripts/check-env.js && prisma generate && next build",
     "start": "next start",
@@ -97,6 +97,7 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
+    "cross-env": "^7.0.3",
     "@playwright/test": "^1.58.2",
     "@tailwindcss/postcss": "^4",
     "@testing-library/react": "^16.3.2",
