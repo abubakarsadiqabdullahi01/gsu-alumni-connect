@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { processImportJob } from "@/lib/import/process-import-job";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+export const maxDuration = 300; // Allow up to 5 min for background processing
 
 export async function POST(req: NextRequest) {
   const session = await auth.api.getSession({ headers: req.headers });
@@ -27,13 +29,21 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "fileName and fileUrl are required" }, { status: 400 });
   }
 
-  // ── Check for an already-active job for this admin ────────────────────────
+  // ── Check for an already-active job ───────────────────────────────────────
   const activeJob = await prisma.importJob.findFirst({
     where: {
       uploadedById: session.user.id,
       status: { in: ["QUEUED", "RUNNING"] },
     },
-    select: { id: true, status: true },
+    select: {
+      id: true,
+      status: true,
+      processedRows: true,
+      totalRows: true,
+      createdRows: true,
+      updatedRows: true,
+      failedRows: true,
+    },
   });
 
   if (activeJob) {
@@ -43,7 +53,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // ── Create the job record ──────────────────────────────────────────────────
+  // ── Create the job ─────────────────────────────────────────────────────────
   const job = await prisma.importJob.create({
     data: {
       uploadedById: session.user.id,
@@ -57,28 +67,35 @@ export async function POST(req: NextRequest) {
 
   console.info(`[import-jobs] created job ${job.id} for ${fileName} (${totalRows} rows)`);
 
-  // ── Self-trigger: immediately kick off processing ──────────────────────────
-  // Fire-and-forget — don't await. This avoids the 60-second cron delay.
-  // The cron is still a safety net if this request fails.
-  const cronSecret = process.env.CRON_SECRET?.trim();
+  // ── Mark RUNNING immediately ───────────────────────────────────────────────
+  await prisma.importJob.update({
+    where: { id: job.id },
+    data: {
+      status: "RUNNING",
+      startedAt: new Date(),
+      heartbeatAt: new Date(),
+    },
+  });
 
-  // Resolve the correct base URL — never fall back to localhost in production
-  const appUrl =
-    process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ??
-    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null);
-
-  if (!appUrl || appUrl.includes("localhost")) {
-    console.warn("[import-jobs] NEXT_PUBLIC_APP_URL not set or is localhost — skipping self-trigger");
-  } else if (cronSecret) {
-    fetch(`${appUrl}/api/cron/process-import`, {
-      method: "GET",
-      headers: { authorization: `Bearer ${cronSecret}` },
-    }).catch((err) => {
-      console.warn(`[import-jobs] self-trigger failed: ${err?.message}`);
-    });
-  } else {
-    console.warn("[import-jobs] CRON_SECRET not set — skipping self-trigger, relying on cron");
-  }
+  // ── Start processing in background, return response immediately ───────────
+  // On Vercel Node.js runtime, the function stays alive for maxDuration after
+  // the response is sent when you use this pattern.
+  setImmediate(async () => {
+    try {
+      await processImportJob(job.id);
+      console.info(`[import-jobs] completed job ${job.id}`);
+    } catch (err) {
+      console.error(`[import-jobs] job ${job.id} failed:`, err);
+      await prisma.importJob.update({
+        where: { id: job.id },
+        data: {
+          status: "FAILED",
+          completedAt: new Date(),
+          heartbeatAt: new Date(),
+        },
+      }).catch(() => {});
+    }
+  });
 
   return NextResponse.json({ job }, { status: 201 });
 }
