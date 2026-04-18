@@ -80,22 +80,21 @@ export async function POST(req: NextRequest) {
   // ── Start processing in background, return response immediately ───────────
   // On Vercel Node.js runtime, the function stays alive for maxDuration after
   // the response is sent when you use this pattern.
-  setImmediate(async () => {
-    try {
-      await processImportJob(job.id);
-      console.info(`[import-jobs] completed job ${job.id}`);
-    } catch (err) {
-      console.error(`[import-jobs] job ${job.id} failed:`, err);
-      await prisma.importJob.update({
-        where: { id: job.id },
-        data: {
-          status: "FAILED",
-          completedAt: new Date(),
-          heartbeatAt: new Date(),
-        },
-      }).catch(() => {});
-    }
-  });
+  // ── Process synchronously — Vercel kills background tasks after response ──
+  try {
+    await processImportJob(job.id);
+    console.info(`[import-jobs] completed job ${job.id}`);
+  } catch (err) {
+    console.error(`[import-jobs] job ${job.id} failed:`, err);
+    await prisma.importJob.update({
+      where: { id: job.id },
+      data: {
+        status: "FAILED",
+        completedAt: new Date(),
+        heartbeatAt: new Date(),
+      },
+    }).catch(() => {});
+  }
 
   return NextResponse.json({ job }, { status: 201 });
 }
