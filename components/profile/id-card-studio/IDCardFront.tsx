@@ -161,8 +161,8 @@ export function IDCardFront({ data, showMarks = false }: IDCardFrontProps) {
             x={F.alumniNo.x}
             y={F.alumniNo.y}
             valueFontSize={F.alumniNo.fontSize}
-            labelFontSize={13}
-            labelOffset={22}
+            labelFontSize={15}
+            labelOffset={25}
             accent
           />
           <DetailField
@@ -171,8 +171,8 @@ export function IDCardFront({ data, showMarks = false }: IDCardFrontProps) {
             x={F.graduationYear.x}
             y={F.graduationYear.y}
             valueFontSize={F.graduationYear.fontSize}
-            labelFontSize={13}
-            labelOffset={22}
+            labelFontSize={15}
+            labelOffset={25}
           />
           <DetailField
             label={F.discipline.label}
@@ -180,8 +180,8 @@ export function IDCardFront({ data, showMarks = false }: IDCardFrontProps) {
             x={F.discipline.x}
             y={F.discipline.y}
             valueFontSize={F.discipline.fontSize}
-            labelFontSize={13}
-            labelOffset={22}
+            labelFontSize={15}
+            labelOffset={25}
           />
           <DetailField
             label={F.gender.label}
@@ -189,8 +189,8 @@ export function IDCardFront({ data, showMarks = false }: IDCardFrontProps) {
             x={F.gender.x}
             y={F.gender.y}
             valueFontSize={F.gender.fontSize}
-            labelFontSize={13}
-            labelOffset={22}
+            labelFontSize={15}
+            labelOffset={25}
           />
 
           <HologramSticker cx={F.holoX} cy={F.holoY + 28} r={F.holoR} />

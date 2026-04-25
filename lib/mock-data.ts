@@ -120,7 +120,6 @@ export const mockAvailableMentors = [
   { id: "am2", name: "Zainab Suleiman", department: "Biochemistry", year: "2021-2022", skills: ["Data Science", "Research", "Bioinformatics"], bio: "Research Analyst at NNPC with passion for mentoring", image: null },
   { id: "am3", name: "Abdullahi Garba", department: "English", year: "2019-2020", skills: ["Content Strategy", "Technical Writing", "Marketing"], bio: "Content lead at Flutterwave", image: null },
 ];
-
 export const mockNotifications = [
   { id: "n1", type: "CONNECTION_REQUEST", title: "New Connection Request", body: "Yusuf Adamu wants to connect with you", isRead: false, createdAt: "2026-03-02T10:30:00Z" },
   { id: "n2", type: "JOB_MATCH", title: "Job Match Found", body: "Senior Accountant at Deloitte matches your profile", isRead: false, createdAt: "2026-03-02T08:15:00Z" },
