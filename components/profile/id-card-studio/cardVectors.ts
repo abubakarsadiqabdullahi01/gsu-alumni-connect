@@ -40,7 +40,7 @@ export const cardVectors = {
     holoX: 550,
     holoY: 530,
     holoR: 35,
-    cardholderSig: { x1: 90, y1: 580, x2: 320, y2: 580, labelX: 200, labelY: 595, imageHeight: 65, imageOffsetY: 65 },
+    cardholderSig: { x1: 90, y1: 580, x2: 320, y2: 580, labelX: 200, labelY: 595, imageHeight: 60, imageOffsetY: 60 },
     borderInset: 10,
     cornerSquares: [
       { x: 40, y: 480, size: 14 },
