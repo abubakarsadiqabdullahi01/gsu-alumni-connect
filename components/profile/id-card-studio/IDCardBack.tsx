@@ -101,13 +101,6 @@ export function IDCardBack({ data, showMarks = false }: IDCardBackProps) {
             {data.stateOfOrigin}
           </text>
 
-          {/* <text x={B.issuedExpiry.x} y={B.issuedExpiry.y - 14} fontSize={B.issuedExpiry.labelFontSize} fontFamily="Inter, sans-serif" fill="#8a8a8a" letterSpacing={1.8} textAnchor="end">
-            {B.issuedExpiry.label}
-          </text>
-          <text x={B.issuedExpiry.x} y={B.issuedExpiry.y} fontSize={B.issuedExpiry.valueFontSize} fontFamily="Inter, sans-serif" fontWeight="600" fill="#333333" textAnchor="end" dominantBaseline="middle">
-            {data.issuedYear} / {data.expiryLabel}
-          </text> */}
-
           <HologramSticker cx={500} cy={530} r={30} />
           {B.cornerSquares.map((sq, i) => (
             <rect key={i} x={sq.x} y={sq.y} width={sq.size} height={sq.size} fill="none" stroke="#1a5c3a" strokeWidth={1.5} rx={2} opacity={0.4} />

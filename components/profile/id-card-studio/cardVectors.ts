@@ -55,7 +55,6 @@ export const cardVectors = {
     magStripe: { y: 510, height: 55 },
     sigText: { x: 510, y: 605, fontSize: 13, letterSpacing: 2, fontWeight: 700 },
     stateOfOrigin: { x: 310, y: 550, labelFontSize: 9, valueFontSize: 15, label: "STATE OF ORIGIN" },
-    issuedExpiry: { x: 690, y: 550, labelFontSize: 9, valueFontSize: 14, label: "ISSUED / EXPIRES" },
     noteBlock: {
       x: 120,
       y: 300,
