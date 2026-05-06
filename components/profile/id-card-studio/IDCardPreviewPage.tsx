@@ -509,7 +509,6 @@ export function IDCardPreviewPage({ data }: IDCardPreviewPageProps) {
                       { label: "State of Origin", value: data.stateOfOrigin },
                       { label: "Gender", value: data.gender },
                       { label: "Serial Number", value: data.serialNumber, mono: true },
-                      { label: "Issued / Expires", value: `${data.issuedYear} / ${data.expiryLabel}` },
                     ].map(({ label, value, mono }) => (
                       <div
                         key={label}
