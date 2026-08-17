@@ -47,6 +47,12 @@ This guide was extracted from the live route handlers under `app/api/**`.
 
 ## Profile & onboarding
 
+- `GET /api/profile`
+  - Returns the current graduate profile for Android profile screens:
+    - `profile.fullName`, `registrationNo`, `departmentName`, `facultyName`, `graduationYear`, `degreeClass`
+    - `profile.email`, `phone`, `avatarUrl`, `signatureUrl`
+    - editable profile fields, plus `employment`, `education`, and `skills`
+
 - `POST /api/onboarding/complete`
   - Body:
     - `currentPassword`, `newPassword`, `confirmPassword`
@@ -69,6 +75,9 @@ This guide was extracted from the live route handlers under `app/api/**`.
 
 - `PATCH /api/settings`
   - Body (privacy/preferences): `showCgpa`, `showEmail`, `showPhone`, `showDob`, `showInDirectory`, `allowMessages`, `showActivityFeed`, `openToOpportunities`, `availableForMentorship`
+
+- `GET /api/settings`
+  - Returns current privacy/preferences for Android settings screens.
 
 ## Directory & connections
 
@@ -354,7 +363,7 @@ This guide was extracted from the live route handlers under `app/api/**`.
 - Home dashboard/feed: `GET /api/feed`, `GET /api/notifications`
 - Directory/search: `GET /api/directory`, `POST /api/connections/request`
 - Connections: `GET /api/connections`, `PATCH /api/connections/{id}`
-- Profile edit: `PATCH /api/profile`, `POST /api/profile/education|employment|skills`, `PATCH /api/settings`
+- Profile edit: `GET|PATCH /api/profile`, `POST /api/profile/education|employment|skills`, `GET|PATCH /api/settings`
 - Groups: `GET /api/groups`, `POST|DELETE /api/groups/{id}/membership`, `GET|POST /api/groups/{id}/posts`
 - Messaging: `GET /api/messages/conversations`, `GET /api/messages/conversations/{id}`, `POST /api/messages/conversations/{id}/messages`
 - Jobs: `GET|POST /api/jobs`, `POST /api/jobs/{id}/apply`
@@ -370,4 +379,3 @@ This guide was extracted from the live route handlers under `app/api/**`.
 - Handle `409` conflict cases explicitly (duplicate applications, duplicate skill, active import in progress).
 - Many list APIs are paginated; keep `page/pageSize` state in UI.
 - Feature flags can disable modules (`featureMessaging`, `featureGroups`, etc.); handle `403` with user-friendly UI states.
-

@@ -14,6 +14,68 @@ type SettingsPayload = {
   availableForMentorship?: boolean;
 };
 
+export async function GET(req: NextRequest) {
+  try {
+    const session = await auth.api.getSession({ headers: req.headers });
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const graduate = await prisma.graduate.findUnique({
+      where: { userId: session.user.id },
+      select: {
+        fullName: true,
+        registrationNo: true,
+        showCgpa: true,
+        showEmail: true,
+        showPhone: true,
+        showDob: true,
+        showInDirectory: true,
+        allowMessages: true,
+        showActivityFeed: true,
+        openToOpportunities: true,
+        availableForMentorship: true,
+        user: {
+          select: {
+            accountStatus: true,
+            email: true,
+            phone: true,
+          },
+        },
+      },
+    });
+
+    if (!graduate) {
+      return NextResponse.json(
+        { error: "Settings not available." },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({
+      settings: {
+        accountStatus: graduate.user.accountStatus,
+        registrationNo: graduate.registrationNo,
+        fullName: graduate.fullName,
+        email: graduate.user.email,
+        phone: graduate.user.phone,
+        showCgpa: graduate.showCgpa,
+        showEmail: graduate.showEmail,
+        showPhone: graduate.showPhone,
+        showDob: graduate.showDob,
+        showInDirectory: graduate.showInDirectory,
+        allowMessages: graduate.allowMessages,
+        showActivityFeed: graduate.showActivityFeed,
+        openToOpportunities: graduate.openToOpportunities,
+        availableForMentorship: graduate.availableForMentorship,
+      },
+    });
+  } catch (error) {
+    console.error("[SettingsGet] Error:", error);
+    return NextResponse.json({ error: "Failed to load settings." }, { status: 500 });
+  }
+}
+
 export async function PATCH(req: NextRequest) {
   try {
     const session = await auth.api.getSession({ headers: req.headers });
@@ -44,4 +106,3 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ error: "Failed to update settings." }, { status: 500 });
   }
 }
-

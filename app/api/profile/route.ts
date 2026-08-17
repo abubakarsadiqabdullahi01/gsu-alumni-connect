@@ -24,6 +24,118 @@ function normalizeOptionalString(value: string | null | undefined): string | nul
   return trimmed.length ? trimmed : null;
 }
 
+function asDateInput(date: Date | null): string | null {
+  if (!date) return null;
+  return date.toISOString().slice(0, 10);
+}
+
+export async function GET(req: NextRequest) {
+  try {
+    const session = await auth.api.getSession({ headers: req.headers });
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const graduate = await prisma.graduate.findUnique({
+      where: { userId: session.user.id },
+      select: {
+        fullName: true,
+        registrationNo: true,
+        departmentName: true,
+        facultyName: true,
+        graduationYear: true,
+        degreeClass: true,
+        dateOfBirth: true,
+        bio: true,
+        linkedinUrl: true,
+        twitterUrl: true,
+        githubUrl: true,
+        personalWebsite: true,
+        nyscState: true,
+        nyscYear: true,
+        openToOpportunities: true,
+        availableForMentorship: true,
+        employment: {
+          orderBy: { createdAt: "desc" },
+          select: {
+            id: true,
+            jobTitle: true,
+            companyName: true,
+            employmentType: true,
+            isCurrent: true,
+          },
+        },
+        education: {
+          orderBy: { createdAt: "desc" },
+          select: {
+            id: true,
+            institution: true,
+            degree: true,
+            fieldOfStudy: true,
+            isCurrent: true,
+          },
+        },
+        skills: {
+          orderBy: { createdAt: "desc" },
+          select: {
+            id: true,
+            skillName: true,
+            proficiency: true,
+          },
+        },
+        user: {
+          select: {
+            accountStatus: true,
+            email: true,
+            phone: true,
+            image: true,
+          },
+        },
+        signatureUrl: true,
+      },
+    });
+
+    if (!graduate) {
+      return NextResponse.json(
+        { error: "Profile not available." },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({
+      profile: {
+        fullName: graduate.fullName,
+        registrationNo: graduate.registrationNo,
+        departmentName: graduate.departmentName,
+        facultyName: graduate.facultyName,
+        graduationYear: graduate.graduationYear,
+        degreeClass: graduate.degreeClass,
+        accountStatus: graduate.user.accountStatus,
+        email: graduate.user.email,
+        phone: graduate.user.phone,
+        avatarUrl: graduate.user.image,
+        signatureUrl: graduate.signatureUrl,
+        dateOfBirth: asDateInput(graduate.dateOfBirth),
+        bio: graduate.bio,
+        linkedinUrl: graduate.linkedinUrl,
+        twitterUrl: graduate.twitterUrl,
+        githubUrl: graduate.githubUrl,
+        personalWebsite: graduate.personalWebsite,
+        nyscState: graduate.nyscState,
+        nyscYear: graduate.nyscYear,
+        openToOpportunities: graduate.openToOpportunities,
+        availableForMentorship: graduate.availableForMentorship,
+        employment: graduate.employment,
+        education: graduate.education,
+        skills: graduate.skills,
+      },
+    });
+  } catch (error) {
+    console.error("[ProfileGet] Error:", error);
+    return NextResponse.json({ error: "Failed to load profile." }, { status: 500 });
+  }
+}
+
 export async function PATCH(req: NextRequest) {
   try {
     const session = await auth.api.getSession({ headers: req.headers });
@@ -92,4 +204,3 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ error: "Failed to update profile." }, { status: 500 });
   }
 }
-
