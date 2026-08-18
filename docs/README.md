@@ -10,10 +10,14 @@ This folder contains comprehensive guides for the optimized graduate import syst
 1. **[QUICK_REFERENCE.md](./QUICK_REFERENCE.md)** ← Start here (5 min read)
 2. **[OPTIMIZATION_SUMMARY.md](./OPTIMIZATION_SUMMARY.md)** ← What changed (10 min)
 3. **[PRODUCTION_DEPLOYMENT_CHECKLIST.md](./PRODUCTION_DEPLOYMENT_CHECKLIST.md)** ← Deploy safely (follow steps)
+4. **[ANDROID_APP_IMPLEMENTATION_BLUEPRINT.md](./ANDROID_APP_IMPLEMENTATION_BLUEPRINT.md)** ← Android app build plan
+5. **[ANDROID_API_INTEGRATION_GUIDE.md](./ANDROID_API_INTEGRATION_GUIDE.md)** ← Android API contracts
 
 **Deep Dives:**
 - **[IMPORT_OPTIMIZATION_GUIDE.md](./IMPORT_OPTIMIZATION_GUIDE.md)** - Detailed strategies & scaling
 - **[../scripts/README.md](../scripts/README.md)** - Script documentation & troubleshooting
+- **[ANDROID_APP_IMPLEMENTATION_BLUEPRINT.md](./ANDROID_APP_IMPLEMENTATION_BLUEPRINT.md)** - Step-by-step Flutter Android implementation plan
+- **[ANDROID_API_INTEGRATION_GUIDE.md](./ANDROID_API_INTEGRATION_GUIDE.md)** - Mobile API endpoint reference
 
 ---
 
@@ -84,6 +88,31 @@ This folder contains comprehensive guides for the optimized graduate import syst
 - Logging setup
 
 **When to use:** Using npm scripts or troubleshooting
+
+---
+
+### 6. ANDROID_APP_IMPLEMENTATION_BLUEPRINT.md
+**Best for:** Planning and building the Flutter Android app
+**Content:**
+- Product goals and mobile UX principles
+- Recommended Flutter stack
+- Screen-by-screen feature plan
+- Authentication, onboarding, ID cards, maps, groups, messaging, jobs, events, mentorship, charts
+- Step-by-step MVP and release roadmap
+
+**When to use:** Before starting Android development and during implementation planning
+
+---
+
+### 7. ANDROID_API_INTEGRATION_GUIDE.md
+**Best for:** Android API integration details
+**Content:**
+- Auth model and cookie handling
+- Endpoint list and request/response notes
+- Screen-to-API mapping
+- Mobile implementation notes
+
+**When to use:** While wiring Flutter/Dio API services
 
 ---
 
