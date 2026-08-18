@@ -45,6 +45,48 @@ This guide was extracted from the live route handlers under `app/api/**`.
 
 ## 3) User-facing APIs (for alumni mobile app)
 
+## Mobile-only aggregates
+
+These three endpoints exist because the web app resolves the same data inside
+server components, which a native client cannot reuse.
+
+- `GET /api/mobile/bootstrap`
+  - The single call the app makes on launch. Returns:
+    - `platform` — `name`, `supportEmail`, `welcomeMessage`
+    - `features` — `jobBoard`, `mentorship`, `messaging`, `map`, `groups`,
+      `skills`, mirroring the admin console feature switches. The client hides
+      navigation for anything switched off, instead of letting the user tap
+      through to a 403.
+    - `identity` — `graduateId`, `fullName`, `registrationNo`, `email`,
+      `avatarUrl`, `departmentName`, `facultyName`, `graduationYear`,
+      `degreeClass`, `accountStatus`, `role`, `profileCompleted`,
+      `mustChangePassword`, `allowMessages`
+    - `badges` — `notifications`, `messages`, `connectionRequests` for the tab
+      badges
+  - `401` when the session cookie is missing or stale; `404` when the account
+    has no linked graduate record. The app treats both as "signed out".
+
+- `GET /api/dashboard`
+  - Graduate KPIs and pre-aggregated chart series, so the client draws charts
+    without client-side joins:
+    - `stats` — `connections`, `pendingConnectionRequests`, `profileViews`,
+      `jobApplications`, `groupsJoined`, `eventsJoined`, `achievements`,
+      `unreadNotifications`, `networkSize`
+    - `completion` — `percent`, `completed`, and an 11-item `checklist`
+    - `charts.networkGrowth` — six trailing months of `{label, added, total}`
+    - `charts.facultyDistribution`, `charts.cohortDistribution` — `{label, count}`
+    - `recentActivity`, `upcomingEvents`
+
+- `GET /api/map`
+  - Alumni geography, using the same resolution rules as the web map page
+    (precise location first, state centroid as fallback):
+    - `points` — `{latitude, longitude, city, state, lga, fullName, courseCode,
+      facultyCode, graduationYear}`
+    - `states` — per-state aggregates `{state, count, latitude, longitude}`,
+      sorted by count, so the client can draw a bubble map directly
+    - `stats` — `mappedAlumni`, `statesCovered`, `topState`, `topStateCount`
+  - `403` when `featureMap` is disabled in admin settings.
+
 ## Profile & onboarding
 
 - `GET /api/profile`
