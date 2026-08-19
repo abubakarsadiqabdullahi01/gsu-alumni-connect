@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/db";
-import { getStateCenter } from "@/lib/nigeria-state-centers";
+import { canonicalStateName, getStateCenter } from "@/lib/nigeria-state-centers";
 
 /**
  * One row per distinct (state, lga, city, faculty, year) combination.
@@ -56,6 +56,34 @@ type NormalisedRow = {
 function clean(value: string | null | undefined): string | null {
   const trimmed = value?.trim();
   return trimmed ? trimmed : null;
+}
+
+/**
+ * Title case with separators flattened, so "YAMALTU-DEBA" and "Yamaltu/Deba"
+ * become one place rather than two entries in the LGA ranking.
+ */
+function canonicalPlace(value: string | null | undefined): string | null {
+  const cleaned = clean(value);
+  if (!cleaned) return null;
+  return cleaned
+    .replace(/[/\-_]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLowerCase()
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
+
+/**
+ * Canonical state name, falling back to the tidied raw value.
+ *
+ * Falling back rather than discarding keeps an unrecognised spelling visible in
+ * the rankings — it simply has no centroid, so it counts towards
+ * `unmappedAlumni` and someone can correct the record or add an alias.
+ */
+function canonicalState(value: string | null | undefined): string | null {
+  return canonicalStateName(value) ?? canonicalPlace(value);
 }
 
 /**
@@ -120,9 +148,9 @@ export async function getAlumniGeography(): Promise<AlumniGeography> {
     seen.add(row.graduate.id);
     rows.push({
       // A saved location wins; state of origin is the fallback.
-      state: clean(row.state) ?? clean(row.graduate.stateOfOrigin),
-      city: clean(row.city),
-      lga: clean(row.graduate.lga),
+      state: canonicalState(row.state) ?? canonicalState(row.graduate.stateOfOrigin),
+      city: canonicalPlace(row.city),
+      lga: canonicalPlace(row.graduate.lga),
       faculty: clean(row.graduate.facultyCode),
       year: clean(row.graduate.graduationYear),
     });
@@ -131,9 +159,9 @@ export async function getAlumniGeography(): Promise<AlumniGeography> {
   for (const grad of fallbackRows) {
     if (seen.has(grad.id)) continue;
     rows.push({
-      state: clean(grad.stateOfOrigin),
+      state: canonicalState(grad.stateOfOrigin),
       city: null,
-      lga: clean(grad.lga),
+      lga: canonicalPlace(grad.lga),
       faculty: clean(grad.facultyCode),
       year: clean(grad.graduationYear),
     });
