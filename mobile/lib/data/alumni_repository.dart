@@ -6,10 +6,13 @@ import 'models/bootstrap.dart';
 import 'models/community.dart';
 import 'models/dashboard.dart';
 import 'models/id_card.dart';
+import 'models/insights.dart';
 import 'models/messaging.dart';
 import 'models/opportunities.dart';
 import 'models/people.dart';
 import 'models/profile.dart';
+import 'models/public_profile.dart';
+import 'models/search.dart';
 
 /// Every server call the app makes, in one place.
 ///
@@ -90,6 +93,38 @@ class AlumniRepository {
 
   Future<AlumniMapData> alumniMap() async {
     return AlumniMapData.fromJson(await _api.get('/api/map'));
+  }
+
+  // ── Insights, search and completion ────────────────────────────────────────
+
+  /// Aggregate platform statistics. Counts only — safe for any member.
+  Future<AlumniInsights> insights() async {
+    return AlumniInsights.fromJson(await _api.get('/api/insights/alumni'));
+  }
+
+  /// One query across alumni, groups, jobs and events.
+  ///
+  /// Short queries are answered locally: the server treats anything under two
+  /// characters as empty, so there is no point spending a request on it.
+  Future<SearchResults> search(String query) async {
+    final trimmed = query.trim();
+    if (trimmed.length < 2) return SearchResults.empty;
+    return SearchResults.fromJson(
+      await _api.get('/api/search', query: {'q': trimmed}),
+    );
+  }
+
+  /// Weighted profile completion for the signed-in member, including the one
+  /// outstanding item most worth prompting about.
+  Future<ProfileCompletion> profileCompletion() async {
+    return ProfileCompletion.fromJson(await _api.get('/api/profile/completion'));
+  }
+
+  /// Another alumnus, with privacy rules already applied server-side.
+  Future<PublicAlumniProfile> alumniProfile(String graduateId) async {
+    return PublicAlumniProfile.fromJson(
+      await _api.get('/api/directory/$graduateId'),
+    );
   }
 
   // ── Directory and connections ──────────────────────────────────────────────

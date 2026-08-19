@@ -4,9 +4,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:gsu_alumni_connect/core/theme/app_theme.dart';
 import 'package:gsu_alumni_connect/core/utils/formatters.dart';
 import 'package:gsu_alumni_connect/core/widgets/ui_kit.dart';
+import 'package:gsu_alumni_connect/data/models/alumni_map.dart';
 import 'package:gsu_alumni_connect/data/models/bootstrap.dart';
+import 'package:gsu_alumni_connect/data/models/dashboard.dart';
 import 'package:gsu_alumni_connect/data/models/opportunities.dart';
 import 'package:gsu_alumni_connect/data/models/people.dart';
+import 'package:gsu_alumni_connect/data/models/public_profile.dart';
+import 'package:gsu_alumni_connect/data/models/search.dart';
 import 'package:gsu_alumni_connect/features/splash/splash_screen.dart';
 
 void main() {
@@ -119,6 +123,156 @@ void main() {
       });
       expect(job.salaryMin, 450000);
       expect(job.salaryMax, 700000);
+    });
+  });
+
+  group('Aggregated map', () {
+    Map<String, dynamic> payload() => {
+          'facts': [
+            {'state': 'Kano', 'lga': 'Nassarawa', 'faculty': 'SC', 'year': '2019-2020', 'count': 4},
+            {'state': 'Kano', 'lga': 'Dala', 'faculty': 'ED', 'year': '2019-2020', 'count': 2},
+            {'state': 'Gombe', 'lga': 'Akko', 'faculty': 'SC', 'year': '2021-2022', 'count': 3},
+            {'state': 'Sokoto', 'faculty': 'SC', 'year': '2019-2020', 'count': 9},
+          ],
+          'states': [
+            {'state': 'Kano', 'count': 6, 'latitude': 11.9, 'longitude': 8.5},
+            {'state': 'Gombe', 'count': 3, 'latitude': 10.3, 'longitude': 11.1},
+          ],
+          'filters': {
+            'faculties': ['ED', 'SC'],
+            'years': ['2021-2022', '2019-2020'],
+          },
+          'stats': {
+            'mappedAlumni': 9,
+            'unmappedAlumni': 9,
+            'statesCovered': 2,
+            'topState': 'Kano',
+            'topStateCount': 6,
+          },
+        };
+
+    test('reads the aggregate shape now that per-person points are gone', () {
+      final data = AlumniMapData.fromJson(payload());
+      expect(data.facts.length, 4);
+      expect(data.states.first.state, 'Kano');
+      expect(data.faculties, ['ED', 'SC']);
+      expect(data.unmappedAlumni, 9);
+    });
+
+    test('clustersFor sums counts rather than counting facts', () {
+      final data = AlumniMapData.fromJson(payload());
+      final all = data.clustersFor();
+      // Kano is two facts totalling 6, so row-counting would report 2.
+      expect(all.first.state, 'Kano');
+      expect(all.first.count, 6);
+    });
+
+    test('clustersFor filters and drops states with no centroid', () {
+      final data = AlumniMapData.fromJson(payload());
+      final science = data.clustersFor(faculty: 'SC');
+      expect(science.map((c) => c.state), ['Kano', 'Gombe']);
+      expect(science.firstWhere((c) => c.state == 'Kano').count, 4);
+      // Sokoto has facts but no centroid, so it cannot be drawn.
+      expect(science.any((c) => c.state == 'Sokoto'), isFalse);
+    });
+  });
+
+  group('Completion and search', () {
+    test('completion exposes the server-chosen next best action', () {
+      final completion = ProfileCompletion.fromJson({
+        'percent': 65,
+        'completed': false,
+        'checklist': [
+          {'key': 'photo', 'label': 'Profile photo', 'done': true, 'weight': 15},
+          {
+            'key': 'employment',
+            'label': 'Work experience',
+            'done': false,
+            'weight': 20,
+            'prompt': 'Add your current job to improve alumni discovery.',
+            'href': '/profile',
+          },
+        ],
+        'nextBestAction': {
+          'key': 'employment',
+          'label': 'Work experience',
+          'done': false,
+          'weight': 20,
+          'prompt': 'Add your current job to improve alumni discovery.',
+        },
+      });
+
+      expect(completion.percent, 65);
+      expect(completion.outstanding.single.key, 'employment');
+      expect(completion.nextBestAction?.prompt, contains('current job'));
+    });
+
+    test('completion tolerates a server that sends no next best action', () {
+      final completion = ProfileCompletion.fromJson({
+        'percent': 100,
+        'completed': true,
+        'checklist': const [],
+      });
+      expect(completion.nextBestAction, isNull);
+      expect(completion.outstanding, isEmpty);
+    });
+
+    test('search normalises the four sections onto one hit shape', () {
+      final results = SearchResults.fromJson({
+        'query': 'kano',
+        'alumni': [
+          {'id': 'a1', 'fullName': 'Amina Bello', 'departmentName': 'Accounting', 'graduationYear': '2019-2020'},
+        ],
+        'groups': [
+          {'id': 'g1', 'name': 'Kano Chapter', 'membersCount': 1},
+        ],
+        'jobs': const [],
+        'events': const [],
+        'total': 2,
+      });
+
+      expect(results.isEmpty, isFalse);
+      expect(results.alumni.single.subtitle, 'Accounting · 2019-2020');
+      // Singular member, so no stray plural.
+      expect(results.groups.single.subtitle, '1 member');
+      expect(results.jobs, isEmpty);
+    });
+  });
+
+  group('Public profile', () {
+    test('hidden contact fields arrive absent, not blank', () {
+      final profile = PublicAlumniProfile.fromJson({
+        'id': 'g1',
+        'fullName': 'Amina Bello',
+        'registrationNo': 'UG19/ASAC/1025',
+        'email': null,
+        'phone': null,
+        'links': {'linkedin': 'https://example.com/in/amina'},
+        'nysc': {'state': 'Kano', 'year': 2021},
+        'viewer': {'connectionStatus': 'none', 'canMessage': true},
+      });
+
+      expect(profile.email, isNull);
+      expect(profile.linkedinUrl, 'https://example.com/in/amina');
+      expect(profile.nyscYear, 2021);
+      expect(profile.employment, isEmpty);
+    });
+
+    test('viewer context decides which actions are offered', () {
+      ProfileViewerContext ctx(Map<String, dynamic> json) =>
+          ProfileViewerContext.fromJson(json);
+
+      expect(ctx({'connectionStatus': 'NONE'}).canRequestConnection, isTrue);
+      expect(ctx({'connectionStatus': 'ACCEPTED'}).isConnected, isTrue);
+      expect(ctx({'connectionStatus': 'ACCEPTED'}).canRequestConnection, isFalse);
+
+      // A request we sent is not ours to answer; one we received is.
+      final sent = ctx({'connectionStatus': 'PENDING', 'connectionInitiatedByMe': true});
+      final received = ctx({'connectionStatus': 'PENDING', 'connectionInitiatedByMe': false});
+      expect(sent.awaitingMyResponse, isFalse);
+      expect(received.awaitingMyResponse, isTrue);
+
+      expect(ctx({'isSelf': true, 'connectionStatus': 'NONE'}).canRequestConnection, isFalse);
     });
   });
 

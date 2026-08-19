@@ -15,6 +15,13 @@ List<Map<String, dynamic>> asList(Object? value) {
   return value.whereType<Object>().map(asMap).toList();
 }
 
+/// For plain string arrays such as filter option lists. Nulls and blanks are
+/// dropped rather than surfacing as empty chips in a dropdown.
+List<String> asStringList(Object? value) {
+  if (value is! List) return const [];
+  return value.map(asStringOrNull).whereType<String>().toList();
+}
+
 String asString(Object? value, {String fallback = ''}) {
   if (value == null) return fallback;
   final text = value.toString().trim();

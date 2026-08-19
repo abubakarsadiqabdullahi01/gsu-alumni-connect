@@ -9,6 +9,9 @@ class DashboardData {
     required this.cohortDistribution,
     required this.recentActivity,
     required this.upcomingEvents,
+    required this.jobs,
+    required this.groups,
+    required this.connectionSuggestions,
   });
 
   final DashboardStats stats;
@@ -18,6 +21,9 @@ class DashboardData {
   final List<CategoryCount> cohortDistribution;
   final List<ActivityItem> recentActivity;
   final List<EventTeaser> upcomingEvents;
+  final JobsSummary jobs;
+  final GroupsSummary groups;
+  final List<SuggestedConnection> connectionSuggestions;
 
   factory DashboardData.fromJson(Map<String, dynamic> json) {
     final charts = asMap(json['charts']);
@@ -36,6 +42,13 @@ class DashboardData {
           asList(json['recentActivity']).map(ActivityItem.fromJson).toList(),
       upcomingEvents:
           asList(json['upcomingEvents']).map(EventTeaser.fromJson).toList(),
+      // Absent on an older server: asMap yields {} and these degrade to zeros
+      // and empty lists rather than throwing.
+      jobs: JobsSummary.fromJson(asMap(json['jobs'])),
+      groups: GroupsSummary.fromJson(asMap(json['groups'])),
+      connectionSuggestions: asList(json['connectionSuggestions'])
+          .map(SuggestedConnection.fromJson)
+          .toList(),
     );
   }
 }
@@ -81,22 +94,29 @@ class ProfileCompletion {
     required this.percent,
     required this.completed,
     required this.checklist,
+    this.nextBestAction,
   });
 
   final int percent;
   final bool completed;
   final List<ChecklistItem> checklist;
 
+  /// The single highest-weight outstanding section, chosen by the server so
+  /// web and mobile nudge towards the same thing.
+  final ChecklistItem? nextBestAction;
+
   List<ChecklistItem> get outstanding =>
       checklist.where((item) => !item.done).toList();
 
-  factory ProfileCompletion.fromJson(Map<String, dynamic> json) =>
-      ProfileCompletion(
-        percent: asInt(json['percent']),
-        completed: asBool(json['completed']),
-        checklist:
-            asList(json['checklist']).map(ChecklistItem.fromJson).toList(),
-      );
+  factory ProfileCompletion.fromJson(Map<String, dynamic> json) {
+    final next = json['nextBestAction'];
+    return ProfileCompletion(
+      percent: asInt(json['percent']),
+      completed: asBool(json['completed']),
+      checklist: asList(json['checklist']).map(ChecklistItem.fromJson).toList(),
+      nextBestAction: next == null ? null : ChecklistItem.fromJson(asMap(next)),
+    );
+  }
 }
 
 class ChecklistItem {
@@ -104,16 +124,134 @@ class ChecklistItem {
     required this.key,
     required this.label,
     required this.done,
+    this.weight = 0,
+    this.prompt,
+    this.href,
   });
 
   final String key;
   final String label;
   final bool done;
 
+  /// How much this section contributes to the percentage.
+  final int weight;
+
+  /// Friendly invitation to complete it, authored server-side.
+  final String? prompt;
+
+  /// Web path the section belongs to; the app maps it to its own route.
+  final String? href;
+
   factory ChecklistItem.fromJson(Map<String, dynamic> json) => ChecklistItem(
         key: asString(json['key']),
         label: asString(json['label']),
         done: asBool(json['done']),
+        weight: asInt(json['weight']),
+        prompt: asStringOrNull(json['prompt']),
+        href: asStringOrNull(json['href']),
+      );
+}
+
+class JobsSummary {
+  const JobsSummary({
+    required this.activeTotal,
+    required this.myApplications,
+    required this.recent,
+  });
+
+  final int activeTotal;
+  final int myApplications;
+  final List<JobTeaser> recent;
+
+  factory JobsSummary.fromJson(Map<String, dynamic> json) => JobsSummary(
+        activeTotal: asInt(json['activeTotal']),
+        myApplications: asInt(json['myApplications']),
+        recent: asList(json['recent']).map(JobTeaser.fromJson).toList(),
+      );
+}
+
+class JobTeaser {
+  const JobTeaser({
+    required this.id,
+    required this.title,
+    required this.companyName,
+    this.industry,
+    this.jobType,
+    this.locationState,
+  });
+
+  final String id;
+  final String title;
+  final String companyName;
+  final String? industry;
+  final String? jobType;
+  final String? locationState;
+
+  factory JobTeaser.fromJson(Map<String, dynamic> json) => JobTeaser(
+        id: asString(json['id']),
+        title: asString(json['title'], fallback: 'Untitled role'),
+        companyName: asString(json['companyName']),
+        industry: asStringOrNull(json['industry']),
+        jobType: asStringOrNull(json['jobType']),
+        locationState: asStringOrNull(json['locationState']),
+      );
+}
+
+class GroupsSummary {
+  const GroupsSummary({required this.joined, required this.popular});
+
+  final int joined;
+  final List<GroupTeaser> popular;
+
+  factory GroupsSummary.fromJson(Map<String, dynamic> json) => GroupsSummary(
+        joined: asInt(json['joined']),
+        popular: asList(json['popular']).map(GroupTeaser.fromJson).toList(),
+      );
+}
+
+class GroupTeaser {
+  const GroupTeaser({
+    required this.id,
+    required this.name,
+    required this.membersCount,
+    this.type,
+  });
+
+  final String id;
+  final String name;
+  final int membersCount;
+  final String? type;
+
+  factory GroupTeaser.fromJson(Map<String, dynamic> json) => GroupTeaser(
+        id: asString(json['id']),
+        name: asString(json['name'], fallback: 'Group'),
+        membersCount: asInt(json['membersCount']),
+        type: asStringOrNull(json['type']),
+      );
+}
+
+class SuggestedConnection {
+  const SuggestedConnection({
+    required this.id,
+    required this.fullName,
+    this.departmentName,
+    this.graduationYear,
+    this.avatarUrl,
+  });
+
+  final String id;
+  final String fullName;
+  final String? departmentName;
+  final String? graduationYear;
+  final String? avatarUrl;
+
+  factory SuggestedConnection.fromJson(Map<String, dynamic> json) =>
+      SuggestedConnection(
+        id: asString(json['id']),
+        fullName: asString(json['fullName'], fallback: 'Alumnus'),
+        departmentName: asStringOrNull(json['departmentName']),
+        graduationYear: asStringOrNull(json['graduationYear']),
+        avatarUrl: asStringOrNull(json['avatarUrl']),
       );
 }
 

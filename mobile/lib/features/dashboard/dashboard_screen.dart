@@ -4,6 +4,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/branding/gsu_crest.dart';
+import '../../core/network/api_exception.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/formatters.dart';
 import '../../core/widgets/state_views.dart';
@@ -12,7 +13,9 @@ import '../../data/models/dashboard.dart';
 import '../../data/providers.dart';
 import '../achievements/achievements_screen.dart';
 import '../auth/session_controller.dart';
+import '../../data/alumni_repository.dart';
 import '../connections/connections_screen.dart';
+import '../directory/directory_screen.dart';
 import '../events/events_screen.dart';
 import '../id_card/id_card_screen.dart';
 import '../jobs/jobs_screen.dart';
@@ -242,6 +245,27 @@ class _DashboardBody extends ConsumerWidget {
             icon: Icons.bolt_rounded,
           ),
           _QuickActions(columns: columns),
+          if (data.connectionSuggestions.isNotEmpty) ...[
+            const SizedBox(height: 22),
+            SectionHeader(
+              title: 'People you may know',
+              subtitle: 'From your faculty and graduating set',
+              actionLabel: 'Directory',
+              icon: Icons.person_add_alt_1_outlined,
+              onAction: () => openScreen(context, const DirectoryScreen()),
+            ),
+            GsuCard(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+              child: Column(
+                children: [
+                  for (var i = 0; i < data.connectionSuggestions.length; i++) ...[
+                    if (i > 0) const Divider(height: 1),
+                    _SuggestionRow(person: data.connectionSuggestions[i]),
+                  ],
+                ],
+              ),
+            ),
+          ],
           if (data.upcomingEvents.isNotEmpty) ...[
             const SizedBox(height: 22),
             SectionHeader(
@@ -390,6 +414,35 @@ class _CompletionCard extends StatelessWidget {
               ),
             ],
           ),
+          // The server picks the highest-weight outstanding section, so the
+          // nudge is the same one the web app shows.
+          if (completion.nextBestAction?.prompt != null) ...[
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              decoration: BoxDecoration(
+                color: AppColors.amber600.withValues(alpha: 0.10),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(
+                    Icons.lightbulb_outline_rounded,
+                    size: 16,
+                    color: AppColors.amber600,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      completion.nextBestAction!.prompt!,
+                      style: theme.textTheme.bodySmall?.copyWith(height: 1.4),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
           if (outstanding.isNotEmpty) ...[
             const SizedBox(height: 14),
             Wrap(
@@ -832,6 +885,108 @@ class _EventTeaserCard extends StatelessWidget {
               ],
             ),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+/// One suggested connection, with the request sent inline.
+///
+/// Mirrors PersonCard's request handling rather than reusing it: PersonCard
+/// needs a full [Person], and the dashboard deliberately receives only the few
+/// fields a suggestion is allowed to carry.
+class _SuggestionRow extends ConsumerStatefulWidget {
+  const _SuggestionRow({required this.person});
+
+  final SuggestedConnection person;
+
+  @override
+  ConsumerState<_SuggestionRow> createState() => _SuggestionRowState();
+}
+
+class _SuggestionRowState extends ConsumerState<_SuggestionRow> {
+  bool _busy = false;
+  bool _sent = false;
+
+  Future<void> _connect() async {
+    setState(() => _busy = true);
+    try {
+      final repository = await ref.read(repositoryProvider.future);
+      await repository.requestConnection(widget.person.id);
+      if (!mounted) return;
+      setState(() => _sent = true);
+      showAppSnack(context, 'Connection request sent.');
+      ref.invalidate(connectionsProvider);
+    } catch (error) {
+      if (!mounted) return;
+      showAppSnack(context, ApiException.from(error).message, isError: true);
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final person = widget.person;
+    final detail = [person.departmentName, person.graduationYear]
+        .whereType<String>()
+        .join(' · ');
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: Row(
+        children: [
+          GsuAvatar(
+            name: person.fullName,
+            imageUrl: person.avatarUrl,
+            radius: 20,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  person.fullName,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                if (detail.isNotEmpty)
+                  Text(
+                    detail,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          if (_sent)
+            Text(
+              'Requested',
+              style: theme.textTheme.labelMedium?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            )
+          else
+            TextButton(
+              onPressed: _busy ? null : _connect,
+              child: _busy
+                  ? const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Text('Connect'),
+            ),
         ],
       ),
     );
