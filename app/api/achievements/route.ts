@@ -2,50 +2,7 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 
-const BADGE_CATALOG = [
-  {
-    badgeType: "PROFILE_COMPLETE",
-    label: "Profile Complete",
-    description: "Complete your profile details to 100%.",
-    icon: "shield-check",
-  },
-  {
-    badgeType: "EARLY_ADOPTER",
-    label: "Early Adopter",
-    description: "Joined the platform in the early launch cohort.",
-    icon: "rocket",
-  },
-  {
-    badgeType: "FIRST_CLASS_HONOURS",
-    label: "First Class Honours",
-    description: "Awarded for graduating with first class honors.",
-    icon: "award",
-  },
-  {
-    badgeType: "MENTOR",
-    label: "Mentor",
-    description: "Actively supports alumni through mentorship.",
-    icon: "graduation-cap",
-  },
-  {
-    badgeType: "JOB_POSTER",
-    label: "Job Poster",
-    description: "Published high-impact job opportunities.",
-    icon: "briefcase",
-  },
-  {
-    badgeType: "TOP_CONNECTOR",
-    label: "Top Connector",
-    description: "Highly active in building alumni connections.",
-    icon: "users",
-  },
-  {
-    badgeType: "VERIFIED",
-    label: "Verified",
-    description: "Verified status granted by administrators.",
-    icon: "badge-check",
-  },
-] as const;
+import { BADGE_CATALOG } from "@/lib/badges";
 
 const MIN_YEAR = 1980;
 const MAX_YEAR = 2100;

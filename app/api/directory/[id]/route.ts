@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
+import { describeBadge } from "@/lib/badges";
 import { prisma } from "@/lib/db";
 
 type RouteCtx = {
@@ -178,10 +179,14 @@ export async function GET(req: NextRequest, ctx: RouteCtx) {
       })),
       achievements: graduate.achievements.map((row) => ({
         ...row,
+        // Always true here — the query filters to verified only — but stated
+        // explicitly so clients don't have to infer it from the route.
+        verified: true,
         verifiedAt: row.verifiedAt?.toISOString() ?? null,
       })),
       badges: graduate.badges.map((row) => ({
-        ...row,
+        id: row.id,
+        ...describeBadge(row.badgeType),
         awardedAt: row.awardedAt.toISOString(),
       })),
 
