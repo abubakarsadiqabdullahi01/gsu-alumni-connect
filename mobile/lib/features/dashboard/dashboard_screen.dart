@@ -181,44 +181,59 @@ class _DashboardBody extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          GridView.count(
-            crossAxisCount: columns,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            mainAxisSpacing: 12,
-            crossAxisSpacing: 12,
-            childAspectRatio: 1.28,
-            children: [
-              StatTile(
-                label: 'Connections',
-                value: Fmt.number(stats.connections),
-                icon: Icons.hub_rounded,
-                tone: AppColors.navy600,
-                caption: stats.pendingConnectionRequests > 0
-                    ? '${stats.pendingConnectionRequests} pending'
-                    : null,
-                onTap: () => openScreen(context, const ConnectionsScreen()),
-              ),
-              StatTile(
-                label: 'Profile views',
-                value: Fmt.compact(stats.profileViews),
-                icon: Icons.visibility_outlined,
-                tone: AppColors.teal600,
-              ),
-              StatTile(
-                label: 'Jobs applied',
-                value: Fmt.number(stats.jobApplications),
-                icon: Icons.work_outline_rounded,
-                tone: AppColors.gold600,
-                onTap: () => openScreen(context, const JobsScreen()),
-              ),
-              StatTile(
-                label: 'Groups joined',
-                value: Fmt.number(stats.groupsJoined),
-                icon: Icons.diversity_3_rounded,
-                tone: const Color(0xFF6D4AA8),
-              ),
-            ],
+          // One row at every width. A responsive grid wrapped the fourth tile
+          // onto its own line on a tablet, which read as a layout accident.
+          // IntrinsicHeight keeps all four the height of the tallest.
+          IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(
+                  child: StatTile(
+                    compact: true,
+                    label: 'Connections',
+                    value: Fmt.number(stats.connections),
+                    icon: Icons.hub_rounded,
+                    tone: AppColors.navy600,
+                    caption: stats.pendingConnectionRequests > 0
+                        ? '${stats.pendingConnectionRequests} pending'
+                        : null,
+                    onTap: () => openScreen(context, const ConnectionsScreen()),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: StatTile(
+                    compact: true,
+                    label: 'Profile views',
+                    value: Fmt.compact(stats.profileViews),
+                    icon: Icons.visibility_outlined,
+                    tone: AppColors.teal600,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: StatTile(
+                    compact: true,
+                    label: 'Jobs applied',
+                    value: Fmt.number(stats.jobApplications),
+                    icon: Icons.work_outline_rounded,
+                    tone: AppColors.gold600,
+                    onTap: () => openScreen(context, const JobsScreen()),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: StatTile(
+                    compact: true,
+                    label: 'Groups joined',
+                    value: Fmt.number(stats.groupsJoined),
+                    icon: Icons.diversity_3_rounded,
+                    tone: const Color(0xFF6D4AA8),
+                  ),
+                ),
+              ],
+            ),
           ).animate().fadeIn(duration: 320.ms).moveY(begin: 12, end: 0),
           const SizedBox(height: 22),
           if (data.completion.percent < 100) ...[

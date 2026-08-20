@@ -92,20 +92,67 @@ class _AppShellState extends ConsumerState<AppShell> {
       ],
     );
 
-    final isWide = MediaQuery.sizeOf(context).width >= 800;
+    return Scaffold(
+      body: body,
+      bottomNavigationBar: _FooterNav(
+        destinations: destinations,
+        selectedIndex: index,
+        onSelected: (value) => setState(() => _index = value),
+      ),
+    );
+  }
+}
 
-    if (isWide) {
-      return Scaffold(
-        body: Row(
-          children: [
-            NavigationRail(
-              selectedIndex: index,
-              onDestinationSelected: (value) => setState(() => _index = value),
-              labelType: NavigationRailLabelType.all,
-              groupAlignment: -0.7,
+/// Navigation footer, used at every width.
+///
+/// Replaces the tablet navigation rail: the rail put navigation somewhere
+/// different depending on the device, and its group alignment left a dead band
+/// above the first destination. A single footer means one muscle memory.
+///
+/// The bar is capped and centred rather than stretched, because a full-width
+/// NavigationBar spreads five destinations to the far edges of a tablet — hard
+/// to reach and visibly a phone layout pulled wide.
+class _FooterNav extends StatelessWidget {
+  const _FooterNav({
+    required this.destinations,
+    required this.selectedIndex,
+    required this.onSelected,
+  });
+
+  final List<_Destination> destinations;
+  final int selectedIndex;
+  final ValueChanged<int> onSelected;
+
+  static const double _maxBarWidth = 640;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final screenWidth = MediaQuery.sizeOf(context).width;
+    // Explicit width, not a ConstrainedBox: inside a Row the bar would be free
+    // to take the cap even on a narrower screen, and overflow.
+    final barWidth = screenWidth < _maxBarWidth ? screenWidth : _maxBarWidth;
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        border: Border(
+          top: BorderSide(color: theme.dividerColor.withValues(alpha: 0.6)),
+        ),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(
+            width: barWidth,
+            child: NavigationBar(
+              selectedIndex: selectedIndex,
+              onDestinationSelected: onSelected,
+              backgroundColor: Colors.transparent,
+              elevation: 0,
               destinations: [
                 for (final destination in destinations)
-                  NavigationRailDestination(
+                  NavigationDestination(
                     icon: _BadgedIcon(
                       icon: destination.icon,
                       count: destination.badge,
@@ -114,35 +161,11 @@ class _AppShellState extends ConsumerState<AppShell> {
                       icon: destination.selectedIcon,
                       count: destination.badge,
                     ),
-                    label: Text(destination.label),
+                    label: destination.label,
                   ),
               ],
             ),
-            const VerticalDivider(width: 1),
-            Expanded(child: body),
-          ],
-        ),
-      );
-    }
-
-    return Scaffold(
-      body: body,
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: index,
-        onDestinationSelected: (value) => setState(() => _index = value),
-        destinations: [
-          for (final destination in destinations)
-            NavigationDestination(
-              icon: _BadgedIcon(
-                icon: destination.icon,
-                count: destination.badge,
-              ),
-              selectedIcon: _BadgedIcon(
-                icon: destination.selectedIcon,
-                count: destination.badge,
-              ),
-              label: destination.label,
-            ),
+          ),
         ],
       ),
     );

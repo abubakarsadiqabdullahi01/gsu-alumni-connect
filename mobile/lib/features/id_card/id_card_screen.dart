@@ -6,7 +6,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
-import '../../core/branding/gsu_crest.dart';
 import '../../core/config/app_config.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/formatters.dart';
@@ -156,247 +155,275 @@ class _FlipCard extends StatelessWidget {
   }
 }
 
-class _CardFront extends StatelessWidget {
-  const _CardFront({required this.card});
+/// Native design size of the card, matching `CARD_WIDTH`/`CARD_HEIGHT` in
+/// components/profile/id-card-studio/cardVectors.ts on the web.
+///
+/// Each face is laid out at exactly these numbers and then scaled to fit, so
+/// every position below is the web's own coordinate rather than something
+/// re-derived by eye. Change one on the web and the same number changes here.
+const double _cardW = 1011;
+const double _cardH = 635;
 
-  final IdCard card;
+const Color _cardGreen = Color(0xFF1A5C3A);
+const Color _cardTeal = Color(0xFF0A9396);
+const Color _cardGold = Color(0xFFC9A84C);
+const Color _labelGrey = Color(0xFF4B5563);
+const Color _valueInk = Color(0xFF333333);
+const Color _noteInk = Color(0xFF334155);
+
+const String _frontTemplate = 'assets/images/Front-ID.png';
+const String _backTemplate = 'assets/images/Back-ID.png';
+const String _fallbackSignature = 'assets/images/Signature.png';
+const String _logoAsset = 'assets/images/gsu-alumni-logo.png';
+
+const String _frontMicrotext =
+    'GSU ALUMNI ASSOCIATION • PRIMUS INTERPARES • '
+    'UPLIFTING THE IDEAS OF GSU • AUTHORIZED MEMBER';
+
+/// Mirrors `serialFrom` in id-card-preview-client.tsx so the app and the web
+/// print the same serial for the same member.
+String _serialFor(IdCard card) {
+  final compact =
+      card.alumniNumber.replaceAll(RegExp(r'[^A-Za-z0-9]'), '').toUpperCase();
+  final slug = compact.length >= 6
+      ? compact.substring(compact.length - 6)
+      : (compact.isEmpty ? '000000' : compact);
+  final sum = compact.codeUnits.fold<int>(0, (acc, unit) => acc + unit);
+  final hex = sum.toRadixString(16).toUpperCase();
+  final checksum =
+      (hex.length > 4 ? hex.substring(hex.length - 4) : hex).padLeft(4, '0');
+  final year = (card.issuedAt ?? DateTime.now()).year;
+  return 'GSU-SERIAL-$year-$slug-$checksum';
+}
+
+/// Scales a face authored at [_cardW]x[_cardH] down to the available width.
+///
+/// Transform.scale rather than FittedBox so the children can be plain
+/// [Positioned] widgets using the design coordinates directly.
+class _CardFace extends StatelessWidget {
+  const _CardFace({required this.template, required this.children});
+
+  final String template;
+  final List<Widget> children;
 
   @override
   Widget build(BuildContext context) {
-    final photo = AppConfig.resolveUrl(card.imageUrl);
-
     return AspectRatio(
-      aspectRatio: 1.62,
-      child: Container(
-        decoration: BoxDecoration(
-          gradient: AppColors.nightGradient,
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.28),
-              blurRadius: 26,
-              offset: const Offset(0, 12),
-            ),
-          ],
-        ),
-        clipBehavior: Clip.antiAlias,
-        child: Stack(
-          children: [
-            const Positioned.fill(
-              child: CustomPaint(painter: _GuillochePainter()),
-            ),
-            Positioned(
-              top: -40,
-              right: -30,
-              child: Container(
-                width: 150,
-                height: 150,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: AppColors.gold500.withValues(alpha: 0.09),
+      aspectRatio: _cardW / _cardH,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: Transform.scale(
+              scale: constraints.maxWidth / _cardW,
+              alignment: Alignment.topLeft,
+              child: SizedBox(
+                width: _cardW,
+                height: _cardH,
+                child: Stack(
+                  children: [
+                    // The template carries the crest, headings, motto and
+                    // guilloche artwork; everything else is overlaid.
+                    Positioned.fill(
+                      child: Image.asset(
+                        template,
+                        fit: BoxFit.cover,
+                        filterQuality: FilterQuality.medium,
+                      ),
+                    ),
+                    ...children,
+                  ],
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      const GsuCrest(size: 34, showRibbon: false),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              AppConfig.institution.toUpperCase(),
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 10.5,
-                                fontWeight: FontWeight.w800,
-                                letterSpacing: 1.4,
-                              ),
-                            ),
-                            const SizedBox(height: 2),
-                            const Text(
-                              'ALUMNI IDENTITY CARD',
-                              style: TextStyle(
-                                color: AppColors.gold400,
-                                fontSize: 8.5,
-                                fontWeight: FontWeight.w700,
-                                letterSpacing: 2,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 7,
-                          vertical: 3,
-                        ),
-                        decoration: BoxDecoration(
-                          gradient: AppColors.goldGradient,
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: const Text(
-                          'VERIFIED',
-                          style: TextStyle(
-                            color: AppColors.navy900,
-                            fontSize: 7.5,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: 1,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 14),
-                  Expanded(
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          width: 78,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(
-                              color: AppColors.gold500.withValues(alpha: 0.55),
-                              width: 1.5,
-                            ),
-                          ),
-                          clipBehavior: Clip.antiAlias,
-                          child: photo.isEmpty
-                              ? Container(
-                                  color: Colors.white.withValues(alpha: 0.08),
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    Fmt.initials(card.fullName),
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 26,
-                                      fontWeight: FontWeight.w800,
-                                    ),
-                                  ),
-                                )
-                              : CachedNetworkImage(
-                                  imageUrl: photo,
-                                  fit: BoxFit.cover,
-                                  errorWidget: (context, _, __) => Container(
-                                    color: Colors.white.withValues(alpha: 0.08),
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      Fmt.initials(card.fullName),
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 26,
-                                        fontWeight: FontWeight.w800,
-                                      ),
-                                    ),
-                                  ),
-                                  placeholder: (context, _) => Container(
-                                    color: Colors.white.withValues(alpha: 0.06),
-                                  ),
-                                ),
-                        ),
-                        const SizedBox(width: 14),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                card.fullName.toUpperCase(),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 15,
-                                  height: 1.2,
-                                  fontWeight: FontWeight.w800,
-                                  letterSpacing: 0.3,
-                                ),
-                              ),
-                              const SizedBox(height: 3),
-                              Text(
-                                card.alumniNumber,
-                                style: const TextStyle(
-                                  color: AppColors.gold400,
-                                  fontSize: 11.5,
-                                  fontWeight: FontWeight.w700,
-                                  letterSpacing: 1.1,
-                                ),
-                              ),
-                              const SizedBox(height: 10),
-                              _CardField(
-                                label: 'DISCIPLINE',
-                                value: card.discipline,
-                              ),
-                              _CardField(
-                                label: 'CLASS',
-                                value: card.graduationYear,
-                              ),
-                              _CardField(label: 'RANK', value: card.rank),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'STATE OF ORIGIN',
-                              style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.45),
-                                fontSize: 6.5,
-                                fontWeight: FontWeight.w800,
-                                letterSpacing: 1.1,
-                              ),
-                            ),
-                            const SizedBox(height: 1),
-                            Text(
-                              card.stateOfOrigin,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 10.5,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        width: 84,
-                        height: 1,
-                        color: AppColors.gold500.withValues(alpha: 0.6),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 3),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: Text(
-                      'REGISTRAR',
-                      style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.45),
-                        fontSize: 6.5,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: 1.4,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+/// Small caps label above a value, matching the web card's `DetailField`.
+class _DetailField extends StatelessWidget {
+  const _DetailField({
+    required this.label,
+    required this.value,
+    required this.left,
+    required this.baseline,
+    this.width = 300,
+    this.accent = false,
+  });
+
+  /// All four fields on the card share this size; the web's per-field override
+  /// resolves to the same 25 for every one of them.
+  static const double _valueFontSize = 25;
+
+  final String label;
+  final String value;
+  final double left;
+
+  /// The web positions the value on an SVG baseline with
+  /// dominantBaseline="middle"; this offsets from the same number.
+  final double baseline;
+  final double width;
+  final bool accent;
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      left: left,
+      top: baseline - 37,
+      width: width,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            maxLines: 1,
+            style: const TextStyle(
+              fontSize: 15,
+              height: 1,
+              fontWeight: FontWeight.w700,
+              color: _labelGrey,
+              letterSpacing: 1.2,
             ),
+          ),
+          const SizedBox(height: 9),
+          Text(
+            value,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: _valueFontSize,
+              height: 1,
+              fontWeight: accent ? FontWeight.w800 : FontWeight.w600,
+              color: accent ? _cardTeal : _valueInk,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// A decorative square outline, as drawn by the web's `cornerSquares`.
+class _CornerSquare extends StatelessWidget {
+  const _CornerSquare({
+    required this.left,
+    required this.top,
+    required this.size,
+    required this.opacity,
+  });
+
+  final double left;
+  final double top;
+  final double size;
+  final double opacity;
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      left: left,
+      top: top,
+      width: size,
+      height: size,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: _cardGreen.withValues(alpha: opacity),
+            width: 1.5,
+          ),
+          borderRadius: BorderRadius.circular(2),
+        ),
+      ),
+    );
+  }
+}
+
+/// Iridescent disc standing in for the web's `HologramSticker`.
+class _Hologram extends StatelessWidget {
+  const _Hologram({
+    required this.centreX,
+    required this.centreY,
+    required this.radius,
+  });
+
+  final double centreX;
+  final double centreY;
+  final double radius;
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      left: centreX - radius,
+      top: centreY - radius,
+      width: radius * 2,
+      height: radius * 2,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          gradient: SweepGradient(
+            colors: [
+              _cardTeal.withValues(alpha: 0.55),
+              _cardGold.withValues(alpha: 0.55),
+              const Color(0xFF6D4AA8).withValues(alpha: 0.5),
+              _cardGreen.withValues(alpha: 0.55),
+              _cardTeal.withValues(alpha: 0.55),
+            ],
+          ),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.6)),
+        ),
+        child: Center(
+          child: Icon(
+            Icons.star_rounded,
+            size: radius * 0.9,
+            color: Colors.white.withValues(alpha: 0.85),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Gold contact pad, standing in for the web's `SmartChip`.
+class _SmartChip extends StatelessWidget {
+  const _SmartChip({
+    required this.left,
+    required this.top,
+    required this.width,
+    required this.height,
+  });
+
+  final double left;
+  final double top;
+  final double width;
+  final double height;
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      left: left,
+      top: top,
+      width: width,
+      height: height,
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(6),
+          gradient: const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0xFFE8D28A), _cardGold, Color(0xFFA8862F)],
+          ),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            for (var i = 0; i < 4; i++)
+              Container(
+                height: 1.4,
+                margin: const EdgeInsets.symmetric(horizontal: 10),
+                color: const Color(0xFF8A6D22).withValues(alpha: 0.7),
+              ),
           ],
         ),
       ),
@@ -404,41 +431,261 @@ class _CardFront extends StatelessWidget {
   }
 }
 
-class _CardField extends StatelessWidget {
-  const _CardField({required this.label, required this.value});
+/// Photo, signature and template images may be bundled assets or remote URLs.
+Widget _cardImage(String? url, {required String fallbackAsset}) {
+  final resolved = AppConfig.resolveUrl(url);
+  if (resolved.isEmpty) {
+    return Image.asset(fallbackAsset, fit: BoxFit.contain);
+  }
+  return CachedNetworkImage(
+    imageUrl: resolved,
+    fit: BoxFit.cover,
+    errorWidget: (context, _, __) =>
+        Image.asset(fallbackAsset, fit: BoxFit.contain),
+    placeholder: (context, _) => const ColoredBox(color: Color(0xFFE7ECE8)),
+  );
+}
 
-  final String label;
-  final String value;
+class _CardFront extends StatelessWidget {
+  const _CardFront({required this.card});
+
+  final IdCard card;
+
+  // cardVectors.front.photo*
+  static const double _photoX = 93;
+  static const double _photoY = 295;
+  static const double _photoR = 105;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 5),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
+    const photoDiameter = _photoR * 2;
+    final qrData = card.verificationUrl.isEmpty
+        ? card.alumniNumber
+        : card.verificationUrl;
+
+    return _CardFace(
+      template: _frontTemplate,
+      children: [
+        // Top spectrum bar.
+        const Positioned(
+          left: 0,
+          top: 0,
+          width: _cardW,
+          height: 18,
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  _cardGreen,
+                  Color(0xFF2E7D52),
+                  _cardTeal,
+                  Color(0xFF2E7D52),
+                  _cardGreen,
+                ],
+                stops: [0, 0.3, 0.5, 0.7, 1],
+              ),
+            ),
+          ),
+        ),
+
+        // Outer gold ring, then the green bezel, then the photo itself.
+        Positioned(
+          left: _photoX - 7,
+          top: _photoY - 7,
+          width: photoDiameter + 14,
+          height: photoDiameter + 14,
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: _cardGold.withValues(alpha: 0.6),
+              ),
+            ),
+          ),
+        ),
+        Positioned(
+          left: _photoX - 2,
+          top: _photoY - 2,
+          width: photoDiameter + 4,
+          height: photoDiameter + 4,
+          child: const DecoratedBox(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.fromBorderSide(
+                BorderSide(color: _cardGreen, width: 3),
+              ),
+            ),
+          ),
+        ),
+        Positioned(
+          left: _photoX,
+          top: _photoY,
+          width: photoDiameter,
+          height: photoDiameter,
+          child: ClipOval(
+            // Falls back to the association mark rather than a broken frame,
+            // so a card with no uploaded photo still prints presentably.
+            child: ColoredBox(
+              color: const Color(0xFFE7ECE8),
+              child: _cardImage(card.imageUrl, fallbackAsset: _logoAsset),
+            ),
+          ),
+        ),
+
+        _SmartChip(left: 870, top: 270, width: 75, height: 55),
+
+        // cardVectors.front.fullName — squeezed rather than clipped, matching
+        // the web's textLength/lengthAdjust.
+        Positioned(
+          left: 390,
+          top: 276,
+          width: 390,
+          height: 46,
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Text(
+              card.fullName.toUpperCase(),
+              maxLines: 1,
+              style: const TextStyle(
+                fontSize: 33,
+                height: 1,
+                fontWeight: FontWeight.w700,
+                color: _cardGreen,
+              ),
+            ),
+          ),
+        ),
+
+        _DetailField(
+          label: 'MEMBERSHIP NUMBER',
+          value: card.alumniNumber,
+          left: 335,
+          baseline: 382,
+          width: 340,
+          accent: true,
+        ),
+        _DetailField(
+          label: 'YEAR OF GRADUATION',
+          value: card.graduationYear,
+          left: 700,
+          baseline: 382,
+          width: 290,
+        ),
+        _DetailField(
+          label: 'DISCIPLINE',
+          value: card.discipline,
+          left: 335,
+          baseline: 478,
+          width: 340,
+        ),
+        _DetailField(
+          label: 'GENDER',
+          value: card.gender,
+          left: 700,
+          baseline: 478,
+          width: 190,
+        ),
+
+        _Hologram(centreX: 550, centreY: 558, radius: 35),
+
+        // cardVectors.front.qr*
+        Positioned(
+          left: 800,
+          top: 420,
+          width: 140,
+          height: 140,
+          child: QrImageView(
+            data: qrData,
+            version: QrVersions.auto,
+            size: 140,
+            gapless: true,
+            padding: EdgeInsets.zero,
+            backgroundColor: Colors.white,
+            eyeStyle: const QrEyeStyle(
+              eyeShape: QrEyeShape.square,
+              color: _cardGreen,
+            ),
+            dataModuleStyle: const QrDataModuleStyle(
+              dataModuleShape: QrDataModuleShape.square,
+              color: _cardGreen,
+            ),
+          ),
+        ),
+
+        // cardVectors.front.cardholderSig
+        Positioned(
+          left: 90,
+          top: 520,
+          width: 230,
+          height: 60,
+          child: _cardImage(
+            card.signatureUrl,
+            fallbackAsset: _fallbackSignature,
+          ),
+        ),
+        const Positioned(
+          left: 90,
+          top: 580,
+          width: 230,
+          height: 0.9,
+          child: ColoredBox(color: _cardGreen),
+        ),
+        const Positioned(
+          left: 90,
+          top: 588,
+          width: 230,
+          child: Text(
+            "HOLDER'S SIGNATURE",
+            textAlign: TextAlign.center,
             style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.45),
-              fontSize: 6.5,
-              fontWeight: FontWeight.w800,
-              letterSpacing: 1.1,
+              fontSize: 8,
+              height: 1,
+              color: Color(0xFF6B7280),
+              letterSpacing: 1.5,
             ),
           ),
-          const SizedBox(height: 1),
-          Text(
-            value,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 10.5,
-              fontWeight: FontWeight.w600,
+        ),
+
+        for (final square in const [
+          [40.0, 480.0, 14.0, 0.45],
+          [68.0, 480.0, 10.0, 0.6],
+          [40.0, 500.0, 10.0, 0.45],
+          [960.0, 480.0, 14.0, 0.6],
+          [946.0, 480.0, 10.0, 0.45],
+          [960.0, 500.0, 10.0, 0.6],
+        ])
+          _CornerSquare(
+            left: square[0],
+            top: square[1],
+            size: square[2],
+            opacity: square[3],
+          ),
+
+        // Footer strip and its microprint.
+        Positioned(
+          left: 0,
+          top: _cardH - 24,
+          width: _cardW,
+          height: 24,
+          child: const ColoredBox(
+            color: _cardGreen,
+            child: Center(
+              child: Text(
+                _frontMicrotext,
+                maxLines: 1,
+                style: TextStyle(
+                  fontSize: 7,
+                  height: 1,
+                  fontFamily: 'monospace',
+                  letterSpacing: 3,
+                  color: Color(0x8CFFFFFF),
+                ),
+              ),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
@@ -448,160 +695,149 @@ class _CardBack extends StatelessWidget {
 
   final IdCard card;
 
+  // cardVectors.back.noteBlock — baselines 308, 363, 398, 433.
+  static const double _noteX = 120;
+
   @override
   Widget build(BuildContext context) {
-    return AspectRatio(
-      aspectRatio: 1.62,
-      child: Container(
-        decoration: BoxDecoration(
-          gradient: AppColors.nightGradient,
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.28),
-              blurRadius: 26,
-              offset: const Offset(0, 12),
+    return _CardFace(
+      template: _backTemplate,
+      children: [
+        const Positioned(
+          left: _noteX,
+          top: 290,
+          width: 800,
+          child: Text(
+            'Emergency NOK: 08131381023',
+            style: TextStyle(
+              fontSize: 23,
+              height: 1,
+              fontWeight: FontWeight.w800,
+              color: _noteInk,
             ),
-          ],
+          ),
         ),
-        clipBehavior: Clip.antiAlias,
-        child: Stack(
-          children: [
-            const Positioned.fill(
-              child: CustomPaint(painter: _GuillochePainter()),
+        const Positioned(
+          left: _noteX,
+          top: 350,
+          width: 800,
+          child: Text(
+            'This card is personal and non-transferable. '
+            'Alteration, erasure, or misuse renders it invalid.',
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: 17,
+              height: 1,
+              fontWeight: FontWeight.w700,
+              color: _noteInk,
             ),
-            // Magnetic-stripe motif.
-            Positioned(
-              top: 18,
-              left: 0,
-              right: 0,
-              child: Container(height: 30, color: Colors.black87),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 62, 16, 14),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(7),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(9),
-                    ),
-                    child: QrImageView(
-                      data: card.verificationUrl.isEmpty
-                          ? card.alumniNumber
-                          : card.verificationUrl,
-                      version: QrVersions.auto,
-                      size: 92,
-                      gapless: true,
-                      backgroundColor: Colors.white,
-                    ),
-                  ),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'SCAN TO VERIFY',
-                          style: TextStyle(
-                            color: AppColors.gold400,
-                            fontSize: 9,
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: 1.6,
-                          ),
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          'This card is cryptographically signed. Scanning the '
-                          'QR code confirms the holder is a genuine graduate '
-                          'of ${AppConfig.institution}.',
-                          style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.72),
-                            fontSize: 8.5,
-                            height: 1.5,
-                          ),
-                        ),
-                        const Spacer(),
-                        Text(
-                          'SIGNATURE',
-                          style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.45),
-                            fontSize: 6.5,
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: 1.1,
-                          ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          card.shortSignature,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 9,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 0.6,
-                            fontFamily: 'monospace',
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+          ),
         ),
-      ),
+        const Positioned(
+          left: _noteX,
+          top: 385,
+          width: 800,
+          child: Text(
+            'Loss should be reported immediately to '
+            'GSU Alumni National Secretariat:',
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: 17,
+              height: 1,
+              fontWeight: FontWeight.w600,
+              color: _noteInk,
+            ),
+          ),
+        ),
+        const Positioned(
+          left: _noteX,
+          top: 420,
+          width: 800,
+          child: Text(
+            '08163667912, 08052495302, or nearest Police Station.',
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: 17,
+              height: 1,
+              fontWeight: FontWeight.w700,
+              color: _noteInk,
+            ),
+          ),
+        ),
+
+        // cardVectors.back.stateOfOrigin
+        const Positioned(
+          left: 310,
+          top: 529,
+          width: 260,
+          child: Text(
+            'STATE OF ORIGIN',
+            style: TextStyle(
+              fontSize: 9,
+              height: 1,
+              color: Color(0xFF8A8A8A),
+              letterSpacing: 1.8,
+            ),
+          ),
+        ),
+        Positioned(
+          left: 310,
+          top: 542,
+          width: 260,
+          child: Text(
+            card.stateOfOrigin,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              fontSize: 15,
+              height: 1,
+              fontWeight: FontWeight.w600,
+              color: _valueInk,
+            ),
+          ),
+        ),
+
+        _Hologram(centreX: 500, centreY: 530, radius: 30),
+
+        // cardVectors.back.sigText — the serial, centred on x 510.
+        Positioned(
+          left: 110,
+          top: 598,
+          width: 800,
+          child: Text(
+            _serialFor(card),
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            style: const TextStyle(
+              fontSize: 13,
+              height: 1,
+              fontWeight: FontWeight.w700,
+              color: Color(0xFF0F5132),
+              letterSpacing: 2,
+            ),
+          ),
+        ),
+
+        for (final square in const [
+          [100.0, 35.0, 14.0],
+          [138.0, 55.0, 10.0],
+          [140.0, 85.0, 14.0],
+          [80.0, 55.0, 10.0],
+        ])
+          _CornerSquare(
+            left: square[0],
+            top: square[1],
+            size: square[2],
+            opacity: 0.4,
+          ),
+      ],
     );
   }
 }
 
-/// Fine interference lines, the way a security document is engraved. Cheap to
-/// draw and impossible to reproduce with a flat colour fill.
-class _GuillochePainter extends CustomPainter {
-  const _GuillochePainter();
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 0.55
-      ..color = Colors.white.withValues(alpha: 0.055);
-
-    for (var i = 0; i < 26; i++) {
-      final path = Path();
-      final offset = i * (size.height / 13);
-      path.moveTo(-size.width * 0.1, offset);
-      path.cubicTo(
-        size.width * 0.3,
-        offset - size.height * 0.22,
-        size.width * 0.7,
-        offset + size.height * 0.22,
-        size.width * 1.1,
-        offset,
-      );
-      canvas.drawPath(path, paint);
-    }
-
-    final radial = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 0.5
-      ..color = AppColors.gold500.withValues(alpha: 0.07);
-    for (var i = 1; i < 9; i++) {
-      canvas.drawCircle(
-        Offset(size.width * 0.82, size.height * 0.5),
-        i * 16.0,
-        radial,
-      );
-    }
-  }
-
-  @override
-  bool shouldRepaint(_GuillochePainter oldDelegate) => false;
-}
 
 class _SecurityPanel extends StatelessWidget {
   const _SecurityPanel({required this.card});

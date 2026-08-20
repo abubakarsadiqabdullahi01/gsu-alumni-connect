@@ -28,11 +28,20 @@ class GsuCrest extends StatelessWidget {
     return SizedBox(
       width: size,
       height: size * 1.12,
-      child: CustomPaint(
-        painter: _CrestPainter(
-          gradient: shieldGradient ?? AppColors.brandGradient,
-          emblem: emblemColor,
-          showRibbon: showRibbon,
+      // The association's actual mark, the same file the web portal's sidebar
+      // uses. The painted crest is kept as the fallback so the brand degrades
+      // to a drawn shield rather than a broken-image box if the asset is ever
+      // missing from a build.
+      child: Image.asset(
+        'assets/images/gsu-alumni-logo.png',
+        fit: BoxFit.contain,
+        filterQuality: FilterQuality.medium,
+        errorBuilder: (context, error, stackTrace) => CustomPaint(
+          painter: _CrestPainter(
+            gradient: shieldGradient ?? AppColors.brandGradient,
+            emblem: emblemColor,
+            showRibbon: showRibbon,
+          ),
         ),
       ),
     );

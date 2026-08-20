@@ -174,6 +174,7 @@ class StatTile extends StatelessWidget {
     this.tone,
     this.caption,
     this.onTap,
+    this.compact = false,
   });
 
   final String label;
@@ -183,10 +184,62 @@ class StatTile extends StatelessWidget {
   final String? caption;
   final VoidCallback? onTap;
 
+  /// Centred and tightened so four tiles fit one row on a phone.
+  final bool compact;
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final color = tone ?? theme.colorScheme.primary;
+
+    if (compact) {
+      return GsuCard(
+        onTap: onTap,
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            IconBadge(icon, color: color, size: 30),
+            const SizedBox(height: 8),
+            // Scaled down rather than clipped: a five-figure count still fits.
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                value,
+                style: theme.textTheme.titleLarge?.copyWith(
+                  height: 1.05,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              label,
+              style: theme.textTheme.labelSmall,
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+            if (caption != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 3),
+                child: Text(
+                  caption!,
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    color: color,
+                    letterSpacing: 0,
+                    fontWeight: FontWeight.w700,
+                  ),
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+          ],
+        ),
+      );
+    }
 
     return GsuCard(
       onTap: onTap,
