@@ -7,6 +7,7 @@ import 'package:gsu_alumni_connect/core/widgets/ui_kit.dart';
 import 'package:gsu_alumni_connect/data/models/alumni_map.dart';
 import 'package:gsu_alumni_connect/data/models/bootstrap.dart';
 import 'package:gsu_alumni_connect/data/models/dashboard.dart';
+import 'package:gsu_alumni_connect/data/models/id_card.dart';
 import 'package:gsu_alumni_connect/data/models/opportunities.dart';
 import 'package:gsu_alumni_connect/data/models/people.dart';
 import 'package:gsu_alumni_connect/data/models/public_profile.dart';
@@ -431,6 +432,48 @@ void main() {
       // Sizing bubbles off the unmerged first entry would misscale every one.
       expect(input.first.count, 5);
       expect(mergeClustersByPosition(input).first.count, 8);
+    });
+  });
+
+  group('ID card numbering', () {
+    IdCard cardFor(String alumniNumber) => IdCard.fromJson({
+          'data': {
+            'payload': {
+              'alumniNumber': alumniNumber,
+              'fullName': 'Abdullahi Abubakar Sadiq',
+            },
+            'verification': <String, dynamic>{},
+            'templates': <String, dynamic>{},
+            'security': {'issuedAt': '2026-08-20T10:36:00Z'},
+          },
+        });
+
+    test('printed membership number swaps faculty and department', () {
+      // UG19/SC·CS/1073 prints as AM19/CS·SC/1073, per the web formatter.
+      expect(cardFor('UG19/SCCS/1073').membershipNumber, 'AM19CSSC1073');
+    });
+
+    test('membership number normalises case and surrounding space', () {
+      expect(cardFor('  ug19/sccs/1073 ').membershipNumber, 'AM19CSSC1073');
+    });
+
+    test('an unexpected registration shape just loses its slashes', () {
+      expect(cardFor('PG20/ABC/12').membershipNumber, 'PG20ABC12');
+      expect(cardFor('').membershipNumber, '');
+    });
+
+    test('the raw number stays available for the QR payload', () {
+      // Reformatting this would invalidate the server's HMAC.
+      expect(cardFor('UG19/SCCS/1073').alumniNumber, 'UG19/SCCS/1073');
+    });
+
+    test('serial derives from the raw number, not the printed one', () {
+      // Raw UG19SCCS1073 ends CS1073; the printed AM19CSSC1073 would end
+      // SC1073. Code units sum to 765 = 0x2FD, padded to 02FD.
+      expect(
+        cardFor('UG19/SCCS/1073').serialNumber,
+        'GSU-SERIAL-2026-CS1073-02FD',
+      );
     });
   });
 

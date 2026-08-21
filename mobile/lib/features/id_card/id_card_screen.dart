@@ -179,22 +179,6 @@ const String _logoAsset = 'assets/images/gsu-alumni-logo.png';
 const String _frontMicrotext = 'GSU ALUMNI ASSOCIATION • PRIMUS INTERPARES • '
     'UPLIFTING THE IDEAS OF GSU • AUTHORIZED MEMBER';
 
-/// Mirrors `serialFrom` in id-card-preview-client.tsx so the app and the web
-/// print the same serial for the same member.
-String _serialFor(IdCard card) {
-  final compact =
-      card.alumniNumber.replaceAll(RegExp(r'[^A-Za-z0-9]'), '').toUpperCase();
-  final slug = compact.length >= 6
-      ? compact.substring(compact.length - 6)
-      : (compact.isEmpty ? '000000' : compact);
-  final sum = compact.codeUnits.fold<int>(0, (acc, unit) => acc + unit);
-  final hex = sum.toRadixString(16).toUpperCase();
-  final checksum =
-      (hex.length > 4 ? hex.substring(hex.length - 4) : hex).padLeft(4, '0');
-  final year = (card.issuedAt ?? DateTime.now()).year;
-  return 'GSU-SERIAL-$year-$slug-$checksum';
-}
-
 /// Scales a face authored at [_cardW]x[_cardH] down to the available width.
 ///
 /// FittedBox, not Transform.scale: Transform does not affect layout, so the
@@ -566,7 +550,8 @@ class _CardFront extends StatelessWidget {
 
         _DetailField(
           label: 'MEMBERSHIP NUMBER',
-          value: card.alumniNumber,
+          // Printed form, not the raw registration number the API sends.
+          value: card.membershipNumber,
           left: 335,
           baseline: 382,
           width: 340,
@@ -816,7 +801,7 @@ class _CardBack extends StatelessWidget {
           top: 598,
           width: 800,
           child: Text(
-            _serialFor(card),
+            card.serialNumber,
             textAlign: TextAlign.center,
             maxLines: 1,
             style: const TextStyle(
