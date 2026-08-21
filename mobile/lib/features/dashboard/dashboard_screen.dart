@@ -173,67 +173,48 @@ class _DashboardBody extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final stats = data.stats;
-    final width = MediaQuery.sizeOf(context).width;
-    final columns = width >= 1000 ? 4 : (width >= 620 ? 3 : 2);
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 20, 16, 32),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // One row at every width. A responsive grid wrapped the fourth tile
-          // onto its own line on a tablet, which read as a layout accident.
-          // IntrinsicHeight keeps all four the height of the tallest.
-          IntrinsicHeight(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Expanded(
-                  child: StatTile(
-                    compact: true,
-                    label: 'Connections',
-                    value: Fmt.number(stats.connections),
-                    icon: Icons.hub_rounded,
-                    tone: AppColors.navy600,
-                    caption: stats.pendingConnectionRequests > 0
-                        ? '${stats.pendingConnectionRequests} pending'
-                        : null,
-                    onTap: () => openScreen(context, const ConnectionsScreen()),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: StatTile(
-                    compact: true,
-                    label: 'Profile views',
-                    value: Fmt.compact(stats.profileViews),
-                    icon: Icons.visibility_outlined,
-                    tone: AppColors.teal600,
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: StatTile(
-                    compact: true,
-                    label: 'Jobs applied',
-                    value: Fmt.number(stats.jobApplications),
-                    icon: Icons.work_outline_rounded,
-                    tone: AppColors.gold600,
-                    onTap: () => openScreen(context, const JobsScreen()),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: StatTile(
-                    compact: true,
-                    label: 'Groups joined',
-                    value: Fmt.number(stats.groupsJoined),
-                    icon: Icons.diversity_3_rounded,
-                    tone: const Color(0xFF6D4AA8),
-                  ),
-                ),
-              ],
-            ),
+          _StatsLayout(
+            children: [
+              StatTile(
+                compact: true,
+                label: 'Connections',
+                value: Fmt.number(stats.connections),
+                icon: Icons.hub_rounded,
+                tone: AppColors.navy600,
+                caption: stats.pendingConnectionRequests > 0
+                    ? '${stats.pendingConnectionRequests} pending'
+                    : null,
+                onTap: () => openScreen(context, const ConnectionsScreen()),
+              ),
+              StatTile(
+                compact: true,
+                label: 'Profile views',
+                value: Fmt.compact(stats.profileViews),
+                icon: Icons.visibility_outlined,
+                tone: AppColors.teal600,
+              ),
+              StatTile(
+                compact: true,
+                label: 'Jobs applied',
+                value: Fmt.number(stats.jobApplications),
+                icon: Icons.work_outline_rounded,
+                tone: AppColors.gold600,
+                onTap: () => openScreen(context, const JobsScreen()),
+              ),
+              StatTile(
+                compact: true,
+                label: 'Groups joined',
+                value: Fmt.number(stats.groupsJoined),
+                icon: Icons.diversity_3_rounded,
+                tone: const Color(0xFF6D4AA8),
+              ),
+            ],
           ).animate().fadeIn(duration: 320.ms).moveY(begin: 12, end: 0),
           const SizedBox(height: 22),
           if (data.completion.percent < 100) ...[
@@ -259,7 +240,7 @@ class _DashboardBody extends ConsumerWidget {
             title: 'Quick actions',
             icon: Icons.bolt_rounded,
           ),
-          _QuickActions(columns: columns),
+          const _QuickActions(),
           if (data.connectionSuggestions.isNotEmpty) ...[
             const SizedBox(height: 22),
             SectionHeader(
@@ -273,7 +254,9 @@ class _DashboardBody extends ConsumerWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
               child: Column(
                 children: [
-                  for (var i = 0; i < data.connectionSuggestions.length; i++) ...[
+                  for (var i = 0;
+                      i < data.connectionSuggestions.length;
+                      i++) ...[
                     if (i > 0) const Divider(height: 1),
                     _SuggestionRow(person: data.connectionSuggestions[i]),
                   ],
@@ -358,6 +341,28 @@ class _HeaderAction extends StatelessWidget {
                 : Icon(icon, color: Colors.white, size: 21),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _StatsLayout extends StatelessWidget {
+  const _StatsLayout({required this.children});
+
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 100,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          for (var i = 0; i < children.length; i++) ...[
+            if (i > 0) const SizedBox(width: 8),
+            Expanded(child: children[i]),
+          ],
+        ],
       ),
     );
   }
@@ -649,7 +654,7 @@ class _FacultyChart extends StatelessWidget {
     if (items.isEmpty) {
       return GsuCard(
         child: SizedBox(
-          height: 100,
+          height: 76,
           child: Center(
             child: Text(
               'Faculty distribution is not available yet.',
@@ -725,9 +730,7 @@ class _FacultyChart extends StatelessWidget {
 }
 
 class _QuickActions extends ConsumerWidget {
-  const _QuickActions({required this.columns});
-
-  final int columns;
+  const _QuickActions();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -781,28 +784,36 @@ class _QuickActions extends ConsumerWidget {
       ),
     ];
 
-    return GridView.count(
-      crossAxisCount: columns,
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      mainAxisSpacing: 12,
-      crossAxisSpacing: 12,
-      childAspectRatio: 1.55,
+    // Wrap of content-sized pills, not a fixed-column grid. There are seven
+    // actions and seven is prime, so every column count left an empty cell in
+    // the last row; and a square cell around one small icon is mostly dead
+    // space. Pills size to their label, flow to fill each row, and leave a
+    // short ragged edge that reads as deliberate rather than as a hole.
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
       children: [
         for (final action in actions)
           GsuCard(
             onTap: action.onTap,
-            padding: const EdgeInsets.all(13),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            padding: const EdgeInsets.fromLTRB(8, 8, 14, 8),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                IconBadge(action.icon, color: action.color, size: 36),
+                IconBadge(
+                  action.icon,
+                  color: action.color,
+                  size: 30,
+                  iconSize: 15,
+                ),
+                const SizedBox(width: 10),
                 Text(
                   action.label,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        fontSize: 12,
+                        height: 1.1,
                         fontWeight: FontWeight.w700,
                         color: Theme.of(context).colorScheme.onSurface,
                       ),

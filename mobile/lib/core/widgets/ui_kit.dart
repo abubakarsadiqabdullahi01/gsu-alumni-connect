@@ -46,6 +46,7 @@ class GsuCard extends StatelessWidget {
           onTap: onTap,
           borderRadius: radius,
           child: Stack(
+            fit: StackFit.passthrough,
             children: [
               if (accent != null)
                 Positioned(
@@ -195,47 +196,64 @@ class StatTile extends StatelessWidget {
     if (compact) {
       return GsuCard(
         onTap: onTap,
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 7),
         child: Column(
-          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            IconBadge(icon, color: color, size: 30),
-            const SizedBox(height: 8),
+            Align(
+              alignment: Alignment.center,
+              child: IconBadge(icon, color: color, size: 26, iconSize: 13),
+            ),
+            const SizedBox(height: 4),
             // Scaled down rather than clipped: a five-figure count still fits.
             FittedBox(
               fit: BoxFit.scaleDown,
               child: Text(
                 value,
-                style: theme.textTheme.titleLarge?.copyWith(
-                  height: 1.05,
-                  fontWeight: FontWeight.w800,
+                style: theme.textTheme.titleMedium?.copyWith(
+                  height: 1,
+                  fontWeight: FontWeight.w900,
                 ),
               ),
             ),
-            const SizedBox(height: 2),
+            const SizedBox(height: 3),
             Text(
               label,
-              style: theme.textTheme.labelSmall,
+              style: theme.textTheme.labelSmall?.copyWith(
+                fontSize: 10,
+                height: 1.1,
+                letterSpacing: 0,
+              ),
               textAlign: TextAlign.center,
-              maxLines: 2,
+              maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
-            if (caption != null)
-              Padding(
-                padding: const EdgeInsets.only(top: 3),
-                child: Text(
-                  caption!,
-                  style: theme.textTheme.labelSmall?.copyWith(
-                    color: color,
-                    letterSpacing: 0,
-                    fontWeight: FontWeight.w700,
-                  ),
-                  textAlign: TextAlign.center,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
+            // Reserved whether or not this tile has a caption. Rendering it
+            // only when present made the one tile carrying "1 pending" taller,
+            // and since the row centres its content vertically, that pushed its
+            // icon, value and label out of line with the other three.
+            SizedBox(
+              height: 13,
+              child: caption == null
+                  ? null
+                  : Center(
+                      child: Text(
+                        caption!,
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          color: color,
+                          fontSize: 9.5,
+                          height: 1.1,
+                          letterSpacing: 0,
+                          fontWeight: FontWeight.w700,
+                        ),
+                        textAlign: TextAlign.center,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+            ),
           ],
         ),
       );

@@ -11,6 +11,7 @@ import 'package:gsu_alumni_connect/data/models/opportunities.dart';
 import 'package:gsu_alumni_connect/data/models/people.dart';
 import 'package:gsu_alumni_connect/data/models/public_profile.dart';
 import 'package:gsu_alumni_connect/data/models/search.dart';
+import 'package:gsu_alumni_connect/features/map/alumni_map_screen.dart';
 import 'package:gsu_alumni_connect/features/splash/splash_screen.dart';
 
 void main() {
@@ -129,10 +130,33 @@ void main() {
   group('Aggregated map', () {
     Map<String, dynamic> payload() => {
           'facts': [
-            {'state': 'Kano', 'lga': 'Nassarawa', 'faculty': 'SC', 'year': '2019-2020', 'count': 4},
-            {'state': 'Kano', 'lga': 'Dala', 'faculty': 'ED', 'year': '2019-2020', 'count': 2},
-            {'state': 'Gombe', 'lga': 'Akko', 'faculty': 'SC', 'year': '2021-2022', 'count': 3},
-            {'state': 'Sokoto', 'faculty': 'SC', 'year': '2019-2020', 'count': 9},
+            {
+              'state': 'Kano',
+              'lga': 'Nassarawa',
+              'faculty': 'SC',
+              'year': '2019-2020',
+              'count': 4
+            },
+            {
+              'state': 'Kano',
+              'lga': 'Dala',
+              'faculty': 'ED',
+              'year': '2019-2020',
+              'count': 2
+            },
+            {
+              'state': 'Gombe',
+              'lga': 'Akko',
+              'faculty': 'SC',
+              'year': '2021-2022',
+              'count': 3
+            },
+            {
+              'state': 'Sokoto',
+              'faculty': 'SC',
+              'year': '2019-2020',
+              'count': 9
+            },
           ],
           'states': [
             {'state': 'Kano', 'count': 6, 'latitude': 11.9, 'longitude': 8.5},
@@ -183,7 +207,12 @@ void main() {
         'percent': 65,
         'completed': false,
         'checklist': [
-          {'key': 'photo', 'label': 'Profile photo', 'done': true, 'weight': 15},
+          {
+            'key': 'photo',
+            'label': 'Profile photo',
+            'done': true,
+            'weight': 15
+          },
           {
             'key': 'employment',
             'label': 'Work experience',
@@ -221,7 +250,12 @@ void main() {
       final results = SearchResults.fromJson({
         'query': 'kano',
         'alumni': [
-          {'id': 'a1', 'fullName': 'Amina Bello', 'departmentName': 'Accounting', 'graduationYear': '2019-2020'},
+          {
+            'id': 'a1',
+            'fullName': 'Amina Bello',
+            'departmentName': 'Accounting',
+            'graduationYear': '2019-2020'
+          },
         ],
         'groups': [
           {'id': 'g1', 'name': 'Kano Chapter', 'membersCount': 1},
@@ -264,15 +298,139 @@ void main() {
 
       expect(ctx({'connectionStatus': 'NONE'}).canRequestConnection, isTrue);
       expect(ctx({'connectionStatus': 'ACCEPTED'}).isConnected, isTrue);
-      expect(ctx({'connectionStatus': 'ACCEPTED'}).canRequestConnection, isFalse);
+      expect(
+          ctx({'connectionStatus': 'ACCEPTED'}).canRequestConnection, isFalse);
 
       // A request we sent is not ours to answer; one we received is.
-      final sent = ctx({'connectionStatus': 'PENDING', 'connectionInitiatedByMe': true});
-      final received = ctx({'connectionStatus': 'PENDING', 'connectionInitiatedByMe': false});
+      final sent =
+          ctx({'connectionStatus': 'PENDING', 'connectionInitiatedByMe': true});
+      final received = ctx(
+          {'connectionStatus': 'PENDING', 'connectionInitiatedByMe': false});
       expect(sent.awaitingMyResponse, isFalse);
       expect(received.awaitingMyResponse, isTrue);
 
-      expect(ctx({'isSelf': true, 'connectionStatus': 'NONE'}).canRequestConnection, isFalse);
+      expect(
+          ctx({'isSelf': true, 'connectionStatus': 'NONE'})
+              .canRequestConnection,
+          isFalse);
+    });
+  });
+
+  group('Dashboard stat row', () {
+    // Mirrors _StatsLayout: a fixed-height row of four stretched tiles. The
+    // fixed height is what guarantees all four are identical, but it also means
+    // the tile's content must actually fit — an overflow here is a real visual
+    // defect that analyze cannot catch.
+    Widget harness({required double width, String? caption}) => MaterialApp(
+          theme: AppTheme.light,
+          home: Scaffold(
+            body: Center(
+              child: SizedBox(
+                width: width,
+                child: SizedBox(
+                  height: 100,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      for (var i = 0; i < 4; i++) ...[
+                        if (i > 0) const SizedBox(width: 8),
+                        Expanded(
+                          child: StatTile(
+                            compact: true,
+                            label: 'Profile views',
+                            value: '12345',
+                            icon: Icons.visibility_outlined,
+                            // Only the first tile carries one, which is the
+                            // case that used to knock the row out of line.
+                            caption: i == 0 ? caption : null,
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+
+    testWidgets('four compact tiles fit the row at phone width',
+        (tester) async {
+      await tester.pumpWidget(harness(width: 360, caption: '1 pending'));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('four compact tiles fit the row at tablet width',
+        (tester) async {
+      await tester.pumpWidget(harness(width: 800, caption: '12 pending'));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('a caption on one tile does not shift the others',
+        (tester) async {
+      await tester.pumpWidget(harness(width: 360, caption: '1 pending'));
+      await tester.pumpAndSettle();
+
+      // Every tile's icon must sit at the same y, or the row reads as ragged.
+      final finder = find.byIcon(Icons.visibility_outlined);
+      expect(finder.evaluate().length, 4);
+
+      final tops = <double>{
+        for (var i = 0; i < 4; i++) tester.getTopLeft(finder.at(i)).dy,
+      };
+      expect(tops.length, 1, reason: 'icons are not on one line: $tops');
+    });
+  });
+
+  group('Map cluster merging', () {
+    StateCluster at(String name, int count, double lat, double lon) =>
+        StateCluster(
+          state: name,
+          count: count,
+          latitude: lat,
+          longitude: lon,
+        );
+
+    test('spellings sharing a centroid collapse into one bubble', () {
+      // What production actually returns before the server-side
+      // canonicalisation ships: four spellings of Gombe on one centroid.
+      final merged = mergeClustersByPosition([
+        at('GOMBE', 30, 10.2897, 11.1673),
+        at('Gombe', 8, 10.2897, 11.1673),
+        at('GOM', 1, 10.2897, 11.1673),
+        at('GM', 1, 10.2897, 11.1673),
+        at('YOBE', 1, 11.7469, 11.9608),
+      ]);
+
+      expect(merged.length, 2);
+      expect(merged.first.count, 40);
+      // The readable spelling wins, not the highest-counted one.
+      expect(merged.first.state, 'Gombe');
+    });
+
+    test('distinct states are left alone and ordered by count', () {
+      final merged = mergeClustersByPosition([
+        at('Yobe', 1, 11.7469, 11.9608),
+        at('Gombe', 30, 10.2897, 11.1673),
+        at('Benue', 4, 7.7322, 8.5391),
+      ]);
+
+      expect(merged.map((c) => c.state), ['Gombe', 'Benue', 'Yobe']);
+      expect(merged.map((c) => c.count), [30, 4, 1]);
+    });
+
+    test('merging changes the leader, so bubble scaling must follow it', () {
+      final input = [
+        at('KANO', 5, 12.0022, 8.592),
+        at('GOMBE', 4, 10.2897, 11.1673),
+        at('Gombe', 4, 10.2897, 11.1673),
+      ];
+      // Pre-merge the leader is Kano with 5; post-merge it is Gombe with 8.
+      // Sizing bubbles off the unmerged first entry would misscale every one.
+      expect(input.first.count, 5);
+      expect(mergeClustersByPosition(input).first.count, 8);
     });
   });
 

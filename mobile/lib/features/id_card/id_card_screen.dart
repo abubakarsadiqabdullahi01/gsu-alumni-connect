@@ -176,8 +176,7 @@ const String _backTemplate = 'assets/images/Back-ID.png';
 const String _fallbackSignature = 'assets/images/Signature.png';
 const String _logoAsset = 'assets/images/gsu-alumni-logo.png';
 
-const String _frontMicrotext =
-    'GSU ALUMNI ASSOCIATION • PRIMUS INTERPARES • '
+const String _frontMicrotext = 'GSU ALUMNI ASSOCIATION • PRIMUS INTERPARES • '
     'UPLIFTING THE IDEAS OF GSU • AUTHORIZED MEMBER';
 
 /// Mirrors `serialFrom` in id-card-preview-client.tsx so the app and the web
@@ -198,8 +197,12 @@ String _serialFor(IdCard card) {
 
 /// Scales a face authored at [_cardW]x[_cardH] down to the available width.
 ///
-/// Transform.scale rather than FittedBox so the children can be plain
-/// [Positioned] widgets using the design coordinates directly.
+/// FittedBox, not Transform.scale: Transform does not affect layout, so the
+/// inner SizedBox was still constrained by the incoming box and got clamped to
+/// the card's on-screen width — then scaled down again, rendering the card at
+/// roughly 40% of its intended size. FittedBox hands the child unbounded
+/// constraints so it lays out at its true 1011x635 before being scaled to fit,
+/// which is what lets the children below use the web's coordinates verbatim.
 class _CardFace extends StatelessWidget {
   const _CardFace({required this.template, required this.children});
 
@@ -210,34 +213,31 @@ class _CardFace extends StatelessWidget {
   Widget build(BuildContext context) {
     return AspectRatio(
       aspectRatio: _cardW / _cardH,
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          return ClipRRect(
-            borderRadius: BorderRadius.circular(16),
-            child: Transform.scale(
-              scale: constraints.maxWidth / _cardW,
-              alignment: Alignment.topLeft,
-              child: SizedBox(
-                width: _cardW,
-                height: _cardH,
-                child: Stack(
-                  children: [
-                    // The template carries the crest, headings, motto and
-                    // guilloche artwork; everything else is overlaid.
-                    Positioned.fill(
-                      child: Image.asset(
-                        template,
-                        fit: BoxFit.cover,
-                        filterQuality: FilterQuality.medium,
-                      ),
-                    ),
-                    ...children,
-                  ],
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: FittedBox(
+          fit: BoxFit.contain,
+          child: SizedBox(
+            width: _cardW,
+            height: _cardH,
+            child: Stack(
+              children: [
+                // The template carries the crest, headings, motto and
+                // guilloche artwork; everything else is overlaid.
+                Positioned.fill(
+                  child: Image.asset(
+                    template,
+                    // Matches the web's object-cover. The box is already the
+                    // template's own 1011x635, so nothing is actually cropped.
+                    fit: BoxFit.cover,
+                    filterQuality: FilterQuality.medium,
+                  ),
                 ),
-              ),
+                ...children,
+              ],
             ),
-          );
-        },
+          ),
+        ),
       ),
     );
   }
@@ -432,16 +432,24 @@ class _SmartChip extends StatelessWidget {
 }
 
 /// Photo, signature and template images may be bundled assets or remote URLs.
-Widget _cardImage(String? url, {required String fallbackAsset}) {
+///
+/// [fit] matters per call site: the photo fills a circle and wants `cover`,
+/// while a signature is a wide transparent strip and must be `contain` — cover
+/// on a 230x60 box crops roughly half the height off a portrait-ish signature,
+/// taking the ascenders and descenders with it.
+Widget _cardImage(
+  String? url, {
+  required String fallbackAsset,
+  BoxFit fit = BoxFit.cover,
+}) {
   final resolved = AppConfig.resolveUrl(url);
   if (resolved.isEmpty) {
-    return Image.asset(fallbackAsset, fit: BoxFit.contain);
+    return Image.asset(fallbackAsset, fit: fit);
   }
   return CachedNetworkImage(
     imageUrl: resolved,
-    fit: BoxFit.cover,
-    errorWidget: (context, _, __) =>
-        Image.asset(fallbackAsset, fit: BoxFit.contain),
+    fit: fit,
+    errorWidget: (context, _, __) => Image.asset(fallbackAsset, fit: fit),
     placeholder: (context, _) => const ColoredBox(color: Color(0xFFE7ECE8)),
   );
 }
@@ -459,9 +467,8 @@ class _CardFront extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const photoDiameter = _photoR * 2;
-    final qrData = card.verificationUrl.isEmpty
-        ? card.alumniNumber
-        : card.verificationUrl;
+    final qrData =
+        card.verificationUrl.isEmpty ? card.alumniNumber : card.verificationUrl;
 
     return _CardFace(
       template: _frontTemplate,
@@ -622,6 +629,7 @@ class _CardFront extends StatelessWidget {
           child: _cardImage(
             card.signatureUrl,
             fallbackAsset: _fallbackSignature,
+            fit: BoxFit.contain,
           ),
         ),
         const Positioned(
@@ -837,7 +845,6 @@ class _CardBack extends StatelessWidget {
     );
   }
 }
-
 
 class _SecurityPanel extends StatelessWidget {
   const _SecurityPanel({required this.card});

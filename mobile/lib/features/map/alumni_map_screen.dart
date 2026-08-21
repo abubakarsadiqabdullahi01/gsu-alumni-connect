@@ -10,6 +10,17 @@ import '../../core/widgets/ui_kit.dart';
 import '../../data/models/alumni_map.dart';
 import '../../data/providers.dart';
 
+/// Nigeria's bounding box, in degrees.
+///
+/// The host AspectRatio and the projection both derive from this single source,
+/// so the canvas can no longer letterbox the outline: a hard-coded 1.08 against
+/// a 1.22 bounding box was leaving a band of dead space above and below.
+const double _minLon = 2.6;
+const double _maxLon = 14.8;
+const double _minLat = 4.0;
+const double _maxLat = 14.0;
+const double _mapAspect = (_maxLon - _minLon) / (_maxLat - _minLat);
+
 /// Simplified national outline, in (longitude, latitude).
 ///
 /// This is a low-resolution cartographic backdrop for the bubble overlay, not a
@@ -97,7 +108,11 @@ class _AlumniMapScreenState extends ConsumerState<AlumniMapScreen> {
               );
             }
 
-            final maxCount = data.states.first.count;
+            // Everything below reads from the merged list, including maxCount:
+            // merging changes the leader's total, so sizing bubbles off the
+            // server's pre-merge first entry would misscale every bubble.
+            final states = mergeClustersByPosition(data.states);
+            final maxCount = states.first.count;
 
             return ListView(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
@@ -116,12 +131,13 @@ class _AlumniMapScreenState extends ConsumerState<AlumniMapScreen> {
                     Expanded(
                       child: StatTile(
                         label: 'States covered',
-                        value: '${data.statesCovered}',
+                        // states.length, not data.statesCovered: merging
+                        // duplicate spellings lowers the drawn count, and this
+                        // tile has to agree with the map beside it.
+                        value: '${states.length}',
                         icon: Icons.map_outlined,
                         tone: AppColors.navy600,
-                        caption: data.topState == null
-                            ? null
-                            : 'Top: ${data.topState}',
+                        caption: 'Top: ${states.first.state}',
                       ),
                     ),
                   ],
@@ -136,7 +152,7 @@ class _AlumniMapScreenState extends ConsumerState<AlumniMapScreen> {
                 GsuCard(
                   padding: const EdgeInsets.all(10),
                   child: AspectRatio(
-                    aspectRatio: 1.08,
+                    aspectRatio: _mapAspect,
                     child: LayoutBuilder(
                       builder: (context, constraints) {
                         return GestureDetector(
@@ -144,14 +160,14 @@ class _AlumniMapScreenState extends ConsumerState<AlumniMapScreen> {
                             final hit = _hitTest(
                               details.localPosition,
                               Size(constraints.maxWidth, constraints.maxHeight),
-                              data.states,
+                              states,
                               maxCount,
                             );
                             setState(() => _selected = hit);
                           },
                           child: CustomPaint(
                             painter: _AlumniMapPainter(
-                              states: data.states,
+                              states: states,
                               maxCount: maxCount,
                               selected: _selected,
                               landColor: theme.brightness == Brightness.dark
@@ -213,23 +229,23 @@ class _AlumniMapScreenState extends ConsumerState<AlumniMapScreen> {
                 GsuCard(
                   child: Column(
                     children: [
-                      for (var i = 0; i < math.min(10, data.states.length); i++)
+                      for (var i = 0; i < math.min(10, states.length); i++)
                         Padding(
                           padding: EdgeInsets.only(
-                            bottom: i == math.min(10, data.states.length) - 1
+                            bottom: i == math.min(10, states.length) - 1
                                 ? 0
                                 : 14,
                           ),
                           child: _StateRow(
                             rank: i + 1,
-                            cluster: data.states[i],
+                            cluster: states[i],
                             maxCount: maxCount,
-                            selected: _selected?.state == data.states[i].state,
+                            selected: _selected?.state == states[i].state,
                             onTap: () => setState(
                               () => _selected =
-                                  _selected?.state == data.states[i].state
+                                  _selected?.state == states[i].state
                                       ? null
-                                      : data.states[i],
+                                      : states[i],
                             ),
                           ),
                         ),
@@ -278,27 +294,21 @@ double _bubbleRadius(int count, int maxCount, Size size) {
 /// Equirectangular projection fitted to Nigeria's bounding box.
 class _Projection {
   _Projection(this.size) {
-    const minLon = 2.6, maxLon = 14.8;
-    const minLat = 4.0, maxLat = 14.0;
+    const spanLon = _maxLon - _minLon;
+    const spanLat = _maxLat - _minLat;
 
-    const spanLon = maxLon - minLon;
-    const spanLat = maxLat - minLat;
-
-    // Preserve aspect so the outline is not stretched.
+    // Preserve aspect so the outline is not stretched. With the host now on
+    // _mapAspect this is an exact fit rather than a letterbox.
     final scale = math.min(size.width / spanLon, size.height / spanLat);
     _scale = scale;
     _offsetX = (size.width - spanLon * scale) / 2;
     _offsetY = (size.height - spanLat * scale) / 2;
-    _minLon = minLon;
-    _maxLat = maxLat;
   }
 
   final Size size;
   late final double _scale;
   late final double _offsetX;
   late final double _offsetY;
-  late final double _minLon;
-  late final double _maxLat;
 
   Offset project(double longitude, double latitude) {
     return Offset(
@@ -306,6 +316,47 @@ class _Projection {
       _offsetY + (_maxLat - latitude) * _scale,
     );
   }
+}
+
+/// Merges clusters that land on the same point.
+///
+/// The API can return several spellings of one state — "GOMBE", "Gombe", "GOM" —
+/// and every one resolves to the same centroid. Painting them all stacked
+/// concentric bubbles and overprinted their labels at a single position, which
+/// is what made the map look broken. Counts are summed; the label keeps the
+/// most readable spelling rather than the highest-counted one, so a row reads
+/// "Gombe 40" and not "GOMBE 40".
+///
+/// This stays useful after the server-side canonicalisation ships: it is the
+/// client's own guarantee that two bubbles never occupy one pixel.
+List<StateCluster> mergeClustersByPosition(List<StateCluster> states) {
+  String betterName(String a, String b) {
+    final aHasLower = a != a.toUpperCase();
+    final bHasLower = b != b.toUpperCase();
+    if (aHasLower != bHasLower) return aHasLower ? a : b;
+    return b.length > a.length ? b : a;
+  }
+
+  final merged = <String, StateCluster>{};
+  for (final cluster in states) {
+    // Three decimals is ~100m — far below the distance between two real state
+    // centroids, so this only ever collapses genuine duplicates.
+    final key = '${cluster.latitude.toStringAsFixed(3)},'
+        '${cluster.longitude.toStringAsFixed(3)}';
+    final existing = merged[key];
+    merged[key] = existing == null
+        ? cluster
+        : StateCluster(
+            state: betterName(existing.state, cluster.state),
+            count: existing.count + cluster.count,
+            latitude: existing.latitude,
+            longitude: existing.longitude,
+          );
+  }
+
+  final result = merged.values.toList()
+    ..sort((a, b) => b.count.compareTo(a.count));
+  return result;
 }
 
 class _AlumniMapPainter extends CustomPainter {
@@ -375,8 +426,15 @@ class _AlumniMapPainter extends CustomPainter {
     }
 
     // Label only the leaders, so the map does not turn into a wall of text.
-    final labelled = ordered.take(5);
-    for (final cluster in labelled) {
+    //
+    // Placement is a greedy search rather than "always below": below, above,
+    // right, then left. The first slot that clears every label already placed
+    // and still fits inside the canvas wins, and a label with no free slot is
+    // dropped. Painting unconditionally below the bubble overprinted
+    // neighbouring states and pushed edge labels off the canvas, where the
+    // card's rounded clip sliced them.
+    final occupied = <Rect>[];
+    for (final cluster in ordered.take(5)) {
       final centre = projection.project(cluster.longitude, cluster.latitude);
       final radius = _bubbleRadius(cluster.count, maxCount, size);
 
@@ -392,10 +450,43 @@ class _AlumniMapPainter extends CustomPainter {
         textDirection: TextDirection.ltr,
       )..layout();
 
-      painter.paint(
-        canvas,
-        Offset(centre.dx - painter.width / 2, centre.dy + radius + 3),
-      );
+      const gap = 3.0;
+      final candidates = <Offset>[
+        Offset(centre.dx - painter.width / 2, centre.dy + radius + gap),
+        Offset(
+          centre.dx - painter.width / 2,
+          centre.dy - radius - gap - painter.height,
+        ),
+        Offset(centre.dx + radius + gap, centre.dy - painter.height / 2),
+        Offset(
+          centre.dx - radius - gap - painter.width,
+          centre.dy - painter.height / 2,
+        ),
+      ];
+
+      for (final candidate in candidates) {
+        final rect = Rect.fromLTWH(
+          candidate.dx,
+          candidate.dy,
+          painter.width,
+          painter.height,
+        );
+
+        // Inset by 2 so a glyph never touches the card's rounded corner.
+        if (rect.left < 2 ||
+            rect.top < 2 ||
+            rect.right > size.width - 2 ||
+            rect.bottom > size.height - 2) {
+          continue;
+        }
+        if (occupied.any((taken) => taken.overlaps(rect))) continue;
+
+        painter.paint(canvas, candidate);
+        // Padded so labels keep a little air between them, not just avoid
+        // literal pixel overlap.
+        occupied.add(rect.inflate(1.5));
+        break;
+      }
     }
   }
 
@@ -403,7 +494,10 @@ class _AlumniMapPainter extends CustomPainter {
   bool shouldRepaint(_AlumniMapPainter oldDelegate) =>
       oldDelegate.states != states ||
       oldDelegate.selected != selected ||
-      oldDelegate.landColor != landColor;
+      oldDelegate.maxCount != maxCount ||
+      oldDelegate.landColor != landColor ||
+      oldDelegate.borderColor != borderColor ||
+      oldDelegate.labelColor != labelColor;
 }
 
 class _StateRow extends StatelessWidget {

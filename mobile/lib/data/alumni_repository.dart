@@ -117,7 +117,8 @@ class AlumniRepository {
   /// Weighted profile completion for the signed-in member, including the one
   /// outstanding item most worth prompting about.
   Future<ProfileCompletion> profileCompletion() async {
-    return ProfileCompletion.fromJson(await _api.get('/api/profile/completion'));
+    return ProfileCompletion.fromJson(
+        await _api.get('/api/profile/completion'));
   }
 
   /// Another alumnus, with privacy rules already applied server-side.
