@@ -12,10 +12,14 @@
  *   pnpm app:publish-apk -- --dry-run
  */
 
+import { exec } from "node:child_process";
 import { createHash } from "node:crypto";
-import { existsSync, readFileSync, statSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
+import { promisify } from "node:util";
 import dotenv from "dotenv";
+
+const run = promisify(exec);
 
 dotenv.config({ path: ".env.local" });
 dotenv.config();
@@ -28,6 +32,73 @@ const DEFAULT_APK = path.join(
   "flutter-apk",
   "app-release.apk"
 );
+
+/** Newest `apksigner` in the local SDK, or null when the SDK is not installed here. */
+function findApksigner(): string | null {
+  const sdk =
+    process.env.ANDROID_HOME?.trim() ||
+    process.env.ANDROID_SDK_ROOT?.trim() ||
+    (process.env.LOCALAPPDATA
+      ? path.join(process.env.LOCALAPPDATA, "Android", "Sdk")
+      : path.join(process.env.HOME ?? "", "Android", "Sdk"));
+
+  const buildTools = path.join(sdk, "build-tools");
+  if (!existsSync(buildTools)) return null;
+
+  const versions = readdirSync(buildTools).sort((a, b) =>
+    b.localeCompare(a, undefined, { numeric: true })
+  );
+
+  for (const version of versions) {
+    for (const name of ["apksigner.bat", "apksigner"]) {
+      const candidate = path.join(buildTools, version, name);
+      if (existsSync(candidate)) return candidate;
+    }
+  }
+  return null;
+}
+
+/**
+ * Which certificate actually signed this APK.
+ *
+ * Checking for key.properties only proves a file exists; this proves what the
+ * build came out signed with, which is the thing that decides whether a future
+ * update can install over it.
+ */
+type SignerCheck =
+  | { status: "ok"; debugSigned: boolean; subject: string }
+  | { status: "missing" }
+  | { status: "failed"; reason: string };
+
+async function readSigner(apk: string): Promise<SignerCheck> {
+  const apksigner = findApksigner();
+  if (!apksigner) return { status: "missing" };
+
+  // apksigner ships as a .bat on Windows, which only runs through a shell, so
+  // this goes out as one quoted command line. A path carrying its own quote
+  // would break out of that, so refuse it rather than build the command.
+  if (/["\r\n]/.test(apk)) {
+    return { status: "failed", reason: "the APK path contains a quote or newline" };
+  }
+
+  try {
+    const { stdout } = await run(`"${apksigner}" verify --print-certs "${apk}"`, {
+      maxBuffer: 4 * 1024 * 1024,
+    });
+    const subject =
+      stdout.match(/Signer #1 certificate DN:\s*(.+)/)?.[1]?.trim() ?? "unknown";
+    return {
+      status: "ok",
+      debugSigned: /CN=Android Debug/i.test(stdout),
+      subject,
+    };
+  } catch (error) {
+    return {
+      status: "failed",
+      reason: error instanceof Error ? error.message.split("\n")[0] : String(error),
+    };
+  }
+}
 
 /** Small enough that a dropped connection costs little, large enough to stay under the 10,000-part cap. */
 const PART_SIZE = 8 * 1024 * 1024;
@@ -58,6 +129,7 @@ function arg(name: string): string | undefined {
 }
 
 const dryRun = process.argv.includes("--dry-run");
+const allowDebugSignature = process.argv.includes("--allow-debug-signature");
 const apkPath = arg("file") ?? DEFAULT_APK;
 
 function requiredEnv(name: string): string {
@@ -126,11 +198,34 @@ async function main() {
   // A debug-signed APK must never reach members: the debug key ships with every
   // Android SDK, and Android refuses to update an app with a differently signed
   // build, so everyone would have to uninstall and lose their session.
-  if (!existsSync(path.join("mobile", "android", "key.properties"))) {
+  const signer = await readSigner(apkPath);
+
+  if (signer.status === "ok") {
+    console.log(`  Signer   ${signer.subject}`);
+    if (signer.debugSigned && !allowDebugSignature) {
+      throw new Error(
+        "this APK is signed with the Android debug key, which every SDK ships.\n" +
+          "  Members who install it could never receive a signed update — they would\n" +
+          "  have to uninstall and reinstall, losing their session.\n\n" +
+          "  Set up the release keystore first: docs/ANDROID_APP_DISTRIBUTION.md\n" +
+          "  To publish one anyway, for testing only, pass --allow-debug-signature."
+      );
+    }
+    if (signer.debugSigned) {
+      console.warn("\n  WARNING  debug-signed build, published because of --allow-debug-signature.");
+      console.warn("           Testing only — this build can never be updated in place.\n");
+    }
+  } else {
+    const why =
+      signer.status === "missing"
+        ? "apksigner was not found in the Android SDK"
+        : `apksigner could not be run (${signer.reason})`;
     console.warn(
-      "  WARNING  mobile/android/key.properties is missing, so this build was\n" +
-        "           signed with the debug key. Do not publish it to members —\n" +
-        "           set up the release keystore and rebuild first.\n"
+      `\n  WARNING  ${why}, so the signature was not checked.\n` +
+        (existsSync(path.join("mobile", "android", "key.properties"))
+          ? "           key.properties exists, so the build was probably signed correctly.\n"
+          : "           key.properties is missing, so this build almost certainly fell\n" +
+            "           back to the debug key. See docs/ANDROID_APP_DISTRIBUTION.md.\n")
     );
   }
 

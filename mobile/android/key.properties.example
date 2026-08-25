@@ -1,0 +1,14 @@
+# Copy this file to `key.properties` in the same folder and fill it in.
+#
+# `key.properties` is gitignored, and so are *.jks / *.keystore — no key
+# material or password ever belongs in the repository. Gradle picks the file up
+# on its own (see app/build.gradle.kts); without it, release builds silently
+# fall back to the debug key.
+#
+# Keep the keystore file itself OUTSIDE the repo and give an absolute path
+# below. A relative path resolves against mobile/android/.
+
+storePassword=
+keyPassword=
+keyAlias=gsu-alumni-connect
+storeFile=C:/Users/<you>/keys/gsu-alumni-connect-release.jks
