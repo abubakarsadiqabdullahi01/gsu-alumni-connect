@@ -43,3 +43,7 @@ next-env.d.ts
 /lib/generated/prisma
 
 .vercel
+
+# Android builds staged for a local download check — production serves the APK
+# from S3 (see scripts/publish-android-apk.ts), never from the repo.
+/public/downloads/*.apk

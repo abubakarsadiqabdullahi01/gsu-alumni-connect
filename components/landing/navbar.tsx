@@ -3,8 +3,9 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Menu, X } from "lucide-react";
+import { Download, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { isAndroidAppAvailable } from "@/lib/app-download";
 import {
   Sheet,
   SheetContent,
@@ -15,6 +16,7 @@ import {
 const navLinks = [
   { href: "#about", label: "About" },
   { href: "#features", label: "Features" },
+  { href: "#download", label: "Get the App" },
   { href: "#leadership", label: "Leadership" },
   { href: "#contact", label: "Contact" },
 ];
@@ -22,6 +24,7 @@ const navLinks = [
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const appAvailable = isAndroidAppAvailable();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 60);
@@ -98,6 +101,23 @@ export function Navbar() {
 
         {/* Desktop CTA */}
         <div className="hidden items-center gap-2.5 md:flex">
+          {appAvailable && (
+            <Button
+              asChild
+              variant="ghost"
+              size="sm"
+              className={`h-9 gap-1.5 rounded-full px-4 text-[13px] font-semibold transition-all ${
+                scrolled
+                  ? "text-muted-foreground hover:bg-accent hover:text-foreground"
+                  : "text-white/85 hover:bg-white/10 hover:text-white"
+              }`}
+            >
+              <a href="#download">
+                <Download className="size-3.5" />
+                Get App
+              </a>
+            </Button>
+          )}
           <Button
             asChild
             size="sm"
@@ -163,12 +183,24 @@ export function Navbar() {
                   </a>
                 ))}
               </nav>
-              <div className="mt-auto border-t p-4">
+              <div className="mt-auto space-y-2 border-t p-4">
                 <Button asChild className="w-full rounded-xl">
                   <Link href="/login" onClick={() => setOpen(false)}>
                     Sign In
                   </Link>
                 </Button>
+                {appAvailable && (
+                  <Button
+                    asChild
+                    variant="outline"
+                    className="w-full gap-2 rounded-xl"
+                  >
+                    <a href="#download" onClick={() => setOpen(false)}>
+                      <Download className="size-4" />
+                      Get the Android app
+                    </a>
+                  </Button>
+                )}
               </div>
             </div>
           </SheetContent>
