@@ -29,6 +29,29 @@ const DEFAULT_APK = path.join(
   "app-release.apk"
 );
 
+/** Small enough that a dropped connection costs little, large enough to stay under the 10,000-part cap. */
+const PART_SIZE = 8 * 1024 * 1024;
+const MAX_ATTEMPTS = 6;
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+/** Retries a part through the connection drops this upload is expected to hit. */
+async function withRetries<T>(label: string, run: () => Promise<T>): Promise<T> {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      return await run();
+    } catch (error) {
+      const reason = error instanceof Error ? error.message : String(error);
+      if (attempt >= MAX_ATTEMPTS) {
+        throw new Error(`${label} failed after ${MAX_ATTEMPTS} attempts: ${reason}`);
+      }
+      const backoff = Math.min(2 ** attempt * 500, 15_000);
+      console.log(`  ${label} failed (${reason}) — retrying in ${backoff / 1000}s`);
+      await sleep(backoff);
+    }
+  }
+}
+
 function arg(name: string): string | undefined {
   const index = process.argv.indexOf(`--${name}`);
   return index === -1 ? undefined : process.argv[index + 1];
@@ -116,7 +139,14 @@ async function main() {
     return;
   }
 
-  const { PutObjectCommand, S3Client } = await import("@aws-sdk/client-s3");
+  const {
+    AbortMultipartUploadCommand,
+    CompleteMultipartUploadCommand,
+    CreateMultipartUploadCommand,
+    S3Client,
+    UploadPartCommand,
+  } = await import("@aws-sdk/client-s3");
+
   const s3 = new S3Client({
     region: process.env.AWS_REGION || "auto",
     endpoint,
@@ -125,23 +155,74 @@ async function main() {
       secretAccessKey: requiredEnv("AWS_SECRET_ACCESS_KEY"),
     },
     forcePathStyle: false,
+    requestHandler: { requestTimeout: 0, connectionTimeout: 20_000 },
   });
 
-  console.log("  Uploading...");
-  await s3.send(
-    new PutObjectCommand({
+  // Multipart, sequential, one part at a time. A single 55 MB PUT does not
+  // survive the connections this gets published from — it dies with
+  // ECONNRESET half way and starts over. Chunked, a reset costs one part.
+  const created = await s3.send(
+    new CreateMultipartUploadCommand({
       Bucket: bucket,
       Key: key,
-      Body: body,
-      ContentLength: size,
       ContentType: "application/vnd.android.package-archive",
       // The key carries the version, so this object never changes again.
       CacheControl: "public, max-age=31536000, immutable",
       ContentDisposition: `attachment; filename="gsu-alumni-connect-v${version}.apk"`,
     })
   );
+  const uploadId = created.UploadId;
+  if (!uploadId) throw new Error("The bucket did not return an upload id.");
 
-  console.log(`  Done: ${url}\n`);
+  const partCount = Math.ceil(size / PART_SIZE);
+  const parts: { ETag: string; PartNumber: number }[] = [];
+
+  try {
+    for (let index = 0; index < partCount; index++) {
+      const chunk = body.subarray(index * PART_SIZE, (index + 1) * PART_SIZE);
+      const partNumber = index + 1;
+
+      const eTag = await withRetries(
+        `part ${partNumber}/${partCount}`,
+        async () => {
+          const part = await s3.send(
+            new UploadPartCommand({
+              Bucket: bucket,
+              Key: key,
+              UploadId: uploadId,
+              PartNumber: partNumber,
+              Body: chunk,
+              ContentLength: chunk.length,
+            })
+          );
+          if (!part.ETag) throw new Error("no ETag returned");
+          return part.ETag;
+        }
+      );
+
+      parts.push({ ETag: eTag, PartNumber: partNumber });
+      console.log(`  uploaded part ${partNumber}/${partCount} (${formatSize(chunk.length)})`);
+    }
+
+    await s3.send(
+      new CompleteMultipartUploadCommand({
+        Bucket: bucket,
+        Key: key,
+        UploadId: uploadId,
+        MultipartUpload: { Parts: parts },
+      })
+    );
+  } catch (error) {
+    // Leaving an incomplete upload behind bills for the parts already stored.
+    await s3
+      .send(
+        new AbortMultipartUploadCommand({ Bucket: bucket, Key: key, UploadId: uploadId })
+      )
+      .catch(() => {});
+    throw error;
+  }
+
+  console.log(`\n  Done: ${url}\n`);
   console.log("  Set these on Vercel (and in .env.local for a local check):\n");
   console.log(`NEXT_PUBLIC_ANDROID_APK_URL=${url}`);
   console.log(`NEXT_PUBLIC_ANDROID_APP_VERSION=${version}`);
