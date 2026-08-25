@@ -6,6 +6,7 @@ import { Mail, MapPin } from "lucide-react";
 const quickLinks = [
 	{ href: "#about", label: "About" },
 	{ href: "#features", label: "Features" },
+	{ href: "#download", label: "Get the App" },
 	{ href: "#leadership", label: "Leadership" },
 	{ href: "/login", label: "Sign In" },
 ];

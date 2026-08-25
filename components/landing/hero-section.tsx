@@ -3,10 +3,20 @@
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { ArrowRight, ChevronDown, Users, Briefcase, Star } from "lucide-react";
+import {
+  ArrowRight,
+  ChevronDown,
+  Users,
+  Briefcase,
+  Star,
+  Download,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { isAndroidAppAvailable } from "@/lib/app-download";
 
 export function HeroSection() {
+  const appAvailable = isAndroidAppAvailable();
+
   return (
     <section className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden">
       {/* Background */}
@@ -133,6 +143,20 @@ export function HeroSection() {
             <a href="#about">Explore the Platform</a>
           </Button>
         </motion.div>
+
+        {/* Android app link */}
+        {appAvailable && (
+          <motion.a
+            href="#download"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.6 }}
+            className="mt-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-xs font-medium text-white/60 backdrop-blur-sm transition-colors hover:border-white/20 hover:text-white"
+          >
+            <Download className="size-3.5 text-emerald-400/80" />
+            Also on Android — download the app
+          </motion.a>
+        )}
 
         {/* Trust strip */}
         <motion.div
