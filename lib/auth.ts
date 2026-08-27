@@ -6,8 +6,18 @@ import { setSessionCookie } from "better-auth/cookies";
 import { parseUserOutput } from "better-auth/db";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
+import { sendEmail } from "@/lib/email";
 import { hashPassword, verifyPassword } from "@/lib/password";
 import { normalizeRegistrationNo } from "@/lib/auth-identity";
+
+function escapeHtml(value: string) {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
 
 const registrationSignInPlugin = {
   id: "registration-sign-in",
@@ -101,6 +111,41 @@ export const auth = betterAuth({
   // ── Email + password (registration-number login handled by custom endpoint) ──
   emailAndPassword: {
     enabled: true,
+    resetPasswordTokenExpiresIn: 60 * 60,
+    revokeSessionsOnPasswordReset: true,
+
+    sendResetPassword: async ({ user, url }) => {
+      if (!user.email) return;
+      const displayName = escapeHtml(user.name || "there");
+
+      await sendEmail({
+        to: user.email,
+        subject: "Reset your GSU Alumni Connect password",
+        html: `
+          <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #111827;">
+            <h2 style="margin: 0 0 12px;">Reset your password</h2>
+            <p>Hello ${displayName},</p>
+            <p>Use the button below to set a new password for your GSU Alumni Connect account. This link expires in 1 hour.</p>
+            <p>
+              <a href="${url}" style="display: inline-block; background: #047857; color: #ffffff; padding: 10px 16px; border-radius: 8px; text-decoration: none; font-weight: 700;">
+                Reset password
+              </a>
+            </p>
+            <p>If the button does not work, copy and paste this link into your browser:</p>
+            <p style="word-break: break-all;"><a href="${url}">${url}</a></p>
+            <p>If you did not request this, you can ignore this email.</p>
+          </div>
+        `,
+        text: `Hello ${user.name || "there"},\n\nUse this link to reset your GSU Alumni Connect password. It expires in 1 hour:\n${url}\n\nIf you did not request this, you can ignore this email.`,
+      });
+    },
+
+    onPasswordReset: async ({ user }) => {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { defaultPassword: false },
+      });
+    },
 
     // Use our scrypt-based hasher (matches what the import engine generates)
     password: {
