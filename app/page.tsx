@@ -4,6 +4,7 @@ import { AboutSection } from "@/components/landing/about-section";
 import { FeaturesSection } from "@/components/landing/features-section";
 import { StatsSection } from "@/components/landing/stats-section";
 import { LeadershipSection } from "@/components/landing/leadership-section";
+import { DownloadSection } from "@/components/landing/download-section";
 import { DeveloperSection } from "@/components/landing/developer-section";
 import { CtaSection } from "@/components/landing/cta-section";
 import { Footer } from "@/components/landing/footer";
@@ -38,6 +39,7 @@ export default async function HomePage() {
         <AboutSection />
         <FeaturesSection />
         <StatsSection />
+        <DownloadSection />
         <LeadershipSection />
         {/*<DeveloperSection />*/}
         <CtaSection />
