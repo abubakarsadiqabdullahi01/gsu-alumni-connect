@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { formatDistanceToNow } from "date-fns";
+import { EmptyState } from "@/components/shared/empty-state";
 import {
   CalendarCheck2,
   CalendarDays,
@@ -403,7 +404,11 @@ export function EventsClient() {
             {loading ? (
               <Card><CardContent className="p-6 text-sm text-muted-foreground">Loading events...</CardContent></Card>
             ) : !payload || payload.events.length === 0 ? (
-              <Card><CardContent className="p-6 text-sm text-muted-foreground">No events found.</CardContent></Card>
+              <EmptyState
+                icon={CalendarDays}
+                title="Nothing on the calendar"
+                description="Reunions, meetups and webinars appear here once they are scheduled. Create one and invite your set."
+              />
             ) : (
               <div className="space-y-3">
                 {payload.events.map((event) => (

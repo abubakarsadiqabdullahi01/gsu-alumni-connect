@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { formatDistanceToNow } from "date-fns";
+import { EmptyState } from "@/components/shared/empty-state";
 import {
   BriefcaseBusiness,
   Building2,
@@ -431,7 +432,11 @@ export function JobsClient() {
             {loading ? (
               <Card><CardContent className="p-6 text-sm text-muted-foreground">Loading jobs...</CardContent></Card>
             ) : !payload || payload.jobs.length === 0 ? (
-              <Card><CardContent className="p-6 text-sm text-muted-foreground">No jobs found for this filter.</CardContent></Card>
+              <EmptyState
+                icon={BriefcaseBusiness}
+                title="No jobs here yet"
+                description="Opportunities posted by fellow graduates show up here. Know of a role? Post it and let the network see it first."
+              />
             ) : (
               <div className="space-y-3">
                 {payload.jobs.map((job) => (
