@@ -143,49 +143,48 @@ async function main() {
   }
 
   // ── Apply ─────────────────────────────────────────────────────────────────
+  // One transaction per source group, and the moving is done set-based in the
+  // database. Reading every membership into this process and sending it back as
+  // one enormous IN (...) blew the transaction budget on Gombe, which alone
+  // holds about 15,700 memberships.
   for (const plan of plans) {
-    await prisma.$transaction(async (tx) => {
-      for (const source of plan.sources) {
-        const members = await tx.groupMember.findMany({
-          where: { groupId: source.id },
-          select: { id: true, graduateId: true },
-        });
+    for (const source of plan.sources) {
+      await prisma.$transaction(
+        async (tx) => {
+          // [groupId, graduateId] is unique, so anyone already in the target
+          // keeps their original membership and the duplicate row goes.
+          await tx.$executeRaw`
+            DELETE FROM "group_member" AS dup
+            WHERE dup."group_id" = ${source.id}
+              AND EXISTS (
+                SELECT 1 FROM "group_member" AS kept
+                WHERE kept."group_id" = ${plan.target.id}
+                  AND kept."graduate_id" = dup."graduate_id"
+              )`;
 
-        // [groupId, graduateId] is unique, so anyone already in the target
-        // keeps their original membership and the duplicate row is dropped.
-        const already = new Set(
-          (
-            await tx.groupMember.findMany({
-              where: { groupId: plan.target.id, graduateId: { in: members.map((m) => m.graduateId) } },
-              select: { graduateId: true },
-            })
-          ).map((m) => m.graduateId)
-        );
+          await tx.$executeRaw`
+            UPDATE "group_member" SET "group_id" = ${plan.target.id}
+            WHERE "group_id" = ${source.id}`;
 
-        const movable = members.filter((m) => !already.has(m.graduateId)).map((m) => m.id);
-        if (movable.length) {
-          await tx.groupMember.updateMany({
-            where: { id: { in: movable } },
-            data: { groupId: plan.target.id },
-          });
-        }
+          await tx.$executeRaw`
+            UPDATE "group_post" SET "group_id" = ${plan.target.id}
+            WHERE "group_id" = ${source.id}`;
 
-        await tx.groupPost.updateMany({
-          where: { groupId: source.id },
-          data: { groupId: plan.target.id },
-        });
+          await tx.$executeRaw`
+            DELETE FROM "alumni_group" WHERE "id" = ${source.id}`;
+        },
+        { timeout: 30_000, maxWait: 10_000 }
+      );
 
-        // Cascades the duplicate memberships that were not moved.
-        await tx.alumniGroup.delete({ where: { id: source.id } });
-      }
+      console.log(`    moved ${source.name} -> ${plan.canonicalName}`);
+    }
 
-      if (plan.rename) {
-        await tx.alumniGroup.update({
-          where: { id: plan.target.id },
-          data: { name: plan.canonicalName, slug: slugify(plan.canonicalName) },
-        });
-      }
-    });
+    if (plan.rename) {
+      await prisma.alumniGroup.update({
+        where: { id: plan.target.id },
+        data: { name: plan.canonicalName, slug: slugify(plan.canonicalName) },
+      });
+    }
 
     console.log(`  merged: ${plan.canonicalName}`);
   }
