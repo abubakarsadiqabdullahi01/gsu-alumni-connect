@@ -1,6 +1,7 @@
 import { prisma } from "../db";
 import { parseExcelFile, type ParsedRow } from "../excel/parser";
 import { generateDefaultPassword, hashPassword } from "../password";
+import { canonicalStateName } from "../nigeria-state-centers";
 import type { Prisma } from "../../src/generated/prisma";
 
 // ── Tuning constants ───────────────────────────────────────────────────────────
@@ -110,11 +111,17 @@ async function prewarmGroups(rows: ParsedRow[]): Promise<void> {
       });
     }
     if (row.stateOfOrigin) {
-      const key = `state-${slugify(row.stateOfOrigin)}`;
+      // Keyed on the canonical state, never the raw cell. The spreadsheets
+      // spell one state a dozen ways — "AB", "ABI", "ABIA" — and keying on the
+      // raw value built a separate group for each, so graduates from one state
+      // never met. An unrecognised value still gets its own group under its own
+      // name, which keeps it visible until someone corrects the record.
+      const state = canonicalStateName(row.stateOfOrigin) ?? row.stateOfOrigin;
+      const key = `state-${slugify(state)}`;
       defs.set(key, {
-        name: `${row.stateOfOrigin} State Alumni`,
+        name: `${state} State Alumni`,
         type: "STATE",
-        meta: { stateCode: slugify(row.stateOfOrigin) },
+        meta: { stateCode: slugify(state) },
       });
     }
   }
