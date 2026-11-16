@@ -34,6 +34,7 @@ export const metadata: Metadata = {
   ],
   icons: {
     icon: "/images/gsu-alumni-logo.png",
+    apple: "/images/gsu-alumni-logo.png",
   },
 };
 
