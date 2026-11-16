@@ -95,7 +95,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
             children: [
               GsuCard(
-                accent: AppColors.navy600,
+                accent: AppColors.green600,
                 child: Row(
                   children: [
                     GsuAvatar(name: current.fullName, radius: 24),

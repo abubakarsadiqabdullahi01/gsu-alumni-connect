@@ -329,7 +329,7 @@ class StatusPill extends StatelessWidget {
       'REJECTED' ||
       'SUSPENDED' =>
         AppColors.rose600,
-      _ => AppColors.navy600,
+      _ => AppColors.green600,
     };
     return StatusPill(Fmt.enumLabel(status), tone: tone, filled: filled);
   }

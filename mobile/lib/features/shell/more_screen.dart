@@ -33,7 +33,7 @@ class MoreScreen extends ConsumerWidget {
         'My profile',
         'Bio, contact details and experience',
         Icons.person_outline_rounded,
-        AppColors.navy600,
+        AppColors.green600,
         () => openScreen(context, const ProfileScreen()),
       ),
       _MoreEntry(
@@ -101,7 +101,7 @@ class MoreScreen extends ConsumerWidget {
         'Activity feed',
         'Your recent milestones',
         Icons.timeline_rounded,
-        AppColors.navy500,
+        AppColors.green500,
         () => openScreen(context, const FeedScreen()),
       ),
       _MoreEntry(

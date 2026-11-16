@@ -136,7 +136,7 @@ class _AlumniMapScreenState extends ConsumerState<AlumniMapScreen> {
                         // tile has to agree with the map beside it.
                         value: '${states.length}',
                         icon: Icons.map_outlined,
-                        tone: AppColors.navy600,
+                        tone: AppColors.green600,
                         caption: 'Top: ${states.first.state}',
                       ),
                     ),

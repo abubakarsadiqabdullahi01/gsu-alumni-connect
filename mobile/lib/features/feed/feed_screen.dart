@@ -74,7 +74,7 @@ class _FeedCard extends StatelessWidget {
             Icons.work_rounded,
             AppColors.teal600,
           ),
-        'JOINED_GROUP' => (Icons.group_add_rounded, AppColors.navy600),
+        'JOINED_GROUP' => (Icons.group_add_rounded, AppColors.green600),
         'POSTED_IN_GROUP' => (Icons.forum_rounded, Color(0xFF6D4AA8)),
         'GRADUATION_ANNIVERSARY' => (
             Icons.celebration_rounded,

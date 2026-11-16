@@ -186,7 +186,7 @@ class _DashboardBody extends ConsumerWidget {
                 label: 'Connections',
                 value: Fmt.number(stats.connections),
                 icon: Icons.hub_rounded,
-                tone: AppColors.navy600,
+                tone: AppColors.green600,
                 caption: stats.pendingConnectionRequests > 0
                     ? '${stats.pendingConnectionRequests} pending'
                     : null,
@@ -587,7 +587,7 @@ class _NetworkGrowthChart extends StatelessWidget {
                 ),
                 lineTouchData: LineTouchData(
                   touchTooltipData: LineTouchTooltipData(
-                    getTooltipColor: (_) => AppColors.navy800,
+                    getTooltipColor: (_) => AppColors.green800,
                     getTooltipItems: (spots) => spots.map((spot) {
                       final point = points[spot.x.round()];
                       return LineTooltipItem(
@@ -746,7 +746,7 @@ class _QuickActions extends ConsumerWidget {
       _QuickAction(
         'Connections',
         Icons.hub_outlined,
-        AppColors.navy600,
+        AppColors.green600,
         () => openScreen(context, const ConnectionsScreen()),
       ),
       if (features.jobBoard)

@@ -17,21 +17,21 @@ class AppTheme {
 
     final scheme = ColorScheme(
       brightness: brightness,
-      primary: isDark ? AppColors.navy300 : AppColors.navy700,
-      onPrimary: isDark ? AppColors.navy900 : Colors.white,
-      primaryContainer: isDark ? AppColors.navy800 : AppColors.navy100,
-      onPrimaryContainer: isDark ? AppColors.navy100 : AppColors.navy900,
+      primary: isDark ? AppColors.green300 : AppColors.green700,
+      onPrimary: isDark ? AppColors.green900 : Colors.white,
+      primaryContainer: isDark ? AppColors.green800 : AppColors.green100,
+      onPrimaryContainer: isDark ? AppColors.green100 : AppColors.green900,
       secondary: isDark ? AppColors.gold400 : AppColors.gold600,
-      onSecondary: isDark ? AppColors.navy900 : Colors.white,
+      onSecondary: isDark ? AppColors.green900 : Colors.white,
       secondaryContainer: isDark ? const Color(0xFF3D3111) : AppColors.gold100,
       onSecondaryContainer:
           isDark ? AppColors.gold100 : const Color(0xFF3D3111),
       tertiary: isDark ? const Color(0xFF5BC8C9) : AppColors.teal600,
-      onTertiary: isDark ? AppColors.navy900 : Colors.white,
+      onTertiary: isDark ? AppColors.green900 : Colors.white,
       tertiaryContainer: isDark ? const Color(0xFF0B3B3C) : AppColors.teal100,
       onTertiaryContainer: isDark ? AppColors.teal100 : const Color(0xFF04302F),
       error: isDark ? const Color(0xFFFF8A80) : AppColors.rose600,
-      onError: isDark ? AppColors.navy900 : Colors.white,
+      onError: isDark ? AppColors.green900 : Colors.white,
       errorContainer: isDark ? const Color(0xFF4A1512) : AppColors.rose100,
       onErrorContainer: isDark ? AppColors.rose100 : const Color(0xFF4A1512),
       surface: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
@@ -48,8 +48,8 @@ class AppTheme {
       outline: isDark ? const Color(0xFF2E3D57) : const Color(0xFFD7DFEC),
       outlineVariant:
           isDark ? const Color(0xFF223350) : const Color(0xFFE7EDF6),
-      inverseSurface: isDark ? const Color(0xFFE6ECF5) : AppColors.navy900,
-      onInverseSurface: isDark ? AppColors.navy900 : Colors.white,
+      inverseSurface: isDark ? const Color(0xFFE6ECF5) : AppColors.green900,
+      onInverseSurface: isDark ? AppColors.green900 : Colors.white,
       shadow: Colors.black,
       scrim: Colors.black,
     );
@@ -224,7 +224,7 @@ class AppTheme {
       ),
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
-        backgroundColor: isDark ? const Color(0xFF1C2B48) : AppColors.navy800,
+        backgroundColor: isDark ? const Color(0xFF1C2B48) : AppColors.green800,
         contentTextStyle: textTheme.bodyMedium?.copyWith(color: Colors.white),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         insetPadding: const EdgeInsets.all(16),

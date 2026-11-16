@@ -2,19 +2,22 @@ import 'package:flutter/material.dart';
 
 /// Brand tokens.
 ///
-/// Deep academic navy carries the institutional weight, gold is reserved for
-/// achievement/verification affordances, and teal handles positive/active
-/// states so gold never gets diluted into ordinary success messaging.
+/// The green is the association's, matched to the web app's primary
+/// (`oklch(0.508 0.118 165.6)` = #047857) so the two clients read as one
+/// product rather than two. Gold is reserved for achievement and verification
+/// affordances — it also carries the printed ID card — and teal handles
+/// positive/active states so gold never dilutes into ordinary success
+/// messaging.
 class AppColors {
   const AppColors._();
 
-  static const navy900 = Color(0xFF06182F);
-  static const navy800 = Color(0xFF0A2245);
-  static const navy700 = Color(0xFF0E2E5C);
-  static const navy600 = Color(0xFF143C74);
-  static const navy500 = Color(0xFF1D5090);
-  static const navy300 = Color(0xFF6E93C4);
-  static const navy100 = Color(0xFFDCE7F6);
+  static const green900 = Color(0xFF022C22);
+  static const green800 = Color(0xFF064E3B);
+  static const green700 = Color(0xFF065F46);
+  static const green600 = Color(0xFF047857);
+  static const green500 = Color(0xFF059669);
+  static const green300 = Color(0xFF6EE7B7);
+  static const green100 = Color(0xFFD1FAE5);
 
   static const gold600 = Color(0xFFA5801F);
   static const gold500 = Color(0xFFC8A34A);
@@ -47,7 +50,7 @@ class AppColors {
   static const brandGradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [navy800, navy600, teal600],
+    colors: [green800, green600, teal600],
   );
 
   static const goldGradient = LinearGradient(
@@ -59,13 +62,13 @@ class AppColors {
   static const nightGradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [navy900, Color(0xFF0C2137), Color(0xFF07343A)],
+    colors: [green900, Color(0xFF053C2C), Color(0xFF07343A)],
   );
 
   /// Deterministic accent per entity, so the same person or group always shows
   /// the same colour across every screen.
   static const accentCycle = <Color>[
-    navy600,
+    green600,
     teal500,
     gold600,
     Color(0xFF6D4AA8),
@@ -74,7 +77,7 @@ class AppColors {
   ];
 
   static Color accentFor(String seed) {
-    if (seed.isEmpty) return navy600;
+    if (seed.isEmpty) return green600;
     var hash = 0;
     for (final unit in seed.codeUnits) {
       hash = (hash * 31 + unit) & 0x7FFFFFFF;

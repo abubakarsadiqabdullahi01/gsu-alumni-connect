@@ -232,7 +232,7 @@ class GsuWordmark extends StatelessWidget {
           showRibbon: false,
           shieldGradient:
               onDark ? AppColors.goldGradient : AppColors.brandGradient,
-          emblemColor: onDark ? AppColors.navy800 : AppColors.gold500,
+          emblemColor: onDark ? AppColors.green800 : AppColors.gold500,
         ),
         const SizedBox(width: 10),
         Column(

@@ -120,7 +120,7 @@ class _NotificationTile extends ConsumerWidget {
     return switch (type.toUpperCase()) {
       'CONNECTION_REQUEST' || 'CONNECTION_ACCEPTED' => (
           Icons.person_add_alt_rounded,
-          AppColors.navy600
+          AppColors.green600
         ),
       'MENTORSHIP_REQUEST' || 'MENTORSHIP_ACCEPTED' => (
           Icons.school_rounded,
@@ -136,7 +136,7 @@ class _NotificationTile extends ConsumerWidget {
         ),
       'GROUP_POST' || 'GROUP_INVITE' => (
           Icons.forum_rounded,
-          AppColors.navy500
+          AppColors.green500
         ),
       'MESSAGE' => (Icons.chat_bubble_rounded, AppColors.teal500),
       'ACHIEVEMENT_VERIFIED' => (

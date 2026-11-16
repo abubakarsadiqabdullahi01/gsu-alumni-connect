@@ -181,7 +181,7 @@ class ErrorView extends StatelessWidget {
       final f when f.isFeatureDisabled => (
           Icons.lock_outline_rounded,
           'Not available',
-          AppColors.navy600,
+          AppColors.green600,
         ),
       final f when f.isUnauthorized => (
           Icons.no_accounts_rounded,

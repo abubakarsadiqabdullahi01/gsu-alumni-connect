@@ -79,7 +79,7 @@ class _IdCardScreenState extends ConsumerState<IdCardScreen> {
                   const IconBadge(
                     Icons.info_outline_rounded,
                     size: 38,
-                    color: AppColors.navy600,
+                    color: AppColors.green600,
                   ),
                   const SizedBox(width: 13),
                   Expanded(
