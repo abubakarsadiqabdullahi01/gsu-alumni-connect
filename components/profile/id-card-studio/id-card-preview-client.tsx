@@ -82,8 +82,21 @@ function formatGraduationYear(input: string): string {
   return years[years.length - 1];
 }
 
+/**
+ * Stored assets are read through our own proxy, never straight from the bucket.
+ *
+ * The bucket sends no `Access-Control-Allow-Origin`, so fetching it from the
+ * browser is blocked by CORS: the conversion to a data URL fails and the card
+ * falls back to the raw remote URL. On screen that looks fine, because an
+ * `<img>` may display a cross-origin image — but html2canvas cannot *draw* one,
+ * so the exported PDF came out missing the photo and the signature. Going
+ * through `/api/id-cards/image-proxy` makes both same-origin, and saves the
+ * seconds the page spent retrying fetches that could never succeed.
+ */
 function absolutizePath(urlOrPath: string): string {
-  if (/^https?:\/\//i.test(urlOrPath)) return urlOrPath;
+  if (/^https?:\/\//i.test(urlOrPath)) {
+    return `/api/id-cards/image-proxy?src=${encodeURIComponent(urlOrPath)}`;
+  }
   if (urlOrPath.startsWith("/")) return `${window.location.origin}${urlOrPath}`;
   return urlOrPath;
 }
@@ -108,21 +121,14 @@ export function IDCardPreviewClient() {
           return;
         }
 
-        const fallback = await fetch("/api/id-cards?mode=sample", { cache: "no-store" });
-        const fallbackJson = (await fallback.json()) as IdCardApiResponse | { error?: string };
-        if (fallback.ok && "data" in fallbackJson) {
-          setApiData(fallbackJson.data);
-          setError(
-            "Live card data unavailable. Showing secure sample preview until your session/profile endpoint is available."
-          );
-          return;
-        }
-
-        const message =
+        // No fallback to the specimen card. This used to drop back to sample
+        // data whenever the real call failed, so a graduate could be shown —
+        // and print — a card carrying a registration number that was not
+        // theirs, behind nothing but a soft notice.
+        setError(
           ("error" in primaryJson && primaryJson.error) ||
-          ("error" in fallbackJson && fallbackJson.error) ||
-          "Failed to load card data.";
-        setError(message);
+            "We could not load your ID card. Please refresh, and contact the Alumni Secretariat if it keeps failing."
+        );
       } catch {
         setError("Failed to load card data.");
       } finally {

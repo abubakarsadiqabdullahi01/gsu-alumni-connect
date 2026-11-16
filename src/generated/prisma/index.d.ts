@@ -164,6 +164,16 @@ export type Notification = $Result.DefaultSelection<Prisma.$NotificationPayload>
  */
 export type ActivityFeedItem = $Result.DefaultSelection<Prisma.$ActivityFeedItemPayload>
 /**
+ * Model IdCard
+ * An issued alumni ID card.
+ * 
+ * A card is a physical object: printed, carried, and scanned by a stranger
+ * years after it was made. So the QR code carries an opaque card id and
+ * nothing else — no name, no registration number — and the validity lives in
+ * this row, where it can be read at scan time and revoked if a card is lost.
+ */
+export type IdCard = $Result.DefaultSelection<Prisma.$IdCardPayload>
+/**
  * Model AdminSetting
  * 
  */
@@ -869,6 +879,16 @@ export class PrismaClient<
   get activityFeedItem(): Prisma.ActivityFeedItemDelegate<ExtArgs, ClientOptions>;
 
   /**
+   * `prisma.idCard`: Exposes CRUD operations for the **IdCard** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more IdCards
+    * const idCards = await prisma.idCard.findMany()
+    * ```
+    */
+  get idCard(): Prisma.IdCardDelegate<ExtArgs, ClientOptions>;
+
+  /**
    * `prisma.adminSetting`: Exposes CRUD operations for the **AdminSetting** model.
     * Example usage:
     * ```ts
@@ -1371,6 +1391,7 @@ export namespace Prisma {
     Mentorship: 'Mentorship',
     Notification: 'Notification',
     ActivityFeedItem: 'ActivityFeedItem',
+    IdCard: 'IdCard',
     AdminSetting: 'AdminSetting',
     UploadAuditLog: 'UploadAuditLog',
     ImportJob: 'ImportJob',
@@ -1390,7 +1411,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "session" | "account" | "verification" | "twoFactor" | "graduate" | "employment" | "education" | "skill" | "endorsement" | "graduateLocation" | "achievement" | "profileBadge" | "alumniGroup" | "groupMember" | "groupPost" | "postComment" | "postReaction" | "conversation" | "conversationParticipant" | "message" | "connection" | "profileView" | "jobPosting" | "jobApplication" | "event" | "eventAttendee" | "mentorship" | "notification" | "activityFeedItem" | "adminSetting" | "uploadAuditLog" | "importJob" | "importJobError"
+      modelProps: "user" | "session" | "account" | "verification" | "twoFactor" | "graduate" | "employment" | "education" | "skill" | "endorsement" | "graduateLocation" | "achievement" | "profileBadge" | "alumniGroup" | "groupMember" | "groupPost" | "postComment" | "postReaction" | "conversation" | "conversationParticipant" | "message" | "connection" | "profileView" | "jobPosting" | "jobApplication" | "event" | "eventAttendee" | "mentorship" | "notification" | "activityFeedItem" | "idCard" | "adminSetting" | "uploadAuditLog" | "importJob" | "importJobError"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -3614,6 +3635,80 @@ export namespace Prisma {
           }
         }
       }
+      IdCard: {
+        payload: Prisma.$IdCardPayload<ExtArgs>
+        fields: Prisma.IdCardFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.IdCardFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IdCardPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.IdCardFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IdCardPayload>
+          }
+          findFirst: {
+            args: Prisma.IdCardFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IdCardPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.IdCardFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IdCardPayload>
+          }
+          findMany: {
+            args: Prisma.IdCardFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IdCardPayload>[]
+          }
+          create: {
+            args: Prisma.IdCardCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IdCardPayload>
+          }
+          createMany: {
+            args: Prisma.IdCardCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.IdCardCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IdCardPayload>[]
+          }
+          delete: {
+            args: Prisma.IdCardDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IdCardPayload>
+          }
+          update: {
+            args: Prisma.IdCardUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IdCardPayload>
+          }
+          deleteMany: {
+            args: Prisma.IdCardDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.IdCardUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.IdCardUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IdCardPayload>[]
+          }
+          upsert: {
+            args: Prisma.IdCardUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IdCardPayload>
+          }
+          aggregate: {
+            args: Prisma.IdCardAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateIdCard>
+          }
+          groupBy: {
+            args: Prisma.IdCardGroupByArgs<ExtArgs>
+            result: $Utils.Optional<IdCardGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.IdCardCountArgs<ExtArgs>
+            result: $Utils.Optional<IdCardCountAggregateOutputType> | number
+          }
+        }
+      }
       AdminSetting: {
         payload: Prisma.$AdminSettingPayload<ExtArgs>
         fields: Prisma.AdminSettingFieldRefs
@@ -4048,6 +4143,7 @@ export namespace Prisma {
     mentorship?: MentorshipOmit
     notification?: NotificationOmit
     activityFeedItem?: ActivityFeedItemOmit
+    idCard?: IdCardOmit
     adminSetting?: AdminSettingOmit
     uploadAuditLog?: UploadAuditLogOmit
     importJob?: ImportJobOmit
@@ -4206,6 +4302,7 @@ export namespace Prisma {
     activityFeed: number
     profileViewsLog: number
     profileViewsGiven: number
+    idCards: number
   }
 
   export type GraduateCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4234,6 +4331,7 @@ export namespace Prisma {
     activityFeed?: boolean | GraduateCountOutputTypeCountActivityFeedArgs
     profileViewsLog?: boolean | GraduateCountOutputTypeCountProfileViewsLogArgs
     profileViewsGiven?: boolean | GraduateCountOutputTypeCountProfileViewsGivenArgs
+    idCards?: boolean | GraduateCountOutputTypeCountIdCardsArgs
   }
 
   // Custom InputTypes
@@ -4420,6 +4518,13 @@ export namespace Prisma {
    */
   export type GraduateCountOutputTypeCountProfileViewsGivenArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ProfileViewWhereInput
+  }
+
+  /**
+   * GraduateCountOutputType without action
+   */
+  export type GraduateCountOutputTypeCountIdCardsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: IdCardWhereInput
   }
 
 
@@ -10901,6 +11006,7 @@ export namespace Prisma {
     activityFeed?: boolean | Graduate$activityFeedArgs<ExtArgs>
     profileViewsLog?: boolean | Graduate$profileViewsLogArgs<ExtArgs>
     profileViewsGiven?: boolean | Graduate$profileViewsGivenArgs<ExtArgs>
+    idCards?: boolean | Graduate$idCardsArgs<ExtArgs>
     _count?: boolean | GraduateCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["graduate"]>
 
@@ -11079,6 +11185,7 @@ export namespace Prisma {
     activityFeed?: boolean | Graduate$activityFeedArgs<ExtArgs>
     profileViewsLog?: boolean | Graduate$profileViewsLogArgs<ExtArgs>
     profileViewsGiven?: boolean | Graduate$profileViewsGivenArgs<ExtArgs>
+    idCards?: boolean | Graduate$idCardsArgs<ExtArgs>
     _count?: boolean | GraduateCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type GraduateIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -11118,6 +11225,7 @@ export namespace Prisma {
       activityFeed: Prisma.$ActivityFeedItemPayload<ExtArgs>[]
       profileViewsLog: Prisma.$ProfileViewPayload<ExtArgs>[]
       profileViewsGiven: Prisma.$ProfileViewPayload<ExtArgs>[]
+      idCards: Prisma.$IdCardPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -11586,6 +11694,7 @@ export namespace Prisma {
     activityFeed<T extends Graduate$activityFeedArgs<ExtArgs> = {}>(args?: Subset<T, Graduate$activityFeedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ActivityFeedItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     profileViewsLog<T extends Graduate$profileViewsLogArgs<ExtArgs> = {}>(args?: Subset<T, Graduate$profileViewsLogArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProfileViewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     profileViewsGiven<T extends Graduate$profileViewsGivenArgs<ExtArgs> = {}>(args?: Subset<T, Graduate$profileViewsGivenArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProfileViewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    idCards<T extends Graduate$idCardsArgs<ExtArgs> = {}>(args?: Subset<T, Graduate$idCardsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$IdCardPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -12672,6 +12781,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ProfileViewScalarFieldEnum | ProfileViewScalarFieldEnum[]
+  }
+
+  /**
+   * Graduate.idCards
+   */
+  export type Graduate$idCardsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IdCard
+     */
+    select?: IdCardSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IdCard
+     */
+    omit?: IdCardOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IdCardInclude<ExtArgs> | null
+    where?: IdCardWhereInput
+    orderBy?: IdCardOrderByWithRelationInput | IdCardOrderByWithRelationInput[]
+    cursor?: IdCardWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: IdCardScalarFieldEnum | IdCardScalarFieldEnum[]
   }
 
   /**
@@ -39676,6 +39809,1111 @@ export namespace Prisma {
 
 
   /**
+   * Model IdCard
+   */
+
+  export type AggregateIdCard = {
+    _count: IdCardCountAggregateOutputType | null
+    _min: IdCardMinAggregateOutputType | null
+    _max: IdCardMaxAggregateOutputType | null
+  }
+
+  export type IdCardMinAggregateOutputType = {
+    id: string | null
+    graduateId: string | null
+    alumniNumber: string | null
+    payloadHash: string | null
+    issuedAt: Date | null
+    expiresAt: Date | null
+    revokedAt: Date | null
+    revokedReason: string | null
+  }
+
+  export type IdCardMaxAggregateOutputType = {
+    id: string | null
+    graduateId: string | null
+    alumniNumber: string | null
+    payloadHash: string | null
+    issuedAt: Date | null
+    expiresAt: Date | null
+    revokedAt: Date | null
+    revokedReason: string | null
+  }
+
+  export type IdCardCountAggregateOutputType = {
+    id: number
+    graduateId: number
+    alumniNumber: number
+    payloadHash: number
+    issuedAt: number
+    expiresAt: number
+    revokedAt: number
+    revokedReason: number
+    _all: number
+  }
+
+
+  export type IdCardMinAggregateInputType = {
+    id?: true
+    graduateId?: true
+    alumniNumber?: true
+    payloadHash?: true
+    issuedAt?: true
+    expiresAt?: true
+    revokedAt?: true
+    revokedReason?: true
+  }
+
+  export type IdCardMaxAggregateInputType = {
+    id?: true
+    graduateId?: true
+    alumniNumber?: true
+    payloadHash?: true
+    issuedAt?: true
+    expiresAt?: true
+    revokedAt?: true
+    revokedReason?: true
+  }
+
+  export type IdCardCountAggregateInputType = {
+    id?: true
+    graduateId?: true
+    alumniNumber?: true
+    payloadHash?: true
+    issuedAt?: true
+    expiresAt?: true
+    revokedAt?: true
+    revokedReason?: true
+    _all?: true
+  }
+
+  export type IdCardAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which IdCard to aggregate.
+     */
+    where?: IdCardWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of IdCards to fetch.
+     */
+    orderBy?: IdCardOrderByWithRelationInput | IdCardOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: IdCardWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` IdCards from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` IdCards.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned IdCards
+    **/
+    _count?: true | IdCardCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: IdCardMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: IdCardMaxAggregateInputType
+  }
+
+  export type GetIdCardAggregateType<T extends IdCardAggregateArgs> = {
+        [P in keyof T & keyof AggregateIdCard]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateIdCard[P]>
+      : GetScalarType<T[P], AggregateIdCard[P]>
+  }
+
+
+
+
+  export type IdCardGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: IdCardWhereInput
+    orderBy?: IdCardOrderByWithAggregationInput | IdCardOrderByWithAggregationInput[]
+    by: IdCardScalarFieldEnum[] | IdCardScalarFieldEnum
+    having?: IdCardScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: IdCardCountAggregateInputType | true
+    _min?: IdCardMinAggregateInputType
+    _max?: IdCardMaxAggregateInputType
+  }
+
+  export type IdCardGroupByOutputType = {
+    id: string
+    graduateId: string
+    alumniNumber: string
+    payloadHash: string
+    issuedAt: Date
+    expiresAt: Date
+    revokedAt: Date | null
+    revokedReason: string | null
+    _count: IdCardCountAggregateOutputType | null
+    _min: IdCardMinAggregateOutputType | null
+    _max: IdCardMaxAggregateOutputType | null
+  }
+
+  type GetIdCardGroupByPayload<T extends IdCardGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<IdCardGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof IdCardGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], IdCardGroupByOutputType[P]>
+            : GetScalarType<T[P], IdCardGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type IdCardSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    graduateId?: boolean
+    alumniNumber?: boolean
+    payloadHash?: boolean
+    issuedAt?: boolean
+    expiresAt?: boolean
+    revokedAt?: boolean
+    revokedReason?: boolean
+    graduate?: boolean | GraduateDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["idCard"]>
+
+  export type IdCardSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    graduateId?: boolean
+    alumniNumber?: boolean
+    payloadHash?: boolean
+    issuedAt?: boolean
+    expiresAt?: boolean
+    revokedAt?: boolean
+    revokedReason?: boolean
+    graduate?: boolean | GraduateDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["idCard"]>
+
+  export type IdCardSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    graduateId?: boolean
+    alumniNumber?: boolean
+    payloadHash?: boolean
+    issuedAt?: boolean
+    expiresAt?: boolean
+    revokedAt?: boolean
+    revokedReason?: boolean
+    graduate?: boolean | GraduateDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["idCard"]>
+
+  export type IdCardSelectScalar = {
+    id?: boolean
+    graduateId?: boolean
+    alumniNumber?: boolean
+    payloadHash?: boolean
+    issuedAt?: boolean
+    expiresAt?: boolean
+    revokedAt?: boolean
+    revokedReason?: boolean
+  }
+
+  export type IdCardOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "graduateId" | "alumniNumber" | "payloadHash" | "issuedAt" | "expiresAt" | "revokedAt" | "revokedReason", ExtArgs["result"]["idCard"]>
+  export type IdCardInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    graduate?: boolean | GraduateDefaultArgs<ExtArgs>
+  }
+  export type IdCardIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    graduate?: boolean | GraduateDefaultArgs<ExtArgs>
+  }
+  export type IdCardIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    graduate?: boolean | GraduateDefaultArgs<ExtArgs>
+  }
+
+  export type $IdCardPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "IdCard"
+    objects: {
+      graduate: Prisma.$GraduatePayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      graduateId: string
+      /**
+       * Snapshot of the registration number at issue, so a later correction to the
+       * graduate record shows up as a mismatch rather than silently rewriting what
+       * the printed card claims.
+       */
+      alumniNumber: string
+      /**
+       * HMAC of the payload this card was issued with.
+       */
+      payloadHash: string
+      issuedAt: Date
+      expiresAt: Date
+      revokedAt: Date | null
+      revokedReason: string | null
+    }, ExtArgs["result"]["idCard"]>
+    composites: {}
+  }
+
+  type IdCardGetPayload<S extends boolean | null | undefined | IdCardDefaultArgs> = $Result.GetResult<Prisma.$IdCardPayload, S>
+
+  type IdCardCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<IdCardFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: IdCardCountAggregateInputType | true
+    }
+
+  export interface IdCardDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['IdCard'], meta: { name: 'IdCard' } }
+    /**
+     * Find zero or one IdCard that matches the filter.
+     * @param {IdCardFindUniqueArgs} args - Arguments to find a IdCard
+     * @example
+     * // Get one IdCard
+     * const idCard = await prisma.idCard.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends IdCardFindUniqueArgs>(args: SelectSubset<T, IdCardFindUniqueArgs<ExtArgs>>): Prisma__IdCardClient<$Result.GetResult<Prisma.$IdCardPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one IdCard that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {IdCardFindUniqueOrThrowArgs} args - Arguments to find a IdCard
+     * @example
+     * // Get one IdCard
+     * const idCard = await prisma.idCard.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends IdCardFindUniqueOrThrowArgs>(args: SelectSubset<T, IdCardFindUniqueOrThrowArgs<ExtArgs>>): Prisma__IdCardClient<$Result.GetResult<Prisma.$IdCardPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first IdCard that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IdCardFindFirstArgs} args - Arguments to find a IdCard
+     * @example
+     * // Get one IdCard
+     * const idCard = await prisma.idCard.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends IdCardFindFirstArgs>(args?: SelectSubset<T, IdCardFindFirstArgs<ExtArgs>>): Prisma__IdCardClient<$Result.GetResult<Prisma.$IdCardPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first IdCard that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IdCardFindFirstOrThrowArgs} args - Arguments to find a IdCard
+     * @example
+     * // Get one IdCard
+     * const idCard = await prisma.idCard.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends IdCardFindFirstOrThrowArgs>(args?: SelectSubset<T, IdCardFindFirstOrThrowArgs<ExtArgs>>): Prisma__IdCardClient<$Result.GetResult<Prisma.$IdCardPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more IdCards that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IdCardFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all IdCards
+     * const idCards = await prisma.idCard.findMany()
+     * 
+     * // Get first 10 IdCards
+     * const idCards = await prisma.idCard.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const idCardWithIdOnly = await prisma.idCard.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends IdCardFindManyArgs>(args?: SelectSubset<T, IdCardFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$IdCardPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a IdCard.
+     * @param {IdCardCreateArgs} args - Arguments to create a IdCard.
+     * @example
+     * // Create one IdCard
+     * const IdCard = await prisma.idCard.create({
+     *   data: {
+     *     // ... data to create a IdCard
+     *   }
+     * })
+     * 
+     */
+    create<T extends IdCardCreateArgs>(args: SelectSubset<T, IdCardCreateArgs<ExtArgs>>): Prisma__IdCardClient<$Result.GetResult<Prisma.$IdCardPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many IdCards.
+     * @param {IdCardCreateManyArgs} args - Arguments to create many IdCards.
+     * @example
+     * // Create many IdCards
+     * const idCard = await prisma.idCard.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends IdCardCreateManyArgs>(args?: SelectSubset<T, IdCardCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many IdCards and returns the data saved in the database.
+     * @param {IdCardCreateManyAndReturnArgs} args - Arguments to create many IdCards.
+     * @example
+     * // Create many IdCards
+     * const idCard = await prisma.idCard.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many IdCards and only return the `id`
+     * const idCardWithIdOnly = await prisma.idCard.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends IdCardCreateManyAndReturnArgs>(args?: SelectSubset<T, IdCardCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$IdCardPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a IdCard.
+     * @param {IdCardDeleteArgs} args - Arguments to delete one IdCard.
+     * @example
+     * // Delete one IdCard
+     * const IdCard = await prisma.idCard.delete({
+     *   where: {
+     *     // ... filter to delete one IdCard
+     *   }
+     * })
+     * 
+     */
+    delete<T extends IdCardDeleteArgs>(args: SelectSubset<T, IdCardDeleteArgs<ExtArgs>>): Prisma__IdCardClient<$Result.GetResult<Prisma.$IdCardPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one IdCard.
+     * @param {IdCardUpdateArgs} args - Arguments to update one IdCard.
+     * @example
+     * // Update one IdCard
+     * const idCard = await prisma.idCard.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends IdCardUpdateArgs>(args: SelectSubset<T, IdCardUpdateArgs<ExtArgs>>): Prisma__IdCardClient<$Result.GetResult<Prisma.$IdCardPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more IdCards.
+     * @param {IdCardDeleteManyArgs} args - Arguments to filter IdCards to delete.
+     * @example
+     * // Delete a few IdCards
+     * const { count } = await prisma.idCard.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends IdCardDeleteManyArgs>(args?: SelectSubset<T, IdCardDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more IdCards.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IdCardUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many IdCards
+     * const idCard = await prisma.idCard.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends IdCardUpdateManyArgs>(args: SelectSubset<T, IdCardUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more IdCards and returns the data updated in the database.
+     * @param {IdCardUpdateManyAndReturnArgs} args - Arguments to update many IdCards.
+     * @example
+     * // Update many IdCards
+     * const idCard = await prisma.idCard.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more IdCards and only return the `id`
+     * const idCardWithIdOnly = await prisma.idCard.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends IdCardUpdateManyAndReturnArgs>(args: SelectSubset<T, IdCardUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$IdCardPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one IdCard.
+     * @param {IdCardUpsertArgs} args - Arguments to update or create a IdCard.
+     * @example
+     * // Update or create a IdCard
+     * const idCard = await prisma.idCard.upsert({
+     *   create: {
+     *     // ... data to create a IdCard
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the IdCard we want to update
+     *   }
+     * })
+     */
+    upsert<T extends IdCardUpsertArgs>(args: SelectSubset<T, IdCardUpsertArgs<ExtArgs>>): Prisma__IdCardClient<$Result.GetResult<Prisma.$IdCardPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of IdCards.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IdCardCountArgs} args - Arguments to filter IdCards to count.
+     * @example
+     * // Count the number of IdCards
+     * const count = await prisma.idCard.count({
+     *   where: {
+     *     // ... the filter for the IdCards we want to count
+     *   }
+     * })
+    **/
+    count<T extends IdCardCountArgs>(
+      args?: Subset<T, IdCardCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], IdCardCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a IdCard.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IdCardAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends IdCardAggregateArgs>(args: Subset<T, IdCardAggregateArgs>): Prisma.PrismaPromise<GetIdCardAggregateType<T>>
+
+    /**
+     * Group by IdCard.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IdCardGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends IdCardGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: IdCardGroupByArgs['orderBy'] }
+        : { orderBy?: IdCardGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, IdCardGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetIdCardGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the IdCard model
+   */
+  readonly fields: IdCardFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for IdCard.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__IdCardClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    graduate<T extends GraduateDefaultArgs<ExtArgs> = {}>(args?: Subset<T, GraduateDefaultArgs<ExtArgs>>): Prisma__GraduateClient<$Result.GetResult<Prisma.$GraduatePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the IdCard model
+   */
+  interface IdCardFieldRefs {
+    readonly id: FieldRef<"IdCard", 'String'>
+    readonly graduateId: FieldRef<"IdCard", 'String'>
+    readonly alumniNumber: FieldRef<"IdCard", 'String'>
+    readonly payloadHash: FieldRef<"IdCard", 'String'>
+    readonly issuedAt: FieldRef<"IdCard", 'DateTime'>
+    readonly expiresAt: FieldRef<"IdCard", 'DateTime'>
+    readonly revokedAt: FieldRef<"IdCard", 'DateTime'>
+    readonly revokedReason: FieldRef<"IdCard", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * IdCard findUnique
+   */
+  export type IdCardFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IdCard
+     */
+    select?: IdCardSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IdCard
+     */
+    omit?: IdCardOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IdCardInclude<ExtArgs> | null
+    /**
+     * Filter, which IdCard to fetch.
+     */
+    where: IdCardWhereUniqueInput
+  }
+
+  /**
+   * IdCard findUniqueOrThrow
+   */
+  export type IdCardFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IdCard
+     */
+    select?: IdCardSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IdCard
+     */
+    omit?: IdCardOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IdCardInclude<ExtArgs> | null
+    /**
+     * Filter, which IdCard to fetch.
+     */
+    where: IdCardWhereUniqueInput
+  }
+
+  /**
+   * IdCard findFirst
+   */
+  export type IdCardFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IdCard
+     */
+    select?: IdCardSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IdCard
+     */
+    omit?: IdCardOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IdCardInclude<ExtArgs> | null
+    /**
+     * Filter, which IdCard to fetch.
+     */
+    where?: IdCardWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of IdCards to fetch.
+     */
+    orderBy?: IdCardOrderByWithRelationInput | IdCardOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for IdCards.
+     */
+    cursor?: IdCardWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` IdCards from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` IdCards.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of IdCards.
+     */
+    distinct?: IdCardScalarFieldEnum | IdCardScalarFieldEnum[]
+  }
+
+  /**
+   * IdCard findFirstOrThrow
+   */
+  export type IdCardFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IdCard
+     */
+    select?: IdCardSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IdCard
+     */
+    omit?: IdCardOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IdCardInclude<ExtArgs> | null
+    /**
+     * Filter, which IdCard to fetch.
+     */
+    where?: IdCardWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of IdCards to fetch.
+     */
+    orderBy?: IdCardOrderByWithRelationInput | IdCardOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for IdCards.
+     */
+    cursor?: IdCardWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` IdCards from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` IdCards.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of IdCards.
+     */
+    distinct?: IdCardScalarFieldEnum | IdCardScalarFieldEnum[]
+  }
+
+  /**
+   * IdCard findMany
+   */
+  export type IdCardFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IdCard
+     */
+    select?: IdCardSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IdCard
+     */
+    omit?: IdCardOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IdCardInclude<ExtArgs> | null
+    /**
+     * Filter, which IdCards to fetch.
+     */
+    where?: IdCardWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of IdCards to fetch.
+     */
+    orderBy?: IdCardOrderByWithRelationInput | IdCardOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing IdCards.
+     */
+    cursor?: IdCardWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` IdCards from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` IdCards.
+     */
+    skip?: number
+    distinct?: IdCardScalarFieldEnum | IdCardScalarFieldEnum[]
+  }
+
+  /**
+   * IdCard create
+   */
+  export type IdCardCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IdCard
+     */
+    select?: IdCardSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IdCard
+     */
+    omit?: IdCardOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IdCardInclude<ExtArgs> | null
+    /**
+     * The data needed to create a IdCard.
+     */
+    data: XOR<IdCardCreateInput, IdCardUncheckedCreateInput>
+  }
+
+  /**
+   * IdCard createMany
+   */
+  export type IdCardCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many IdCards.
+     */
+    data: IdCardCreateManyInput | IdCardCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * IdCard createManyAndReturn
+   */
+  export type IdCardCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IdCard
+     */
+    select?: IdCardSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the IdCard
+     */
+    omit?: IdCardOmit<ExtArgs> | null
+    /**
+     * The data used to create many IdCards.
+     */
+    data: IdCardCreateManyInput | IdCardCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IdCardIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * IdCard update
+   */
+  export type IdCardUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IdCard
+     */
+    select?: IdCardSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IdCard
+     */
+    omit?: IdCardOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IdCardInclude<ExtArgs> | null
+    /**
+     * The data needed to update a IdCard.
+     */
+    data: XOR<IdCardUpdateInput, IdCardUncheckedUpdateInput>
+    /**
+     * Choose, which IdCard to update.
+     */
+    where: IdCardWhereUniqueInput
+  }
+
+  /**
+   * IdCard updateMany
+   */
+  export type IdCardUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update IdCards.
+     */
+    data: XOR<IdCardUpdateManyMutationInput, IdCardUncheckedUpdateManyInput>
+    /**
+     * Filter which IdCards to update
+     */
+    where?: IdCardWhereInput
+    /**
+     * Limit how many IdCards to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * IdCard updateManyAndReturn
+   */
+  export type IdCardUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IdCard
+     */
+    select?: IdCardSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the IdCard
+     */
+    omit?: IdCardOmit<ExtArgs> | null
+    /**
+     * The data used to update IdCards.
+     */
+    data: XOR<IdCardUpdateManyMutationInput, IdCardUncheckedUpdateManyInput>
+    /**
+     * Filter which IdCards to update
+     */
+    where?: IdCardWhereInput
+    /**
+     * Limit how many IdCards to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IdCardIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * IdCard upsert
+   */
+  export type IdCardUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IdCard
+     */
+    select?: IdCardSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IdCard
+     */
+    omit?: IdCardOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IdCardInclude<ExtArgs> | null
+    /**
+     * The filter to search for the IdCard to update in case it exists.
+     */
+    where: IdCardWhereUniqueInput
+    /**
+     * In case the IdCard found by the `where` argument doesn't exist, create a new IdCard with this data.
+     */
+    create: XOR<IdCardCreateInput, IdCardUncheckedCreateInput>
+    /**
+     * In case the IdCard was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<IdCardUpdateInput, IdCardUncheckedUpdateInput>
+  }
+
+  /**
+   * IdCard delete
+   */
+  export type IdCardDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IdCard
+     */
+    select?: IdCardSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IdCard
+     */
+    omit?: IdCardOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IdCardInclude<ExtArgs> | null
+    /**
+     * Filter which IdCard to delete.
+     */
+    where: IdCardWhereUniqueInput
+  }
+
+  /**
+   * IdCard deleteMany
+   */
+  export type IdCardDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which IdCards to delete
+     */
+    where?: IdCardWhereInput
+    /**
+     * Limit how many IdCards to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * IdCard without action
+   */
+  export type IdCardDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IdCard
+     */
+    select?: IdCardSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IdCard
+     */
+    omit?: IdCardOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IdCardInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Model AdminSetting
    */
 
@@ -44848,6 +46086,20 @@ export namespace Prisma {
   export type ActivityFeedItemScalarFieldEnum = (typeof ActivityFeedItemScalarFieldEnum)[keyof typeof ActivityFeedItemScalarFieldEnum]
 
 
+  export const IdCardScalarFieldEnum: {
+    id: 'id',
+    graduateId: 'graduateId',
+    alumniNumber: 'alumniNumber',
+    payloadHash: 'payloadHash',
+    issuedAt: 'issuedAt',
+    expiresAt: 'expiresAt',
+    revokedAt: 'revokedAt',
+    revokedReason: 'revokedReason'
+  };
+
+  export type IdCardScalarFieldEnum = (typeof IdCardScalarFieldEnum)[keyof typeof IdCardScalarFieldEnum]
+
+
   export const AdminSettingScalarFieldEnum: {
     id: 'id',
     platformName: 'platformName',
@@ -45781,6 +47033,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemListRelationFilter
     profileViewsLog?: ProfileViewListRelationFilter
     profileViewsGiven?: ProfileViewListRelationFilter
+    idCards?: IdCardListRelationFilter
   }
 
   export type GraduateOrderByWithRelationInput = {
@@ -45856,6 +47109,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemOrderByRelationAggregateInput
     profileViewsLog?: ProfileViewOrderByRelationAggregateInput
     profileViewsGiven?: ProfileViewOrderByRelationAggregateInput
+    idCards?: IdCardOrderByRelationAggregateInput
   }
 
   export type GraduateWhereUniqueInput = Prisma.AtLeast<{
@@ -45934,6 +47188,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemListRelationFilter
     profileViewsLog?: ProfileViewListRelationFilter
     profileViewsGiven?: ProfileViewListRelationFilter
+    idCards?: IdCardListRelationFilter
   }, "id" | "userId" | "registrationNo">
 
   export type GraduateOrderByWithAggregationInput = {
@@ -47840,6 +49095,76 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"ActivityFeedItem"> | Date | string
   }
 
+  export type IdCardWhereInput = {
+    AND?: IdCardWhereInput | IdCardWhereInput[]
+    OR?: IdCardWhereInput[]
+    NOT?: IdCardWhereInput | IdCardWhereInput[]
+    id?: StringFilter<"IdCard"> | string
+    graduateId?: StringFilter<"IdCard"> | string
+    alumniNumber?: StringFilter<"IdCard"> | string
+    payloadHash?: StringFilter<"IdCard"> | string
+    issuedAt?: DateTimeFilter<"IdCard"> | Date | string
+    expiresAt?: DateTimeFilter<"IdCard"> | Date | string
+    revokedAt?: DateTimeNullableFilter<"IdCard"> | Date | string | null
+    revokedReason?: StringNullableFilter<"IdCard"> | string | null
+    graduate?: XOR<GraduateScalarRelationFilter, GraduateWhereInput>
+  }
+
+  export type IdCardOrderByWithRelationInput = {
+    id?: SortOrder
+    graduateId?: SortOrder
+    alumniNumber?: SortOrder
+    payloadHash?: SortOrder
+    issuedAt?: SortOrder
+    expiresAt?: SortOrder
+    revokedAt?: SortOrderInput | SortOrder
+    revokedReason?: SortOrderInput | SortOrder
+    graduate?: GraduateOrderByWithRelationInput
+  }
+
+  export type IdCardWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: IdCardWhereInput | IdCardWhereInput[]
+    OR?: IdCardWhereInput[]
+    NOT?: IdCardWhereInput | IdCardWhereInput[]
+    graduateId?: StringFilter<"IdCard"> | string
+    alumniNumber?: StringFilter<"IdCard"> | string
+    payloadHash?: StringFilter<"IdCard"> | string
+    issuedAt?: DateTimeFilter<"IdCard"> | Date | string
+    expiresAt?: DateTimeFilter<"IdCard"> | Date | string
+    revokedAt?: DateTimeNullableFilter<"IdCard"> | Date | string | null
+    revokedReason?: StringNullableFilter<"IdCard"> | string | null
+    graduate?: XOR<GraduateScalarRelationFilter, GraduateWhereInput>
+  }, "id">
+
+  export type IdCardOrderByWithAggregationInput = {
+    id?: SortOrder
+    graduateId?: SortOrder
+    alumniNumber?: SortOrder
+    payloadHash?: SortOrder
+    issuedAt?: SortOrder
+    expiresAt?: SortOrder
+    revokedAt?: SortOrderInput | SortOrder
+    revokedReason?: SortOrderInput | SortOrder
+    _count?: IdCardCountOrderByAggregateInput
+    _max?: IdCardMaxOrderByAggregateInput
+    _min?: IdCardMinOrderByAggregateInput
+  }
+
+  export type IdCardScalarWhereWithAggregatesInput = {
+    AND?: IdCardScalarWhereWithAggregatesInput | IdCardScalarWhereWithAggregatesInput[]
+    OR?: IdCardScalarWhereWithAggregatesInput[]
+    NOT?: IdCardScalarWhereWithAggregatesInput | IdCardScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"IdCard"> | string
+    graduateId?: StringWithAggregatesFilter<"IdCard"> | string
+    alumniNumber?: StringWithAggregatesFilter<"IdCard"> | string
+    payloadHash?: StringWithAggregatesFilter<"IdCard"> | string
+    issuedAt?: DateTimeWithAggregatesFilter<"IdCard"> | Date | string
+    expiresAt?: DateTimeWithAggregatesFilter<"IdCard"> | Date | string
+    revokedAt?: DateTimeNullableWithAggregatesFilter<"IdCard"> | Date | string | null
+    revokedReason?: StringNullableWithAggregatesFilter<"IdCard"> | string | null
+  }
+
   export type AdminSettingWhereInput = {
     AND?: AdminSettingWhereInput | AdminSettingWhereInput[]
     OR?: AdminSettingWhereInput[]
@@ -48763,6 +50088,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemCreateNestedManyWithoutGraduateInput
     profileViewsLog?: ProfileViewCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewCreateNestedManyWithoutViewerInput
+    idCards?: IdCardCreateNestedManyWithoutGraduateInput
   }
 
   export type GraduateUncheckedCreateInput = {
@@ -48837,6 +50163,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUncheckedCreateNestedManyWithoutGraduateInput
     profileViewsLog?: ProfileViewUncheckedCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewUncheckedCreateNestedManyWithoutViewerInput
+    idCards?: IdCardUncheckedCreateNestedManyWithoutGraduateInput
   }
 
   export type GraduateUpdateInput = {
@@ -48911,6 +50238,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUpdateManyWithoutGraduateNestedInput
     profileViewsLog?: ProfileViewUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUpdateManyWithoutGraduateNestedInput
   }
 
   export type GraduateUncheckedUpdateInput = {
@@ -48985,6 +50313,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUncheckedUpdateManyWithoutGraduateNestedInput
     profileViewsLog?: ProfileViewUncheckedUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUncheckedUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUncheckedUpdateManyWithoutGraduateNestedInput
   }
 
   export type GraduateCreateManyInput = {
@@ -51031,6 +52360,82 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type IdCardCreateInput = {
+    id?: string
+    alumniNumber: string
+    payloadHash: string
+    issuedAt?: Date | string
+    expiresAt: Date | string
+    revokedAt?: Date | string | null
+    revokedReason?: string | null
+    graduate: GraduateCreateNestedOneWithoutIdCardsInput
+  }
+
+  export type IdCardUncheckedCreateInput = {
+    id?: string
+    graduateId: string
+    alumniNumber: string
+    payloadHash: string
+    issuedAt?: Date | string
+    expiresAt: Date | string
+    revokedAt?: Date | string | null
+    revokedReason?: string | null
+  }
+
+  export type IdCardUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    alumniNumber?: StringFieldUpdateOperationsInput | string
+    payloadHash?: StringFieldUpdateOperationsInput | string
+    issuedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revokedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    graduate?: GraduateUpdateOneRequiredWithoutIdCardsNestedInput
+  }
+
+  export type IdCardUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    graduateId?: StringFieldUpdateOperationsInput | string
+    alumniNumber?: StringFieldUpdateOperationsInput | string
+    payloadHash?: StringFieldUpdateOperationsInput | string
+    issuedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revokedReason?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type IdCardCreateManyInput = {
+    id?: string
+    graduateId: string
+    alumniNumber: string
+    payloadHash: string
+    issuedAt?: Date | string
+    expiresAt: Date | string
+    revokedAt?: Date | string | null
+    revokedReason?: string | null
+  }
+
+  export type IdCardUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    alumniNumber?: StringFieldUpdateOperationsInput | string
+    payloadHash?: StringFieldUpdateOperationsInput | string
+    issuedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revokedReason?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type IdCardUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    graduateId?: StringFieldUpdateOperationsInput | string
+    alumniNumber?: StringFieldUpdateOperationsInput | string
+    payloadHash?: StringFieldUpdateOperationsInput | string
+    issuedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revokedReason?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
   export type AdminSettingCreateInput = {
     id?: string
     platformName?: string
@@ -52070,6 +53475,12 @@ export namespace Prisma {
     none?: ProfileViewWhereInput
   }
 
+  export type IdCardListRelationFilter = {
+    every?: IdCardWhereInput
+    some?: IdCardWhereInput
+    none?: IdCardWhereInput
+  }
+
   export type EmploymentOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -52151,6 +53562,10 @@ export namespace Prisma {
   }
 
   export type ProfileViewOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type IdCardOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -53580,6 +54995,39 @@ export namespace Prisma {
     _max?: NestedEnumActivityTypeFilter<$PrismaModel>
   }
 
+  export type IdCardCountOrderByAggregateInput = {
+    id?: SortOrder
+    graduateId?: SortOrder
+    alumniNumber?: SortOrder
+    payloadHash?: SortOrder
+    issuedAt?: SortOrder
+    expiresAt?: SortOrder
+    revokedAt?: SortOrder
+    revokedReason?: SortOrder
+  }
+
+  export type IdCardMaxOrderByAggregateInput = {
+    id?: SortOrder
+    graduateId?: SortOrder
+    alumniNumber?: SortOrder
+    payloadHash?: SortOrder
+    issuedAt?: SortOrder
+    expiresAt?: SortOrder
+    revokedAt?: SortOrder
+    revokedReason?: SortOrder
+  }
+
+  export type IdCardMinOrderByAggregateInput = {
+    id?: SortOrder
+    graduateId?: SortOrder
+    alumniNumber?: SortOrder
+    payloadHash?: SortOrder
+    issuedAt?: SortOrder
+    expiresAt?: SortOrder
+    revokedAt?: SortOrder
+    revokedReason?: SortOrder
+  }
+
   export type AdminSettingCountOrderByAggregateInput = {
     id?: SortOrder
     platformName?: SortOrder
@@ -54286,6 +55734,13 @@ export namespace Prisma {
     connect?: ProfileViewWhereUniqueInput | ProfileViewWhereUniqueInput[]
   }
 
+  export type IdCardCreateNestedManyWithoutGraduateInput = {
+    create?: XOR<IdCardCreateWithoutGraduateInput, IdCardUncheckedCreateWithoutGraduateInput> | IdCardCreateWithoutGraduateInput[] | IdCardUncheckedCreateWithoutGraduateInput[]
+    connectOrCreate?: IdCardCreateOrConnectWithoutGraduateInput | IdCardCreateOrConnectWithoutGraduateInput[]
+    createMany?: IdCardCreateManyGraduateInputEnvelope
+    connect?: IdCardWhereUniqueInput | IdCardWhereUniqueInput[]
+  }
+
   export type EmploymentUncheckedCreateNestedManyWithoutGraduateInput = {
     create?: XOR<EmploymentCreateWithoutGraduateInput, EmploymentUncheckedCreateWithoutGraduateInput> | EmploymentCreateWithoutGraduateInput[] | EmploymentUncheckedCreateWithoutGraduateInput[]
     connectOrCreate?: EmploymentCreateOrConnectWithoutGraduateInput | EmploymentCreateOrConnectWithoutGraduateInput[]
@@ -54465,6 +55920,13 @@ export namespace Prisma {
     connectOrCreate?: ProfileViewCreateOrConnectWithoutViewerInput | ProfileViewCreateOrConnectWithoutViewerInput[]
     createMany?: ProfileViewCreateManyViewerInputEnvelope
     connect?: ProfileViewWhereUniqueInput | ProfileViewWhereUniqueInput[]
+  }
+
+  export type IdCardUncheckedCreateNestedManyWithoutGraduateInput = {
+    create?: XOR<IdCardCreateWithoutGraduateInput, IdCardUncheckedCreateWithoutGraduateInput> | IdCardCreateWithoutGraduateInput[] | IdCardUncheckedCreateWithoutGraduateInput[]
+    connectOrCreate?: IdCardCreateOrConnectWithoutGraduateInput | IdCardCreateOrConnectWithoutGraduateInput[]
+    createMany?: IdCardCreateManyGraduateInputEnvelope
+    connect?: IdCardWhereUniqueInput | IdCardWhereUniqueInput[]
   }
 
   export type NullableEnumSexFieldUpdateOperationsInput = {
@@ -54867,6 +56329,20 @@ export namespace Prisma {
     deleteMany?: ProfileViewScalarWhereInput | ProfileViewScalarWhereInput[]
   }
 
+  export type IdCardUpdateManyWithoutGraduateNestedInput = {
+    create?: XOR<IdCardCreateWithoutGraduateInput, IdCardUncheckedCreateWithoutGraduateInput> | IdCardCreateWithoutGraduateInput[] | IdCardUncheckedCreateWithoutGraduateInput[]
+    connectOrCreate?: IdCardCreateOrConnectWithoutGraduateInput | IdCardCreateOrConnectWithoutGraduateInput[]
+    upsert?: IdCardUpsertWithWhereUniqueWithoutGraduateInput | IdCardUpsertWithWhereUniqueWithoutGraduateInput[]
+    createMany?: IdCardCreateManyGraduateInputEnvelope
+    set?: IdCardWhereUniqueInput | IdCardWhereUniqueInput[]
+    disconnect?: IdCardWhereUniqueInput | IdCardWhereUniqueInput[]
+    delete?: IdCardWhereUniqueInput | IdCardWhereUniqueInput[]
+    connect?: IdCardWhereUniqueInput | IdCardWhereUniqueInput[]
+    update?: IdCardUpdateWithWhereUniqueWithoutGraduateInput | IdCardUpdateWithWhereUniqueWithoutGraduateInput[]
+    updateMany?: IdCardUpdateManyWithWhereWithoutGraduateInput | IdCardUpdateManyWithWhereWithoutGraduateInput[]
+    deleteMany?: IdCardScalarWhereInput | IdCardScalarWhereInput[]
+  }
+
   export type EmploymentUncheckedUpdateManyWithoutGraduateNestedInput = {
     create?: XOR<EmploymentCreateWithoutGraduateInput, EmploymentUncheckedCreateWithoutGraduateInput> | EmploymentCreateWithoutGraduateInput[] | EmploymentUncheckedCreateWithoutGraduateInput[]
     connectOrCreate?: EmploymentCreateOrConnectWithoutGraduateInput | EmploymentCreateOrConnectWithoutGraduateInput[]
@@ -55225,6 +56701,20 @@ export namespace Prisma {
     update?: ProfileViewUpdateWithWhereUniqueWithoutViewerInput | ProfileViewUpdateWithWhereUniqueWithoutViewerInput[]
     updateMany?: ProfileViewUpdateManyWithWhereWithoutViewerInput | ProfileViewUpdateManyWithWhereWithoutViewerInput[]
     deleteMany?: ProfileViewScalarWhereInput | ProfileViewScalarWhereInput[]
+  }
+
+  export type IdCardUncheckedUpdateManyWithoutGraduateNestedInput = {
+    create?: XOR<IdCardCreateWithoutGraduateInput, IdCardUncheckedCreateWithoutGraduateInput> | IdCardCreateWithoutGraduateInput[] | IdCardUncheckedCreateWithoutGraduateInput[]
+    connectOrCreate?: IdCardCreateOrConnectWithoutGraduateInput | IdCardCreateOrConnectWithoutGraduateInput[]
+    upsert?: IdCardUpsertWithWhereUniqueWithoutGraduateInput | IdCardUpsertWithWhereUniqueWithoutGraduateInput[]
+    createMany?: IdCardCreateManyGraduateInputEnvelope
+    set?: IdCardWhereUniqueInput | IdCardWhereUniqueInput[]
+    disconnect?: IdCardWhereUniqueInput | IdCardWhereUniqueInput[]
+    delete?: IdCardWhereUniqueInput | IdCardWhereUniqueInput[]
+    connect?: IdCardWhereUniqueInput | IdCardWhereUniqueInput[]
+    update?: IdCardUpdateWithWhereUniqueWithoutGraduateInput | IdCardUpdateWithWhereUniqueWithoutGraduateInput[]
+    updateMany?: IdCardUpdateManyWithWhereWithoutGraduateInput | IdCardUpdateManyWithWhereWithoutGraduateInput[]
+    deleteMany?: IdCardScalarWhereInput | IdCardScalarWhereInput[]
   }
 
   export type GraduateCreateNestedOneWithoutEmploymentInput = {
@@ -56201,6 +57691,20 @@ export namespace Prisma {
     update?: XOR<XOR<GraduateUpdateToOneWithWhereWithoutActivityFeedInput, GraduateUpdateWithoutActivityFeedInput>, GraduateUncheckedUpdateWithoutActivityFeedInput>
   }
 
+  export type GraduateCreateNestedOneWithoutIdCardsInput = {
+    create?: XOR<GraduateCreateWithoutIdCardsInput, GraduateUncheckedCreateWithoutIdCardsInput>
+    connectOrCreate?: GraduateCreateOrConnectWithoutIdCardsInput
+    connect?: GraduateWhereUniqueInput
+  }
+
+  export type GraduateUpdateOneRequiredWithoutIdCardsNestedInput = {
+    create?: XOR<GraduateCreateWithoutIdCardsInput, GraduateUncheckedCreateWithoutIdCardsInput>
+    connectOrCreate?: GraduateCreateOrConnectWithoutIdCardsInput
+    upsert?: GraduateUpsertWithoutIdCardsInput
+    connect?: GraduateWhereUniqueInput
+    update?: XOR<XOR<GraduateUpdateToOneWithWhereWithoutIdCardsInput, GraduateUpdateWithoutIdCardsInput>, GraduateUncheckedUpdateWithoutIdCardsInput>
+  }
+
   export type EnumUploadStatusFieldUpdateOperationsInput = {
     set?: $Enums.UploadStatus
   }
@@ -56992,6 +58496,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemCreateNestedManyWithoutGraduateInput
     profileViewsLog?: ProfileViewCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewCreateNestedManyWithoutViewerInput
+    idCards?: IdCardCreateNestedManyWithoutGraduateInput
   }
 
   export type GraduateUncheckedCreateWithoutUserInput = {
@@ -57065,6 +58570,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUncheckedCreateNestedManyWithoutGraduateInput
     profileViewsLog?: ProfileViewUncheckedCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewUncheckedCreateNestedManyWithoutViewerInput
+    idCards?: IdCardUncheckedCreateNestedManyWithoutGraduateInput
   }
 
   export type GraduateCreateOrConnectWithoutUserInput = {
@@ -57246,6 +58752,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUpdateManyWithoutGraduateNestedInput
     profileViewsLog?: ProfileViewUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUpdateManyWithoutGraduateNestedInput
   }
 
   export type GraduateUncheckedUpdateWithoutUserInput = {
@@ -57319,6 +58826,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUncheckedUpdateManyWithoutGraduateNestedInput
     profileViewsLog?: ProfileViewUncheckedUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUncheckedUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUncheckedUpdateManyWithoutGraduateNestedInput
   }
 
   export type UserCreateWithoutSessionsInput = {
@@ -58477,6 +59985,36 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type IdCardCreateWithoutGraduateInput = {
+    id?: string
+    alumniNumber: string
+    payloadHash: string
+    issuedAt?: Date | string
+    expiresAt: Date | string
+    revokedAt?: Date | string | null
+    revokedReason?: string | null
+  }
+
+  export type IdCardUncheckedCreateWithoutGraduateInput = {
+    id?: string
+    alumniNumber: string
+    payloadHash: string
+    issuedAt?: Date | string
+    expiresAt: Date | string
+    revokedAt?: Date | string | null
+    revokedReason?: string | null
+  }
+
+  export type IdCardCreateOrConnectWithoutGraduateInput = {
+    where: IdCardWhereUniqueInput
+    create: XOR<IdCardCreateWithoutGraduateInput, IdCardUncheckedCreateWithoutGraduateInput>
+  }
+
+  export type IdCardCreateManyGraduateInputEnvelope = {
+    data: IdCardCreateManyGraduateInput | IdCardCreateManyGraduateInput[]
+    skipDuplicates?: boolean
+  }
+
   export type UserUpsertWithoutGraduateInput = {
     update: XOR<UserUpdateWithoutGraduateInput, UserUncheckedUpdateWithoutGraduateInput>
     create: XOR<UserCreateWithoutGraduateInput, UserUncheckedCreateWithoutGraduateInput>
@@ -59262,6 +60800,36 @@ export namespace Prisma {
     data: XOR<ProfileViewUpdateManyMutationInput, ProfileViewUncheckedUpdateManyWithoutViewerInput>
   }
 
+  export type IdCardUpsertWithWhereUniqueWithoutGraduateInput = {
+    where: IdCardWhereUniqueInput
+    update: XOR<IdCardUpdateWithoutGraduateInput, IdCardUncheckedUpdateWithoutGraduateInput>
+    create: XOR<IdCardCreateWithoutGraduateInput, IdCardUncheckedCreateWithoutGraduateInput>
+  }
+
+  export type IdCardUpdateWithWhereUniqueWithoutGraduateInput = {
+    where: IdCardWhereUniqueInput
+    data: XOR<IdCardUpdateWithoutGraduateInput, IdCardUncheckedUpdateWithoutGraduateInput>
+  }
+
+  export type IdCardUpdateManyWithWhereWithoutGraduateInput = {
+    where: IdCardScalarWhereInput
+    data: XOR<IdCardUpdateManyMutationInput, IdCardUncheckedUpdateManyWithoutGraduateInput>
+  }
+
+  export type IdCardScalarWhereInput = {
+    AND?: IdCardScalarWhereInput | IdCardScalarWhereInput[]
+    OR?: IdCardScalarWhereInput[]
+    NOT?: IdCardScalarWhereInput | IdCardScalarWhereInput[]
+    id?: StringFilter<"IdCard"> | string
+    graduateId?: StringFilter<"IdCard"> | string
+    alumniNumber?: StringFilter<"IdCard"> | string
+    payloadHash?: StringFilter<"IdCard"> | string
+    issuedAt?: DateTimeFilter<"IdCard"> | Date | string
+    expiresAt?: DateTimeFilter<"IdCard"> | Date | string
+    revokedAt?: DateTimeNullableFilter<"IdCard"> | Date | string | null
+    revokedReason?: StringNullableFilter<"IdCard"> | string | null
+  }
+
   export type GraduateCreateWithoutEmploymentInput = {
     id?: string
     registrationNo: string
@@ -59333,6 +60901,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemCreateNestedManyWithoutGraduateInput
     profileViewsLog?: ProfileViewCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewCreateNestedManyWithoutViewerInput
+    idCards?: IdCardCreateNestedManyWithoutGraduateInput
   }
 
   export type GraduateUncheckedCreateWithoutEmploymentInput = {
@@ -59406,6 +60975,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUncheckedCreateNestedManyWithoutGraduateInput
     profileViewsLog?: ProfileViewUncheckedCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewUncheckedCreateNestedManyWithoutViewerInput
+    idCards?: IdCardUncheckedCreateNestedManyWithoutGraduateInput
   }
 
   export type GraduateCreateOrConnectWithoutEmploymentInput = {
@@ -59495,6 +61065,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUpdateManyWithoutGraduateNestedInput
     profileViewsLog?: ProfileViewUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUpdateManyWithoutGraduateNestedInput
   }
 
   export type GraduateUncheckedUpdateWithoutEmploymentInput = {
@@ -59568,6 +61139,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUncheckedUpdateManyWithoutGraduateNestedInput
     profileViewsLog?: ProfileViewUncheckedUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUncheckedUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUncheckedUpdateManyWithoutGraduateNestedInput
   }
 
   export type GraduateCreateWithoutEducationInput = {
@@ -59641,6 +61213,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemCreateNestedManyWithoutGraduateInput
     profileViewsLog?: ProfileViewCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewCreateNestedManyWithoutViewerInput
+    idCards?: IdCardCreateNestedManyWithoutGraduateInput
   }
 
   export type GraduateUncheckedCreateWithoutEducationInput = {
@@ -59714,6 +61287,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUncheckedCreateNestedManyWithoutGraduateInput
     profileViewsLog?: ProfileViewUncheckedCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewUncheckedCreateNestedManyWithoutViewerInput
+    idCards?: IdCardUncheckedCreateNestedManyWithoutGraduateInput
   }
 
   export type GraduateCreateOrConnectWithoutEducationInput = {
@@ -59803,6 +61377,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUpdateManyWithoutGraduateNestedInput
     profileViewsLog?: ProfileViewUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUpdateManyWithoutGraduateNestedInput
   }
 
   export type GraduateUncheckedUpdateWithoutEducationInput = {
@@ -59876,6 +61451,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUncheckedUpdateManyWithoutGraduateNestedInput
     profileViewsLog?: ProfileViewUncheckedUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUncheckedUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUncheckedUpdateManyWithoutGraduateNestedInput
   }
 
   export type GraduateCreateWithoutSkillsInput = {
@@ -59949,6 +61525,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemCreateNestedManyWithoutGraduateInput
     profileViewsLog?: ProfileViewCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewCreateNestedManyWithoutViewerInput
+    idCards?: IdCardCreateNestedManyWithoutGraduateInput
   }
 
   export type GraduateUncheckedCreateWithoutSkillsInput = {
@@ -60022,6 +61599,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUncheckedCreateNestedManyWithoutGraduateInput
     profileViewsLog?: ProfileViewUncheckedCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewUncheckedCreateNestedManyWithoutViewerInput
+    idCards?: IdCardUncheckedCreateNestedManyWithoutGraduateInput
   }
 
   export type GraduateCreateOrConnectWithoutSkillsInput = {
@@ -60135,6 +61713,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUpdateManyWithoutGraduateNestedInput
     profileViewsLog?: ProfileViewUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUpdateManyWithoutGraduateNestedInput
   }
 
   export type GraduateUncheckedUpdateWithoutSkillsInput = {
@@ -60208,6 +61787,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUncheckedUpdateManyWithoutGraduateNestedInput
     profileViewsLog?: ProfileViewUncheckedUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUncheckedUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUncheckedUpdateManyWithoutGraduateNestedInput
   }
 
   export type EndorsementUpsertWithWhereUniqueWithoutSkillInput = {
@@ -60297,6 +61877,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemCreateNestedManyWithoutGraduateInput
     profileViewsLog?: ProfileViewCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewCreateNestedManyWithoutViewerInput
+    idCards?: IdCardCreateNestedManyWithoutGraduateInput
   }
 
   export type GraduateUncheckedCreateWithoutEndorsementsGivenInput = {
@@ -60370,6 +61951,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUncheckedCreateNestedManyWithoutGraduateInput
     profileViewsLog?: ProfileViewUncheckedCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewUncheckedCreateNestedManyWithoutViewerInput
+    idCards?: IdCardUncheckedCreateNestedManyWithoutGraduateInput
   }
 
   export type GraduateCreateOrConnectWithoutEndorsementsGivenInput = {
@@ -60448,6 +62030,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemCreateNestedManyWithoutGraduateInput
     profileViewsLog?: ProfileViewCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewCreateNestedManyWithoutViewerInput
+    idCards?: IdCardCreateNestedManyWithoutGraduateInput
   }
 
   export type GraduateUncheckedCreateWithoutEndorsementsReceivedInput = {
@@ -60521,6 +62104,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUncheckedCreateNestedManyWithoutGraduateInput
     profileViewsLog?: ProfileViewUncheckedCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewUncheckedCreateNestedManyWithoutViewerInput
+    idCards?: IdCardUncheckedCreateNestedManyWithoutGraduateInput
   }
 
   export type GraduateCreateOrConnectWithoutEndorsementsReceivedInput = {
@@ -60631,6 +62215,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUpdateManyWithoutGraduateNestedInput
     profileViewsLog?: ProfileViewUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUpdateManyWithoutGraduateNestedInput
   }
 
   export type GraduateUncheckedUpdateWithoutEndorsementsGivenInput = {
@@ -60704,6 +62289,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUncheckedUpdateManyWithoutGraduateNestedInput
     profileViewsLog?: ProfileViewUncheckedUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUncheckedUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUncheckedUpdateManyWithoutGraduateNestedInput
   }
 
   export type GraduateUpsertWithoutEndorsementsReceivedInput = {
@@ -60788,6 +62374,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUpdateManyWithoutGraduateNestedInput
     profileViewsLog?: ProfileViewUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUpdateManyWithoutGraduateNestedInput
   }
 
   export type GraduateUncheckedUpdateWithoutEndorsementsReceivedInput = {
@@ -60861,6 +62448,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUncheckedUpdateManyWithoutGraduateNestedInput
     profileViewsLog?: ProfileViewUncheckedUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUncheckedUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUncheckedUpdateManyWithoutGraduateNestedInput
   }
 
   export type SkillUpsertWithoutEndorsementsInput = {
@@ -60961,6 +62549,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemCreateNestedManyWithoutGraduateInput
     profileViewsLog?: ProfileViewCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewCreateNestedManyWithoutViewerInput
+    idCards?: IdCardCreateNestedManyWithoutGraduateInput
   }
 
   export type GraduateUncheckedCreateWithoutLocationInput = {
@@ -61034,6 +62623,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUncheckedCreateNestedManyWithoutGraduateInput
     profileViewsLog?: ProfileViewUncheckedCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewUncheckedCreateNestedManyWithoutViewerInput
+    idCards?: IdCardUncheckedCreateNestedManyWithoutGraduateInput
   }
 
   export type GraduateCreateOrConnectWithoutLocationInput = {
@@ -61123,6 +62713,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUpdateManyWithoutGraduateNestedInput
     profileViewsLog?: ProfileViewUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUpdateManyWithoutGraduateNestedInput
   }
 
   export type GraduateUncheckedUpdateWithoutLocationInput = {
@@ -61196,6 +62787,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUncheckedUpdateManyWithoutGraduateNestedInput
     profileViewsLog?: ProfileViewUncheckedUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUncheckedUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUncheckedUpdateManyWithoutGraduateNestedInput
   }
 
   export type GraduateCreateWithoutAchievementsInput = {
@@ -61269,6 +62861,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemCreateNestedManyWithoutGraduateInput
     profileViewsLog?: ProfileViewCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewCreateNestedManyWithoutViewerInput
+    idCards?: IdCardCreateNestedManyWithoutGraduateInput
   }
 
   export type GraduateUncheckedCreateWithoutAchievementsInput = {
@@ -61342,6 +62935,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUncheckedCreateNestedManyWithoutGraduateInput
     profileViewsLog?: ProfileViewUncheckedCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewUncheckedCreateNestedManyWithoutViewerInput
+    idCards?: IdCardUncheckedCreateNestedManyWithoutGraduateInput
   }
 
   export type GraduateCreateOrConnectWithoutAchievementsInput = {
@@ -61431,6 +63025,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUpdateManyWithoutGraduateNestedInput
     profileViewsLog?: ProfileViewUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUpdateManyWithoutGraduateNestedInput
   }
 
   export type GraduateUncheckedUpdateWithoutAchievementsInput = {
@@ -61504,6 +63099,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUncheckedUpdateManyWithoutGraduateNestedInput
     profileViewsLog?: ProfileViewUncheckedUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUncheckedUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUncheckedUpdateManyWithoutGraduateNestedInput
   }
 
   export type GraduateCreateWithoutBadgesInput = {
@@ -61577,6 +63173,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemCreateNestedManyWithoutGraduateInput
     profileViewsLog?: ProfileViewCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewCreateNestedManyWithoutViewerInput
+    idCards?: IdCardCreateNestedManyWithoutGraduateInput
   }
 
   export type GraduateUncheckedCreateWithoutBadgesInput = {
@@ -61650,6 +63247,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUncheckedCreateNestedManyWithoutGraduateInput
     profileViewsLog?: ProfileViewUncheckedCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewUncheckedCreateNestedManyWithoutViewerInput
+    idCards?: IdCardUncheckedCreateNestedManyWithoutGraduateInput
   }
 
   export type GraduateCreateOrConnectWithoutBadgesInput = {
@@ -61739,6 +63337,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUpdateManyWithoutGraduateNestedInput
     profileViewsLog?: ProfileViewUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUpdateManyWithoutGraduateNestedInput
   }
 
   export type GraduateUncheckedUpdateWithoutBadgesInput = {
@@ -61812,6 +63411,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUncheckedUpdateManyWithoutGraduateNestedInput
     profileViewsLog?: ProfileViewUncheckedUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUncheckedUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUncheckedUpdateManyWithoutGraduateNestedInput
   }
 
   export type GroupMemberCreateWithoutGroupInput = {
@@ -62020,6 +63620,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemCreateNestedManyWithoutGraduateInput
     profileViewsLog?: ProfileViewCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewCreateNestedManyWithoutViewerInput
+    idCards?: IdCardCreateNestedManyWithoutGraduateInput
   }
 
   export type GraduateUncheckedCreateWithoutGroupMembershipsInput = {
@@ -62093,6 +63694,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUncheckedCreateNestedManyWithoutGraduateInput
     profileViewsLog?: ProfileViewUncheckedCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewUncheckedCreateNestedManyWithoutViewerInput
+    idCards?: IdCardUncheckedCreateNestedManyWithoutGraduateInput
   }
 
   export type GraduateCreateOrConnectWithoutGroupMembershipsInput = {
@@ -62229,6 +63831,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUpdateManyWithoutGraduateNestedInput
     profileViewsLog?: ProfileViewUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUpdateManyWithoutGraduateNestedInput
   }
 
   export type GraduateUncheckedUpdateWithoutGroupMembershipsInput = {
@@ -62302,6 +63905,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUncheckedUpdateManyWithoutGraduateNestedInput
     profileViewsLog?: ProfileViewUncheckedUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUncheckedUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUncheckedUpdateManyWithoutGraduateNestedInput
   }
 
   export type AlumniGroupCreateWithoutPostsInput = {
@@ -62416,6 +64020,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemCreateNestedManyWithoutGraduateInput
     profileViewsLog?: ProfileViewCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewCreateNestedManyWithoutViewerInput
+    idCards?: IdCardCreateNestedManyWithoutGraduateInput
   }
 
   export type GraduateUncheckedCreateWithoutGroupPostsInput = {
@@ -62489,6 +64094,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUncheckedCreateNestedManyWithoutGraduateInput
     profileViewsLog?: ProfileViewUncheckedCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewUncheckedCreateNestedManyWithoutViewerInput
+    idCards?: IdCardUncheckedCreateNestedManyWithoutGraduateInput
   }
 
   export type GraduateCreateOrConnectWithoutGroupPostsInput = {
@@ -62677,6 +64283,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUpdateManyWithoutGraduateNestedInput
     profileViewsLog?: ProfileViewUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUpdateManyWithoutGraduateNestedInput
   }
 
   export type GraduateUncheckedUpdateWithoutGroupPostsInput = {
@@ -62750,6 +64357,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUncheckedUpdateManyWithoutGraduateNestedInput
     profileViewsLog?: ProfileViewUncheckedUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUncheckedUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUncheckedUpdateManyWithoutGraduateNestedInput
   }
 
   export type PostCommentUpsertWithWhereUniqueWithoutPostInput = {
@@ -62886,6 +64494,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemCreateNestedManyWithoutGraduateInput
     profileViewsLog?: ProfileViewCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewCreateNestedManyWithoutViewerInput
+    idCards?: IdCardCreateNestedManyWithoutGraduateInput
   }
 
   export type GraduateUncheckedCreateWithoutPostCommentsInput = {
@@ -62959,6 +64568,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUncheckedCreateNestedManyWithoutGraduateInput
     profileViewsLog?: ProfileViewUncheckedCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewUncheckedCreateNestedManyWithoutViewerInput
+    idCards?: IdCardUncheckedCreateNestedManyWithoutGraduateInput
   }
 
   export type GraduateCreateOrConnectWithoutPostCommentsInput = {
@@ -63140,6 +64750,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUpdateManyWithoutGraduateNestedInput
     profileViewsLog?: ProfileViewUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUpdateManyWithoutGraduateNestedInput
   }
 
   export type GraduateUncheckedUpdateWithoutPostCommentsInput = {
@@ -63213,6 +64824,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUncheckedUpdateManyWithoutGraduateNestedInput
     profileViewsLog?: ProfileViewUncheckedUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUncheckedUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUncheckedUpdateManyWithoutGraduateNestedInput
   }
 
   export type PostCommentUpsertWithoutRepliesInput = {
@@ -63364,6 +64976,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemCreateNestedManyWithoutGraduateInput
     profileViewsLog?: ProfileViewCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewCreateNestedManyWithoutViewerInput
+    idCards?: IdCardCreateNestedManyWithoutGraduateInput
   }
 
   export type GraduateUncheckedCreateWithoutPostReactionsInput = {
@@ -63437,6 +65050,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUncheckedCreateNestedManyWithoutGraduateInput
     profileViewsLog?: ProfileViewUncheckedCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewUncheckedCreateNestedManyWithoutViewerInput
+    idCards?: IdCardUncheckedCreateNestedManyWithoutGraduateInput
   }
 
   export type GraduateCreateOrConnectWithoutPostReactionsInput = {
@@ -63563,6 +65177,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUpdateManyWithoutGraduateNestedInput
     profileViewsLog?: ProfileViewUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUpdateManyWithoutGraduateNestedInput
   }
 
   export type GraduateUncheckedUpdateWithoutPostReactionsInput = {
@@ -63636,6 +65251,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUncheckedUpdateManyWithoutGraduateNestedInput
     profileViewsLog?: ProfileViewUncheckedUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUncheckedUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUncheckedUpdateManyWithoutGraduateNestedInput
   }
 
   export type ConversationParticipantCreateWithoutConversationInput = {
@@ -63824,6 +65440,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemCreateNestedManyWithoutGraduateInput
     profileViewsLog?: ProfileViewCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewCreateNestedManyWithoutViewerInput
+    idCards?: IdCardCreateNestedManyWithoutGraduateInput
   }
 
   export type GraduateUncheckedCreateWithoutConversationsInput = {
@@ -63897,6 +65514,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUncheckedCreateNestedManyWithoutGraduateInput
     profileViewsLog?: ProfileViewUncheckedCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewUncheckedCreateNestedManyWithoutViewerInput
+    idCards?: IdCardUncheckedCreateNestedManyWithoutGraduateInput
   }
 
   export type GraduateCreateOrConnectWithoutConversationsInput = {
@@ -64017,6 +65635,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUpdateManyWithoutGraduateNestedInput
     profileViewsLog?: ProfileViewUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUpdateManyWithoutGraduateNestedInput
   }
 
   export type GraduateUncheckedUpdateWithoutConversationsInput = {
@@ -64090,6 +65709,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUncheckedUpdateManyWithoutGraduateNestedInput
     profileViewsLog?: ProfileViewUncheckedUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUncheckedUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUncheckedUpdateManyWithoutGraduateNestedInput
   }
 
   export type ConversationCreateWithoutMessagesInput = {
@@ -64188,6 +65808,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemCreateNestedManyWithoutGraduateInput
     profileViewsLog?: ProfileViewCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewCreateNestedManyWithoutViewerInput
+    idCards?: IdCardCreateNestedManyWithoutGraduateInput
   }
 
   export type GraduateUncheckedCreateWithoutSentMessagesInput = {
@@ -64261,6 +65882,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUncheckedCreateNestedManyWithoutGraduateInput
     profileViewsLog?: ProfileViewUncheckedCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewUncheckedCreateNestedManyWithoutViewerInput
+    idCards?: IdCardUncheckedCreateNestedManyWithoutGraduateInput
   }
 
   export type GraduateCreateOrConnectWithoutSentMessagesInput = {
@@ -64381,6 +66003,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUpdateManyWithoutGraduateNestedInput
     profileViewsLog?: ProfileViewUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUpdateManyWithoutGraduateNestedInput
   }
 
   export type GraduateUncheckedUpdateWithoutSentMessagesInput = {
@@ -64454,6 +66077,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUncheckedUpdateManyWithoutGraduateNestedInput
     profileViewsLog?: ProfileViewUncheckedUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUncheckedUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUncheckedUpdateManyWithoutGraduateNestedInput
   }
 
   export type GraduateCreateWithoutConnectionsInitiatedInput = {
@@ -64527,6 +66151,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemCreateNestedManyWithoutGraduateInput
     profileViewsLog?: ProfileViewCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewCreateNestedManyWithoutViewerInput
+    idCards?: IdCardCreateNestedManyWithoutGraduateInput
   }
 
   export type GraduateUncheckedCreateWithoutConnectionsInitiatedInput = {
@@ -64600,6 +66225,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUncheckedCreateNestedManyWithoutGraduateInput
     profileViewsLog?: ProfileViewUncheckedCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewUncheckedCreateNestedManyWithoutViewerInput
+    idCards?: IdCardUncheckedCreateNestedManyWithoutGraduateInput
   }
 
   export type GraduateCreateOrConnectWithoutConnectionsInitiatedInput = {
@@ -64678,6 +66304,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemCreateNestedManyWithoutGraduateInput
     profileViewsLog?: ProfileViewCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewCreateNestedManyWithoutViewerInput
+    idCards?: IdCardCreateNestedManyWithoutGraduateInput
   }
 
   export type GraduateUncheckedCreateWithoutConnectionsReceivedInput = {
@@ -64751,6 +66378,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUncheckedCreateNestedManyWithoutGraduateInput
     profileViewsLog?: ProfileViewUncheckedCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewUncheckedCreateNestedManyWithoutViewerInput
+    idCards?: IdCardUncheckedCreateNestedManyWithoutGraduateInput
   }
 
   export type GraduateCreateOrConnectWithoutConnectionsReceivedInput = {
@@ -64840,6 +66468,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUpdateManyWithoutGraduateNestedInput
     profileViewsLog?: ProfileViewUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUpdateManyWithoutGraduateNestedInput
   }
 
   export type GraduateUncheckedUpdateWithoutConnectionsInitiatedInput = {
@@ -64913,6 +66542,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUncheckedUpdateManyWithoutGraduateNestedInput
     profileViewsLog?: ProfileViewUncheckedUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUncheckedUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUncheckedUpdateManyWithoutGraduateNestedInput
   }
 
   export type GraduateUpsertWithoutConnectionsReceivedInput = {
@@ -64997,6 +66627,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUpdateManyWithoutGraduateNestedInput
     profileViewsLog?: ProfileViewUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUpdateManyWithoutGraduateNestedInput
   }
 
   export type GraduateUncheckedUpdateWithoutConnectionsReceivedInput = {
@@ -65070,6 +66701,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUncheckedUpdateManyWithoutGraduateNestedInput
     profileViewsLog?: ProfileViewUncheckedUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUncheckedUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUncheckedUpdateManyWithoutGraduateNestedInput
   }
 
   export type GraduateCreateWithoutProfileViewsLogInput = {
@@ -65143,6 +66775,7 @@ export namespace Prisma {
     notifications?: NotificationCreateNestedManyWithoutGraduateInput
     activityFeed?: ActivityFeedItemCreateNestedManyWithoutGraduateInput
     profileViewsGiven?: ProfileViewCreateNestedManyWithoutViewerInput
+    idCards?: IdCardCreateNestedManyWithoutGraduateInput
   }
 
   export type GraduateUncheckedCreateWithoutProfileViewsLogInput = {
@@ -65216,6 +66849,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedCreateNestedManyWithoutGraduateInput
     activityFeed?: ActivityFeedItemUncheckedCreateNestedManyWithoutGraduateInput
     profileViewsGiven?: ProfileViewUncheckedCreateNestedManyWithoutViewerInput
+    idCards?: IdCardUncheckedCreateNestedManyWithoutGraduateInput
   }
 
   export type GraduateCreateOrConnectWithoutProfileViewsLogInput = {
@@ -65294,6 +66928,7 @@ export namespace Prisma {
     notifications?: NotificationCreateNestedManyWithoutGraduateInput
     activityFeed?: ActivityFeedItemCreateNestedManyWithoutGraduateInput
     profileViewsLog?: ProfileViewCreateNestedManyWithoutViewedInput
+    idCards?: IdCardCreateNestedManyWithoutGraduateInput
   }
 
   export type GraduateUncheckedCreateWithoutProfileViewsGivenInput = {
@@ -65367,6 +67002,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedCreateNestedManyWithoutGraduateInput
     activityFeed?: ActivityFeedItemUncheckedCreateNestedManyWithoutGraduateInput
     profileViewsLog?: ProfileViewUncheckedCreateNestedManyWithoutViewedInput
+    idCards?: IdCardUncheckedCreateNestedManyWithoutGraduateInput
   }
 
   export type GraduateCreateOrConnectWithoutProfileViewsGivenInput = {
@@ -65456,6 +67092,7 @@ export namespace Prisma {
     notifications?: NotificationUpdateManyWithoutGraduateNestedInput
     activityFeed?: ActivityFeedItemUpdateManyWithoutGraduateNestedInput
     profileViewsGiven?: ProfileViewUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUpdateManyWithoutGraduateNestedInput
   }
 
   export type GraduateUncheckedUpdateWithoutProfileViewsLogInput = {
@@ -65529,6 +67166,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedUpdateManyWithoutGraduateNestedInput
     activityFeed?: ActivityFeedItemUncheckedUpdateManyWithoutGraduateNestedInput
     profileViewsGiven?: ProfileViewUncheckedUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUncheckedUpdateManyWithoutGraduateNestedInput
   }
 
   export type GraduateUpsertWithoutProfileViewsGivenInput = {
@@ -65613,6 +67251,7 @@ export namespace Prisma {
     notifications?: NotificationUpdateManyWithoutGraduateNestedInput
     activityFeed?: ActivityFeedItemUpdateManyWithoutGraduateNestedInput
     profileViewsLog?: ProfileViewUpdateManyWithoutViewedNestedInput
+    idCards?: IdCardUpdateManyWithoutGraduateNestedInput
   }
 
   export type GraduateUncheckedUpdateWithoutProfileViewsGivenInput = {
@@ -65686,6 +67325,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedUpdateManyWithoutGraduateNestedInput
     activityFeed?: ActivityFeedItemUncheckedUpdateManyWithoutGraduateNestedInput
     profileViewsLog?: ProfileViewUncheckedUpdateManyWithoutViewedNestedInput
+    idCards?: IdCardUncheckedUpdateManyWithoutGraduateNestedInput
   }
 
   export type GraduateCreateWithoutJobPostingsInput = {
@@ -65759,6 +67399,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemCreateNestedManyWithoutGraduateInput
     profileViewsLog?: ProfileViewCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewCreateNestedManyWithoutViewerInput
+    idCards?: IdCardCreateNestedManyWithoutGraduateInput
   }
 
   export type GraduateUncheckedCreateWithoutJobPostingsInput = {
@@ -65832,6 +67473,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUncheckedCreateNestedManyWithoutGraduateInput
     profileViewsLog?: ProfileViewUncheckedCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewUncheckedCreateNestedManyWithoutViewerInput
+    idCards?: IdCardUncheckedCreateNestedManyWithoutGraduateInput
   }
 
   export type GraduateCreateOrConnectWithoutJobPostingsInput = {
@@ -65949,6 +67591,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUpdateManyWithoutGraduateNestedInput
     profileViewsLog?: ProfileViewUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUpdateManyWithoutGraduateNestedInput
   }
 
   export type GraduateUncheckedUpdateWithoutJobPostingsInput = {
@@ -66022,6 +67665,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUncheckedUpdateManyWithoutGraduateNestedInput
     profileViewsLog?: ProfileViewUncheckedUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUncheckedUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUncheckedUpdateManyWithoutGraduateNestedInput
   }
 
   export type JobApplicationUpsertWithWhereUniqueWithoutJobInput = {
@@ -66166,6 +67810,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemCreateNestedManyWithoutGraduateInput
     profileViewsLog?: ProfileViewCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewCreateNestedManyWithoutViewerInput
+    idCards?: IdCardCreateNestedManyWithoutGraduateInput
   }
 
   export type GraduateUncheckedCreateWithoutJobApplicationsInput = {
@@ -66239,6 +67884,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUncheckedCreateNestedManyWithoutGraduateInput
     profileViewsLog?: ProfileViewUncheckedCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewUncheckedCreateNestedManyWithoutViewerInput
+    idCards?: IdCardUncheckedCreateNestedManyWithoutGraduateInput
   }
 
   export type GraduateCreateOrConnectWithoutJobApplicationsInput = {
@@ -66389,6 +68035,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUpdateManyWithoutGraduateNestedInput
     profileViewsLog?: ProfileViewUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUpdateManyWithoutGraduateNestedInput
   }
 
   export type GraduateUncheckedUpdateWithoutJobApplicationsInput = {
@@ -66462,6 +68109,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUncheckedUpdateManyWithoutGraduateNestedInput
     profileViewsLog?: ProfileViewUncheckedUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUncheckedUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUncheckedUpdateManyWithoutGraduateNestedInput
   }
 
   export type GraduateCreateWithoutEventsCreatedInput = {
@@ -66535,6 +68183,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemCreateNestedManyWithoutGraduateInput
     profileViewsLog?: ProfileViewCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewCreateNestedManyWithoutViewerInput
+    idCards?: IdCardCreateNestedManyWithoutGraduateInput
   }
 
   export type GraduateUncheckedCreateWithoutEventsCreatedInput = {
@@ -66608,6 +68257,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUncheckedCreateNestedManyWithoutGraduateInput
     profileViewsLog?: ProfileViewUncheckedCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewUncheckedCreateNestedManyWithoutViewerInput
+    idCards?: IdCardUncheckedCreateNestedManyWithoutGraduateInput
   }
 
   export type GraduateCreateOrConnectWithoutEventsCreatedInput = {
@@ -66719,6 +68369,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUpdateManyWithoutGraduateNestedInput
     profileViewsLog?: ProfileViewUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUpdateManyWithoutGraduateNestedInput
   }
 
   export type GraduateUncheckedUpdateWithoutEventsCreatedInput = {
@@ -66792,6 +68443,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUncheckedUpdateManyWithoutGraduateNestedInput
     profileViewsLog?: ProfileViewUncheckedUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUncheckedUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUncheckedUpdateManyWithoutGraduateNestedInput
   }
 
   export type EventAttendeeUpsertWithWhereUniqueWithoutEventInput = {
@@ -66918,6 +68570,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemCreateNestedManyWithoutGraduateInput
     profileViewsLog?: ProfileViewCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewCreateNestedManyWithoutViewerInput
+    idCards?: IdCardCreateNestedManyWithoutGraduateInput
   }
 
   export type GraduateUncheckedCreateWithoutEventAttendancesInput = {
@@ -66991,6 +68644,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUncheckedCreateNestedManyWithoutGraduateInput
     profileViewsLog?: ProfileViewUncheckedCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewUncheckedCreateNestedManyWithoutViewerInput
+    idCards?: IdCardUncheckedCreateNestedManyWithoutGraduateInput
   }
 
   export type GraduateCreateOrConnectWithoutEventAttendancesInput = {
@@ -67123,6 +68777,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUpdateManyWithoutGraduateNestedInput
     profileViewsLog?: ProfileViewUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUpdateManyWithoutGraduateNestedInput
   }
 
   export type GraduateUncheckedUpdateWithoutEventAttendancesInput = {
@@ -67196,6 +68851,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUncheckedUpdateManyWithoutGraduateNestedInput
     profileViewsLog?: ProfileViewUncheckedUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUncheckedUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUncheckedUpdateManyWithoutGraduateNestedInput
   }
 
   export type GraduateCreateWithoutMentorshipAsMenteeInput = {
@@ -67269,6 +68925,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemCreateNestedManyWithoutGraduateInput
     profileViewsLog?: ProfileViewCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewCreateNestedManyWithoutViewerInput
+    idCards?: IdCardCreateNestedManyWithoutGraduateInput
   }
 
   export type GraduateUncheckedCreateWithoutMentorshipAsMenteeInput = {
@@ -67342,6 +68999,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUncheckedCreateNestedManyWithoutGraduateInput
     profileViewsLog?: ProfileViewUncheckedCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewUncheckedCreateNestedManyWithoutViewerInput
+    idCards?: IdCardUncheckedCreateNestedManyWithoutGraduateInput
   }
 
   export type GraduateCreateOrConnectWithoutMentorshipAsMenteeInput = {
@@ -67420,6 +69078,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemCreateNestedManyWithoutGraduateInput
     profileViewsLog?: ProfileViewCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewCreateNestedManyWithoutViewerInput
+    idCards?: IdCardCreateNestedManyWithoutGraduateInput
   }
 
   export type GraduateUncheckedCreateWithoutMentorshipAsMentorInput = {
@@ -67493,6 +69152,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUncheckedCreateNestedManyWithoutGraduateInput
     profileViewsLog?: ProfileViewUncheckedCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewUncheckedCreateNestedManyWithoutViewerInput
+    idCards?: IdCardUncheckedCreateNestedManyWithoutGraduateInput
   }
 
   export type GraduateCreateOrConnectWithoutMentorshipAsMentorInput = {
@@ -67582,6 +69242,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUpdateManyWithoutGraduateNestedInput
     profileViewsLog?: ProfileViewUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUpdateManyWithoutGraduateNestedInput
   }
 
   export type GraduateUncheckedUpdateWithoutMentorshipAsMenteeInput = {
@@ -67655,6 +69316,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUncheckedUpdateManyWithoutGraduateNestedInput
     profileViewsLog?: ProfileViewUncheckedUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUncheckedUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUncheckedUpdateManyWithoutGraduateNestedInput
   }
 
   export type GraduateUpsertWithoutMentorshipAsMentorInput = {
@@ -67739,6 +69401,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUpdateManyWithoutGraduateNestedInput
     profileViewsLog?: ProfileViewUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUpdateManyWithoutGraduateNestedInput
   }
 
   export type GraduateUncheckedUpdateWithoutMentorshipAsMentorInput = {
@@ -67812,6 +69475,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUncheckedUpdateManyWithoutGraduateNestedInput
     profileViewsLog?: ProfileViewUncheckedUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUncheckedUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUncheckedUpdateManyWithoutGraduateNestedInput
   }
 
   export type GraduateCreateWithoutNotificationsInput = {
@@ -67885,6 +69549,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemCreateNestedManyWithoutGraduateInput
     profileViewsLog?: ProfileViewCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewCreateNestedManyWithoutViewerInput
+    idCards?: IdCardCreateNestedManyWithoutGraduateInput
   }
 
   export type GraduateUncheckedCreateWithoutNotificationsInput = {
@@ -67958,6 +69623,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUncheckedCreateNestedManyWithoutGraduateInput
     profileViewsLog?: ProfileViewUncheckedCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewUncheckedCreateNestedManyWithoutViewerInput
+    idCards?: IdCardUncheckedCreateNestedManyWithoutGraduateInput
   }
 
   export type GraduateCreateOrConnectWithoutNotificationsInput = {
@@ -68047,6 +69713,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUpdateManyWithoutGraduateNestedInput
     profileViewsLog?: ProfileViewUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUpdateManyWithoutGraduateNestedInput
   }
 
   export type GraduateUncheckedUpdateWithoutNotificationsInput = {
@@ -68120,6 +69787,7 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUncheckedUpdateManyWithoutGraduateNestedInput
     profileViewsLog?: ProfileViewUncheckedUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUncheckedUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUncheckedUpdateManyWithoutGraduateNestedInput
   }
 
   export type GraduateCreateWithoutActivityFeedInput = {
@@ -68193,6 +69861,7 @@ export namespace Prisma {
     notifications?: NotificationCreateNestedManyWithoutGraduateInput
     profileViewsLog?: ProfileViewCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewCreateNestedManyWithoutViewerInput
+    idCards?: IdCardCreateNestedManyWithoutGraduateInput
   }
 
   export type GraduateUncheckedCreateWithoutActivityFeedInput = {
@@ -68266,6 +69935,7 @@ export namespace Prisma {
     notifications?: NotificationUncheckedCreateNestedManyWithoutGraduateInput
     profileViewsLog?: ProfileViewUncheckedCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewUncheckedCreateNestedManyWithoutViewerInput
+    idCards?: IdCardUncheckedCreateNestedManyWithoutGraduateInput
   }
 
   export type GraduateCreateOrConnectWithoutActivityFeedInput = {
@@ -68355,6 +70025,7 @@ export namespace Prisma {
     notifications?: NotificationUpdateManyWithoutGraduateNestedInput
     profileViewsLog?: ProfileViewUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUpdateManyWithoutGraduateNestedInput
   }
 
   export type GraduateUncheckedUpdateWithoutActivityFeedInput = {
@@ -68426,6 +70097,319 @@ export namespace Prisma {
     mentorshipAsMentee?: MentorshipUncheckedUpdateManyWithoutMenteeNestedInput
     mentorshipAsMentor?: MentorshipUncheckedUpdateManyWithoutMentorNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutGraduateNestedInput
+    profileViewsLog?: ProfileViewUncheckedUpdateManyWithoutViewedNestedInput
+    profileViewsGiven?: ProfileViewUncheckedUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUncheckedUpdateManyWithoutGraduateNestedInput
+  }
+
+  export type GraduateCreateWithoutIdCardsInput = {
+    id?: string
+    registrationNo: string
+    fullName: string
+    surname?: string | null
+    otherNames?: string | null
+    sex?: $Enums.Sex | null
+    stateOfOrigin?: string | null
+    lga?: string | null
+    facultyCode?: string | null
+    facultyName?: string | null
+    courseCode?: string | null
+    departmentName?: string | null
+    cgpa?: Decimal | DecimalJsLike | number | string | null
+    degreeClass?: $Enums.DegreeClass | null
+    graduationYear?: string | null
+    entryYear?: number | null
+    jambNumber?: string | null
+    sourceSheet?: string | null
+    dateOfBirth?: Date | string | null
+    bio?: string | null
+    linkedinUrl?: string | null
+    twitterUrl?: string | null
+    githubUrl?: string | null
+    personalWebsite?: string | null
+    signatureUrl?: string | null
+    nyscState?: string | null
+    nyscYear?: number | null
+    showCgpa?: boolean
+    showEmail?: boolean
+    showPhone?: boolean
+    showDob?: boolean
+    showInDirectory?: boolean
+    allowMessages?: boolean
+    showActivityFeed?: boolean
+    openToOpportunities?: boolean
+    availableForMentorship?: boolean
+    profileCompleted?: boolean
+    onboardingStep?: number
+    profileViews?: number
+    salaryMin?: Decimal | DecimalJsLike | number | string | null
+    salaryMax?: Decimal | DecimalJsLike | number | string | null
+    salaryCurrency?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutGraduateInput
+    employment?: EmploymentCreateNestedManyWithoutGraduateInput
+    education?: EducationCreateNestedManyWithoutGraduateInput
+    skills?: SkillCreateNestedManyWithoutGraduateInput
+    endorsementsGiven?: EndorsementCreateNestedManyWithoutEndorserInput
+    endorsementsReceived?: EndorsementCreateNestedManyWithoutEndorsedInput
+    location?: GraduateLocationCreateNestedOneWithoutGraduateInput
+    achievements?: AchievementCreateNestedManyWithoutGraduateInput
+    badges?: ProfileBadgeCreateNestedManyWithoutGraduateInput
+    groupMemberships?: GroupMemberCreateNestedManyWithoutGraduateInput
+    groupPosts?: GroupPostCreateNestedManyWithoutAuthorInput
+    postComments?: PostCommentCreateNestedManyWithoutAuthorInput
+    postReactions?: PostReactionCreateNestedManyWithoutGraduateInput
+    sentMessages?: MessageCreateNestedManyWithoutSenderInput
+    conversations?: ConversationParticipantCreateNestedManyWithoutGraduateInput
+    connectionsInitiated?: ConnectionCreateNestedManyWithoutRequesterInput
+    connectionsReceived?: ConnectionCreateNestedManyWithoutReceiverInput
+    jobPostings?: JobPostingCreateNestedManyWithoutPostedByInput
+    jobApplications?: JobApplicationCreateNestedManyWithoutApplicantInput
+    eventsCreated?: EventCreateNestedManyWithoutCreatorInput
+    eventAttendances?: EventAttendeeCreateNestedManyWithoutGraduateInput
+    mentorshipAsMentee?: MentorshipCreateNestedManyWithoutMenteeInput
+    mentorshipAsMentor?: MentorshipCreateNestedManyWithoutMentorInput
+    notifications?: NotificationCreateNestedManyWithoutGraduateInput
+    activityFeed?: ActivityFeedItemCreateNestedManyWithoutGraduateInput
+    profileViewsLog?: ProfileViewCreateNestedManyWithoutViewedInput
+    profileViewsGiven?: ProfileViewCreateNestedManyWithoutViewerInput
+  }
+
+  export type GraduateUncheckedCreateWithoutIdCardsInput = {
+    id?: string
+    userId: string
+    registrationNo: string
+    fullName: string
+    surname?: string | null
+    otherNames?: string | null
+    sex?: $Enums.Sex | null
+    stateOfOrigin?: string | null
+    lga?: string | null
+    facultyCode?: string | null
+    facultyName?: string | null
+    courseCode?: string | null
+    departmentName?: string | null
+    cgpa?: Decimal | DecimalJsLike | number | string | null
+    degreeClass?: $Enums.DegreeClass | null
+    graduationYear?: string | null
+    entryYear?: number | null
+    jambNumber?: string | null
+    sourceSheet?: string | null
+    dateOfBirth?: Date | string | null
+    bio?: string | null
+    linkedinUrl?: string | null
+    twitterUrl?: string | null
+    githubUrl?: string | null
+    personalWebsite?: string | null
+    signatureUrl?: string | null
+    nyscState?: string | null
+    nyscYear?: number | null
+    showCgpa?: boolean
+    showEmail?: boolean
+    showPhone?: boolean
+    showDob?: boolean
+    showInDirectory?: boolean
+    allowMessages?: boolean
+    showActivityFeed?: boolean
+    openToOpportunities?: boolean
+    availableForMentorship?: boolean
+    profileCompleted?: boolean
+    onboardingStep?: number
+    profileViews?: number
+    salaryMin?: Decimal | DecimalJsLike | number | string | null
+    salaryMax?: Decimal | DecimalJsLike | number | string | null
+    salaryCurrency?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    employment?: EmploymentUncheckedCreateNestedManyWithoutGraduateInput
+    education?: EducationUncheckedCreateNestedManyWithoutGraduateInput
+    skills?: SkillUncheckedCreateNestedManyWithoutGraduateInput
+    endorsementsGiven?: EndorsementUncheckedCreateNestedManyWithoutEndorserInput
+    endorsementsReceived?: EndorsementUncheckedCreateNestedManyWithoutEndorsedInput
+    location?: GraduateLocationUncheckedCreateNestedOneWithoutGraduateInput
+    achievements?: AchievementUncheckedCreateNestedManyWithoutGraduateInput
+    badges?: ProfileBadgeUncheckedCreateNestedManyWithoutGraduateInput
+    groupMemberships?: GroupMemberUncheckedCreateNestedManyWithoutGraduateInput
+    groupPosts?: GroupPostUncheckedCreateNestedManyWithoutAuthorInput
+    postComments?: PostCommentUncheckedCreateNestedManyWithoutAuthorInput
+    postReactions?: PostReactionUncheckedCreateNestedManyWithoutGraduateInput
+    sentMessages?: MessageUncheckedCreateNestedManyWithoutSenderInput
+    conversations?: ConversationParticipantUncheckedCreateNestedManyWithoutGraduateInput
+    connectionsInitiated?: ConnectionUncheckedCreateNestedManyWithoutRequesterInput
+    connectionsReceived?: ConnectionUncheckedCreateNestedManyWithoutReceiverInput
+    jobPostings?: JobPostingUncheckedCreateNestedManyWithoutPostedByInput
+    jobApplications?: JobApplicationUncheckedCreateNestedManyWithoutApplicantInput
+    eventsCreated?: EventUncheckedCreateNestedManyWithoutCreatorInput
+    eventAttendances?: EventAttendeeUncheckedCreateNestedManyWithoutGraduateInput
+    mentorshipAsMentee?: MentorshipUncheckedCreateNestedManyWithoutMenteeInput
+    mentorshipAsMentor?: MentorshipUncheckedCreateNestedManyWithoutMentorInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutGraduateInput
+    activityFeed?: ActivityFeedItemUncheckedCreateNestedManyWithoutGraduateInput
+    profileViewsLog?: ProfileViewUncheckedCreateNestedManyWithoutViewedInput
+    profileViewsGiven?: ProfileViewUncheckedCreateNestedManyWithoutViewerInput
+  }
+
+  export type GraduateCreateOrConnectWithoutIdCardsInput = {
+    where: GraduateWhereUniqueInput
+    create: XOR<GraduateCreateWithoutIdCardsInput, GraduateUncheckedCreateWithoutIdCardsInput>
+  }
+
+  export type GraduateUpsertWithoutIdCardsInput = {
+    update: XOR<GraduateUpdateWithoutIdCardsInput, GraduateUncheckedUpdateWithoutIdCardsInput>
+    create: XOR<GraduateCreateWithoutIdCardsInput, GraduateUncheckedCreateWithoutIdCardsInput>
+    where?: GraduateWhereInput
+  }
+
+  export type GraduateUpdateToOneWithWhereWithoutIdCardsInput = {
+    where?: GraduateWhereInput
+    data: XOR<GraduateUpdateWithoutIdCardsInput, GraduateUncheckedUpdateWithoutIdCardsInput>
+  }
+
+  export type GraduateUpdateWithoutIdCardsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    registrationNo?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    surname?: NullableStringFieldUpdateOperationsInput | string | null
+    otherNames?: NullableStringFieldUpdateOperationsInput | string | null
+    sex?: NullableEnumSexFieldUpdateOperationsInput | $Enums.Sex | null
+    stateOfOrigin?: NullableStringFieldUpdateOperationsInput | string | null
+    lga?: NullableStringFieldUpdateOperationsInput | string | null
+    facultyCode?: NullableStringFieldUpdateOperationsInput | string | null
+    facultyName?: NullableStringFieldUpdateOperationsInput | string | null
+    courseCode?: NullableStringFieldUpdateOperationsInput | string | null
+    departmentName?: NullableStringFieldUpdateOperationsInput | string | null
+    cgpa?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    degreeClass?: NullableEnumDegreeClassFieldUpdateOperationsInput | $Enums.DegreeClass | null
+    graduationYear?: NullableStringFieldUpdateOperationsInput | string | null
+    entryYear?: NullableIntFieldUpdateOperationsInput | number | null
+    jambNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceSheet?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    linkedinUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    nyscState?: NullableStringFieldUpdateOperationsInput | string | null
+    nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
+    showCgpa?: BoolFieldUpdateOperationsInput | boolean
+    showEmail?: BoolFieldUpdateOperationsInput | boolean
+    showPhone?: BoolFieldUpdateOperationsInput | boolean
+    showDob?: BoolFieldUpdateOperationsInput | boolean
+    showInDirectory?: BoolFieldUpdateOperationsInput | boolean
+    allowMessages?: BoolFieldUpdateOperationsInput | boolean
+    showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
+    openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
+    availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    profileCompleted?: BoolFieldUpdateOperationsInput | boolean
+    onboardingStep?: IntFieldUpdateOperationsInput | number
+    profileViews?: IntFieldUpdateOperationsInput | number
+    salaryMin?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    salaryMax?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    salaryCurrency?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutGraduateNestedInput
+    employment?: EmploymentUpdateManyWithoutGraduateNestedInput
+    education?: EducationUpdateManyWithoutGraduateNestedInput
+    skills?: SkillUpdateManyWithoutGraduateNestedInput
+    endorsementsGiven?: EndorsementUpdateManyWithoutEndorserNestedInput
+    endorsementsReceived?: EndorsementUpdateManyWithoutEndorsedNestedInput
+    location?: GraduateLocationUpdateOneWithoutGraduateNestedInput
+    achievements?: AchievementUpdateManyWithoutGraduateNestedInput
+    badges?: ProfileBadgeUpdateManyWithoutGraduateNestedInput
+    groupMemberships?: GroupMemberUpdateManyWithoutGraduateNestedInput
+    groupPosts?: GroupPostUpdateManyWithoutAuthorNestedInput
+    postComments?: PostCommentUpdateManyWithoutAuthorNestedInput
+    postReactions?: PostReactionUpdateManyWithoutGraduateNestedInput
+    sentMessages?: MessageUpdateManyWithoutSenderNestedInput
+    conversations?: ConversationParticipantUpdateManyWithoutGraduateNestedInput
+    connectionsInitiated?: ConnectionUpdateManyWithoutRequesterNestedInput
+    connectionsReceived?: ConnectionUpdateManyWithoutReceiverNestedInput
+    jobPostings?: JobPostingUpdateManyWithoutPostedByNestedInput
+    jobApplications?: JobApplicationUpdateManyWithoutApplicantNestedInput
+    eventsCreated?: EventUpdateManyWithoutCreatorNestedInput
+    eventAttendances?: EventAttendeeUpdateManyWithoutGraduateNestedInput
+    mentorshipAsMentee?: MentorshipUpdateManyWithoutMenteeNestedInput
+    mentorshipAsMentor?: MentorshipUpdateManyWithoutMentorNestedInput
+    notifications?: NotificationUpdateManyWithoutGraduateNestedInput
+    activityFeed?: ActivityFeedItemUpdateManyWithoutGraduateNestedInput
+    profileViewsLog?: ProfileViewUpdateManyWithoutViewedNestedInput
+    profileViewsGiven?: ProfileViewUpdateManyWithoutViewerNestedInput
+  }
+
+  export type GraduateUncheckedUpdateWithoutIdCardsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    registrationNo?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    surname?: NullableStringFieldUpdateOperationsInput | string | null
+    otherNames?: NullableStringFieldUpdateOperationsInput | string | null
+    sex?: NullableEnumSexFieldUpdateOperationsInput | $Enums.Sex | null
+    stateOfOrigin?: NullableStringFieldUpdateOperationsInput | string | null
+    lga?: NullableStringFieldUpdateOperationsInput | string | null
+    facultyCode?: NullableStringFieldUpdateOperationsInput | string | null
+    facultyName?: NullableStringFieldUpdateOperationsInput | string | null
+    courseCode?: NullableStringFieldUpdateOperationsInput | string | null
+    departmentName?: NullableStringFieldUpdateOperationsInput | string | null
+    cgpa?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    degreeClass?: NullableEnumDegreeClassFieldUpdateOperationsInput | $Enums.DegreeClass | null
+    graduationYear?: NullableStringFieldUpdateOperationsInput | string | null
+    entryYear?: NullableIntFieldUpdateOperationsInput | number | null
+    jambNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceSheet?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    linkedinUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    nyscState?: NullableStringFieldUpdateOperationsInput | string | null
+    nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
+    showCgpa?: BoolFieldUpdateOperationsInput | boolean
+    showEmail?: BoolFieldUpdateOperationsInput | boolean
+    showPhone?: BoolFieldUpdateOperationsInput | boolean
+    showDob?: BoolFieldUpdateOperationsInput | boolean
+    showInDirectory?: BoolFieldUpdateOperationsInput | boolean
+    allowMessages?: BoolFieldUpdateOperationsInput | boolean
+    showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
+    openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
+    availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    profileCompleted?: BoolFieldUpdateOperationsInput | boolean
+    onboardingStep?: IntFieldUpdateOperationsInput | number
+    profileViews?: IntFieldUpdateOperationsInput | number
+    salaryMin?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    salaryMax?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    salaryCurrency?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    employment?: EmploymentUncheckedUpdateManyWithoutGraduateNestedInput
+    education?: EducationUncheckedUpdateManyWithoutGraduateNestedInput
+    skills?: SkillUncheckedUpdateManyWithoutGraduateNestedInput
+    endorsementsGiven?: EndorsementUncheckedUpdateManyWithoutEndorserNestedInput
+    endorsementsReceived?: EndorsementUncheckedUpdateManyWithoutEndorsedNestedInput
+    location?: GraduateLocationUncheckedUpdateOneWithoutGraduateNestedInput
+    achievements?: AchievementUncheckedUpdateManyWithoutGraduateNestedInput
+    badges?: ProfileBadgeUncheckedUpdateManyWithoutGraduateNestedInput
+    groupMemberships?: GroupMemberUncheckedUpdateManyWithoutGraduateNestedInput
+    groupPosts?: GroupPostUncheckedUpdateManyWithoutAuthorNestedInput
+    postComments?: PostCommentUncheckedUpdateManyWithoutAuthorNestedInput
+    postReactions?: PostReactionUncheckedUpdateManyWithoutGraduateNestedInput
+    sentMessages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
+    conversations?: ConversationParticipantUncheckedUpdateManyWithoutGraduateNestedInput
+    connectionsInitiated?: ConnectionUncheckedUpdateManyWithoutRequesterNestedInput
+    connectionsReceived?: ConnectionUncheckedUpdateManyWithoutReceiverNestedInput
+    jobPostings?: JobPostingUncheckedUpdateManyWithoutPostedByNestedInput
+    jobApplications?: JobApplicationUncheckedUpdateManyWithoutApplicantNestedInput
+    eventsCreated?: EventUncheckedUpdateManyWithoutCreatorNestedInput
+    eventAttendances?: EventAttendeeUncheckedUpdateManyWithoutGraduateNestedInput
+    mentorshipAsMentee?: MentorshipUncheckedUpdateManyWithoutMenteeNestedInput
+    mentorshipAsMentor?: MentorshipUncheckedUpdateManyWithoutMentorNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutGraduateNestedInput
+    activityFeed?: ActivityFeedItemUncheckedUpdateManyWithoutGraduateNestedInput
     profileViewsLog?: ProfileViewUncheckedUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUncheckedUpdateManyWithoutViewerNestedInput
   }
@@ -68956,6 +70940,16 @@ export namespace Prisma {
     id?: string
     viewedId: string
     viewedAt?: Date | string
+  }
+
+  export type IdCardCreateManyGraduateInput = {
+    id?: string
+    alumniNumber: string
+    payloadHash: string
+    issuedAt?: Date | string
+    expiresAt: Date | string
+    revokedAt?: Date | string | null
+    revokedReason?: string | null
   }
 
   export type EmploymentUpdateWithoutGraduateInput = {
@@ -69709,6 +71703,36 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     viewedId?: StringFieldUpdateOperationsInput | string
     viewedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type IdCardUpdateWithoutGraduateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    alumniNumber?: StringFieldUpdateOperationsInput | string
+    payloadHash?: StringFieldUpdateOperationsInput | string
+    issuedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revokedReason?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type IdCardUncheckedUpdateWithoutGraduateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    alumniNumber?: StringFieldUpdateOperationsInput | string
+    payloadHash?: StringFieldUpdateOperationsInput | string
+    issuedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revokedReason?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type IdCardUncheckedUpdateManyWithoutGraduateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    alumniNumber?: StringFieldUpdateOperationsInput | string
+    payloadHash?: StringFieldUpdateOperationsInput | string
+    issuedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revokedReason?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type EndorsementCreateManySkillInput = {

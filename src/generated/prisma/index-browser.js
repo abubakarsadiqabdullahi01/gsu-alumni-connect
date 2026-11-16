@@ -503,6 +503,17 @@ exports.Prisma.ActivityFeedItemScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.IdCardScalarFieldEnum = {
+  id: 'id',
+  graduateId: 'graduateId',
+  alumniNumber: 'alumniNumber',
+  payloadHash: 'payloadHash',
+  issuedAt: 'issuedAt',
+  expiresAt: 'expiresAt',
+  revokedAt: 'revokedAt',
+  revokedReason: 'revokedReason'
+};
+
 exports.Prisma.AdminSettingScalarFieldEnum = {
   id: 'id',
   platformName: 'platformName',
@@ -764,6 +775,7 @@ exports.Prisma.ModelName = {
   Mentorship: 'Mentorship',
   Notification: 'Notification',
   ActivityFeedItem: 'ActivityFeedItem',
+  IdCard: 'IdCard',
   AdminSetting: 'AdminSetting',
   UploadAuditLog: 'UploadAuditLog',
   ImportJob: 'ImportJob',

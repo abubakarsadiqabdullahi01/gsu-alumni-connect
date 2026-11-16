@@ -375,6 +375,7 @@ model Graduate {
   activityFeed         ActivityFeedItem[]
   profileViewsLog      ProfileView[]             @relation("ViewedRelation")
   profileViewsGiven    ProfileView[]             @relation("ViewerRelation")
+  idCards              IdCard[]
 
   @@index([registrationNo])
   @@index([graduationYear])
@@ -883,6 +884,35 @@ model ActivityFeedItem {
 // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // 16. UPLOAD AUDIT LOG
 // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+/// An issued alumni ID card.
+///
+/// A card is a physical object: printed, carried, and scanned by a stranger
+/// years after it was made. So the QR code carries an opaque card id and
+/// nothing else — no name, no registration number — and the validity lives in
+/// this row, where it can be read at scan time and revoked if a card is lost.
+model IdCard {
+  id         String   @id @default(uuid())
+  graduateId String   @map("graduate_id")
+  graduate   Graduate @relation(fields: [graduateId], references: [id], onDelete: Cascade)
+
+  /// Snapshot of the registration number at issue, so a later correction to the
+  /// graduate record shows up as a mismatch rather than silently rewriting what
+  /// the printed card claims.
+  alumniNumber String @map("alumni_number")
+
+  /// HMAC of the payload this card was issued with.
+  payloadHash String @map("payload_hash")
+
+  issuedAt      DateTime  @default(now()) @map("issued_at")
+  expiresAt     DateTime  @map("expires_at")
+  revokedAt     DateTime? @map("revoked_at")
+  revokedReason String?   @map("revoked_reason")
+
+  @@index([graduateId, issuedAt(sort: Desc)])
+  @@index([alumniNumber])
+  @@map("id_card")
+}
 
 model AdminSetting {
   id String @id @default("main")

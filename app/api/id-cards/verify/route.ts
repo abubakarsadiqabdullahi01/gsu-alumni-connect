@@ -1,66 +1,40 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/db";
-import { verifyVerificationQuery } from "@/lib/id-card-security";
+import { readVerificationParams, resolveCardVerification } from "@/lib/id-card-verification";
+
+const STATUS_CODES = {
+  valid: 200,
+  expired: 410,
+  revoked: 410,
+  invalid: 400,
+} as const;
 
 export async function GET(request: NextRequest) {
-  const cardId = request.nextUrl.searchParams.get("c") ?? "";
-  const alumniNumber = request.nextUrl.searchParams.get("a") ?? "";
-  const expiresAtUnix = Number(request.nextUrl.searchParams.get("e") ?? "");
-  const signature = request.nextUrl.searchParams.get("s") ?? "";
-
-  const verified = verifyVerificationQuery({ cardId, alumniNumber, expiresAtUnix, signature });
-  const statusCode = verified.status === "valid" ? 200 : verified.status === "expired" ? 410 : 400;
-
-  let graduate: {
-    fullName: string;
-    registrationNo: string;
-    stateOfOrigin: string | null;
-    graduationYear: string | null;
-    departmentName: string | null;
-    degreeClass: string | null;
-    sex: "M" | "F" | null;
-  } | null = null;
-
-  if (verified.ok) {
-    graduate = await prisma.graduate.findUnique({
-      where: { registrationNo: alumniNumber },
-      select: {
-        fullName: true,
-        registrationNo: true,
-        stateOfOrigin: true,
-        graduationYear: true,
-        departmentName: true,
-        degreeClass: true,
-        sex: true,
-      },
-    });
-  }
+  const params = readVerificationParams((key) => request.nextUrl.searchParams.get(key));
+  const verification = await resolveCardVerification(params);
 
   return NextResponse.json(
     {
-      status: verified.status,
-      verified: verified.ok,
-      reason: verified.reason ?? null,
+      status: verification.status,
+      verified: verification.verified,
+      reason: verification.reason,
       verifiedAt: new Date().toISOString(),
-      data: graduate
+      data: verification.data
         ? {
-            cardId,
-            alumniNumber: graduate.registrationNo,
-            fullName: graduate.fullName,
-            stateOfOrigin: graduate.stateOfOrigin ?? "Not Provided",
-            graduationYear: graduate.graduationYear ?? "Not Provided",
-            discipline: graduate.departmentName ?? "Not Provided",
-            gender: graduate.sex === "F" ? "Female" : graduate.sex === "M" ? "Male" : "Unknown",
-            rank: graduate.degreeClass ?? "Alumni Member",
+            ...verification.data,
             security: {
               algorithm: "HMAC-SHA256",
-              expiresAt: new Date(expiresAtUnix * 1000).toISOString(),
+              issuedAt: verification.issuedAt,
+              expiresAt: verification.expiresAt,
               classification: "enterprise-premium",
             },
           }
         : null,
     },
-    { status: statusCode }
+    {
+      status: STATUS_CODES[verification.status],
+      // A verification result is about this card at this moment: revocation has
+      // to take effect on the next scan, not after a cache expires.
+      headers: { "Cache-Control": "no-store" },
+    }
   );
 }
-
