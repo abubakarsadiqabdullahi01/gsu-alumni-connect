@@ -89,10 +89,15 @@ class _DirectoryScreenState extends ConsumerState<DirectoryScreen> {
                                 style: theme.textTheme.headlineSmall),
                             const SizedBox(height: 2),
                             Text(
+                              // Not "verified": the platform verifies nothing
+                              // about these graduates. They are the members
+                              // who have activated an account and chosen to be
+                              // listed. VERIFIED is a separate badge an
+                              // administrator awards.
                               directory.valueOrNull == null
-                                  ? 'Search verified graduates'
+                                  ? 'Search fellow graduates'
                                   : '${Fmt.number(directory.value!.pagination.total)} '
-                                      'verified graduates',
+                                      'graduates listed',
                               style: theme.textTheme.bodySmall,
                             ),
                           ],
