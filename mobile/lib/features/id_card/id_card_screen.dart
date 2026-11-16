@@ -94,10 +94,11 @@ class _IdCardScreenState extends ConsumerState<IdCardScreen> {
                         const SizedBox(height: 6),
                         Text(
                           'Each card is signed by the server with HMAC-SHA256 '
-                          'and expires shortly after it is issued. Anyone can '
-                          'scan the QR code on the back to confirm the card is '
-                          'genuine and unaltered. Pull to reissue if it has '
-                          'expired.',
+                          'and stays valid for five years. Anyone can scan the '
+                          'QR code on the back to confirm the card is genuine '
+                          'and has not been withdrawn — no account needed. '
+                          'Report a lost card to the Alumni Secretariat and it '
+                          'can be revoked.',
                           style:
                               theme.textTheme.bodySmall?.copyWith(height: 1.5),
                         ),
@@ -866,8 +867,8 @@ class _SecurityPanel extends StatelessWidget {
                     Text(
                       expired
                           ? 'Tap refresh above to issue a new signed card.'
-                          : 'Signed with HMAC-SHA256 · expires '
-                              '${Fmt.time(card.expiresAt)}',
+                          : 'Signed with HMAC-SHA256 · valid until '
+                              '${Fmt.date(card.expiresAt)}',
                       style: theme.textTheme.bodySmall,
                     ),
                   ],
