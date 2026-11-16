@@ -30,6 +30,17 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
+  # Build-time only: regenerates the launcher icons from the crest.
+  flutter_launcher_icons: ^0.14.1
+
+# Run after changing the logo: dart run flutter_launcher_icons
+flutter_launcher_icons:
+  android: true
+  ios: false
+  image_path: assets/images/gsu-alumni-logo.png
+  adaptive_icon_background: "#ffffff"
+  adaptive_icon_foreground: assets/images/gsu-alumni-logo.png
+  min_sdk_android: 24
 
 flutter:
   uses-material-design: true
