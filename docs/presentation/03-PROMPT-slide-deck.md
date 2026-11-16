@@ -120,8 +120,9 @@ few who ask harder questions.
     active, 17,558 still on their default password**. Say plainly that the
     published Android build is a test build pending a signed release.
 19. What that means — the platform is built; adoption has not started. The next
-    work is a rollout campaign, not more features. The facts file notes that
-    SMS (Termii) and email (Resend) are already wired.
+    work is reaching the membership, not more features. Be accurate about what
+    exists: §8 of the facts file records that the system currently has no way
+    to send an announcement to graduates at all.
 20. Ask / next steps — leave the specific ask as a clearly marked placeholder
     for me to fill in.
 21. Closing — the one-line value, and contact details.

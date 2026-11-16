@@ -282,7 +282,6 @@ graduate's record is in, a later sheet cannot silently rewrite their degree clas
 | Queue | **BullMQ** on Redis, with a standalone worker process |
 | Object storage | **Tigris** (S3-compatible) — avatars, signatures, import files, error reports, the Android APK |
 | Email | **Resend** (React Email templates) |
-| SMS | **Termii** |
 | Documents | jsPDF + html2canvas (ID cards), SheetJS (`xlsx`) for import/export, Puppeteer for server-side rendering |
 | Charts & maps | Recharts, Leaflet / react-leaflet, react-simple-maps, d3-geo |
 | Hosting | **Vercel** (web + cron), worker on a long-running process (`Procfile`) |
@@ -344,7 +343,7 @@ profile views; and status/date indexes on import jobs.
 - **Audit trail** for every bulk upload: who, what file, what outcome.
 - **Trusted origins** pinned for auth; API routes pass through shared middleware
   for session and role checks.
-- **Secrets never in the repo**: database URLs, Pusher, Redis, Resend, Termii and
+- **Secrets never in the repo**: database URLs, Pusher, Redis, Resend and
   S3 credentials all come from the environment; the Android signing keystore and
   `key.properties` are gitignored.
 
@@ -396,6 +395,13 @@ For an internal document, these are worth stating plainly:
 - **Self-registration is off**; membership comes from the Secretariat's imports.
 - The landing-page statistics are **presentation constants**, not live queries.
 - `DeveloperSection` exists on the landing page but is **commented out**.
+- **There is no way to contact the membership.** Email is wired for one thing
+  only — the password-reset link. The `termii` SMS package is installed but
+  never imported, so no SMS is sent. The admin "Notifications" screen is the
+  administrator's own inbox: notifications are created as side effects of
+  specific actions (an achievement verified, a job application, a mentorship
+  request), and nothing in the system sends an announcement to many graduates.
+  With 17,558 accounts never signed into, this is the platform's largest gap.
 
 ---
 
