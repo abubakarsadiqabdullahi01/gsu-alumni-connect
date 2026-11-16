@@ -47,3 +47,13 @@ next-env.d.ts
 # Android builds staged for a local download check — production serves the APK
 # from S3 (see scripts/publish-android-apk.ts), never from the repo.
 /public/downloads/*.apk
+
+# Deck screenshots — regenerate with scripts/capture-screenshots.mjs rather than
+# carrying ~28 MB of PNGs in the repo.
+/docs/presentation/screenshots/
+
+# Signed-in Chrome profile used by scripts/capture-screenshots.mjs --auth
+/.capture-profile*/
+
+# Saved capture sessions (live cookies)
+.capture-profile*/session-cookies.json
