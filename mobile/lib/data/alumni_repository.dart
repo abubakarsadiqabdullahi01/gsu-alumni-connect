@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/network/api_client.dart';
+import '../core/network/api_exception.dart';
 import 'models/alumni_map.dart';
 import 'models/bootstrap.dart';
 import 'models/community.dart';
@@ -34,7 +35,7 @@ class AlumniRepository {
     required String password,
     bool rememberMe = true,
   }) async {
-    await _api.post(
+    final result = await _api.post(
       '/api/auth/sign-in/registration',
       body: {
         'registrationNo': registrationNo.trim(),
@@ -42,6 +43,11 @@ class AlumniRepository {
         'rememberMe': rememberMe,
       },
     );
+    // The default password was right, but no session was opened: the account
+    // still has to be activated on the website.
+    if (result['status'] == 'verification_required') {
+      throw const ActivationRequiredException();
+    }
   }
 
   Future<void> signOut() async {
@@ -417,7 +423,23 @@ class AlumniRepository {
   }
 
   Future<IdCard> idCard() async {
-    return IdCard.fromJson(await _api.get('/api/id-cards'));
+    try {
+      return IdCard.fromJson(await _api.get('/api/id-cards'));
+    } on ApiException catch (error) {
+      final body = error.body;
+      if (error.statusCode == 403 && body?['code'] == 'VERIFICATION_REQUIRED') {
+        throw IdentityConfirmationRequired(
+          method: '${body!['method'] ?? 'cgpa'}',
+          prompt: '${body['prompt'] ?? ''}',
+        );
+      }
+      rethrow;
+    }
+  }
+
+  /// The one-off record check that unlocks the ID card for existing members.
+  Future<void> confirmIdentity(String answer) async {
+    await _api.post('/api/activation/confirm', body: {'answer': answer});
   }
 }
 

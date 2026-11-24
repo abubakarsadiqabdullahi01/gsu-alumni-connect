@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Eye, EyeOff, ArrowLeft, Info, MoveRight } from "lucide-react";
+import { Eye, EyeOff, ArrowLeft, Info, MoveRight, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,6 +17,14 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  // Set when the default password was right: the account still needs the
+  // CGPA/surname check before any session exists.
+  const [verification, setVerification] = useState<{
+    token: string;
+    method: "cgpa" | "surname";
+    prompt: string;
+  } | null>(null);
+  const [answer, setAnswer] = useState("");
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -49,12 +57,26 @@ export default function LoginPage() {
         }
         const data = (await response.json()) as {
           user?: { role?: string; defaultPassword?: boolean };
+          status?: string;
+          method?: "cgpa" | "surname";
+          prompt?: string;
+          activationToken?: string;
         };
         return { data };
       });
 
       if (result.error) {
         setError(result.error.message || "Invalid credentials.");
+        return;
+      }
+
+      if (result.data?.status === "verification_required" && result.data.activationToken) {
+        setVerification({
+          token: result.data.activationToken,
+          method: result.data.method ?? "cgpa",
+          prompt: result.data.prompt ?? "",
+        });
+        setAnswer("");
         return;
       }
 
@@ -80,6 +102,110 @@ export default function LoginPage() {
     }
   }
 
+  async function handleVerify(e: React.FormEvent) {
+    e.preventDefault();
+    if (!verification) return;
+    setError("");
+    if (!answer.trim()) {
+      setError(verification.method === "cgpa" ? "Please enter your CGPA." : "Please enter your surname.");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const response = await fetch("/api/auth/activation/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ activationToken: verification.token, answer: answer.trim(), rememberMe: true }),
+      });
+      const payload = (await response.json().catch(() => ({}))) as { message?: string };
+
+      if (!response.ok) {
+        setError(payload.message ?? "We could not confirm that. Please try again.");
+        // An expired step cannot be retried; start again from the password.
+        if (payload.message?.includes("expired")) {
+          setVerification(null);
+          setPassword("");
+        }
+        return;
+      }
+      router.push("/onboarding");
+    } catch {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  const verificationForm = verification ? (
+    <form onSubmit={handleVerify} className="flex flex-col gap-5">
+      <div className="flex items-start gap-3 rounded-xl border border-primary/15 bg-primary/5 p-4">
+        <ShieldCheck className="mt-0.5 size-4 shrink-0 text-primary/70" />
+        <p className="text-[12px] leading-relaxed text-muted-foreground">
+          <span className="font-semibold text-foreground">One more step to activate.</span>{" "}
+          Your account was created from Gombe State University&apos;s graduation records. To make sure
+          it&apos;s really you, confirm one detail from your record. After five wrong answers, activation
+          locks for 24 hours.
+        </p>
+      </div>
+
+      {error && (
+        <Alert variant="destructive" className="py-3 text-sm">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
+
+      <div className="flex flex-col gap-2">
+        <Label htmlFor="verification-answer" className="text-[13px] font-semibold">
+          {verification.method === "cgpa" ? "Your CGPA" : "Your surname"}
+        </Label>
+        <Input
+          id="verification-answer"
+          type="text"
+          inputMode={verification.method === "cgpa" ? "decimal" : "text"}
+          placeholder={verification.method === "cgpa" ? "e.g. 3.45" : "As on your university record"}
+          value={answer}
+          onChange={(e) => setAnswer(e.target.value)}
+          disabled={isLoading}
+          autoComplete="off"
+          autoFocus
+          className="h-11 rounded-xl border-border/70 bg-background text-[14px] placeholder:text-muted-foreground/50 focus-visible:ring-primary/30"
+        />
+        <p className="text-[12px] text-muted-foreground">{verification.prompt}</p>
+      </div>
+
+      <Button
+        type="submit"
+        disabled={isLoading}
+        className="group mt-1 h-11 w-full rounded-xl text-[14px] font-semibold shadow-sm shadow-primary/20 transition-all hover:shadow-md hover:shadow-primary/25"
+      >
+        {isLoading ? (
+          <span className="flex items-center gap-2">
+            <span className="size-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+            Checking…
+          </span>
+        ) : (
+          <span className="flex items-center gap-2">
+            Confirm and continue
+            <MoveRight className="size-4 transition-transform group-hover:translate-x-0.5" />
+          </span>
+        )}
+      </Button>
+
+      <button
+        type="button"
+        onClick={() => {
+          setVerification(null);
+          setPassword("");
+          setError("");
+        }}
+        className="text-[12px] font-medium text-muted-foreground transition-colors hover:text-foreground"
+      >
+        Use a different registration number
+      </button>
+    </form>
+  ) : null;
+
   return (
     <div className="flex flex-col gap-8">
       {/* Back link */}
@@ -102,6 +228,7 @@ export default function LoginPage() {
       </div>
 
       {/* Form */}
+      {verificationForm ?? (
       <form onSubmit={handleSubmit} className="flex flex-col gap-5">
         {/* Error */}
         {error && (
@@ -186,6 +313,7 @@ export default function LoginPage() {
           )}
         </Button>
       </form>
+      )}
 
       {/* Divider */}
       <div className="flex items-center gap-3">

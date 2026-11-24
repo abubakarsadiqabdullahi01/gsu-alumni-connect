@@ -13,6 +13,8 @@ import '../../core/widgets/state_views.dart';
 import '../../core/widgets/ui_kit.dart';
 import '../../data/models/id_card.dart';
 import '../../data/providers.dart';
+import '../../core/network/api_exception.dart';
+import '../../data/alumni_repository.dart';
 
 class IdCardScreen extends ConsumerStatefulWidget {
   const IdCardScreen({super.key});
@@ -40,7 +42,12 @@ class _IdCardScreenState extends ConsumerState<IdCardScreen> {
           ),
         ],
       ),
-      body: AsyncView<IdCard>(
+      body: card.error is IdentityConfirmationRequired
+          ? _ConfirmIdentity(
+              requirement: card.error! as IdentityConfirmationRequired,
+              onConfirmed: () => ref.invalidate(idCardProvider),
+            )
+          : AsyncView<IdCard>(
         value: card,
         onRetry: () => ref.invalidate(idCardProvider),
         loading: const Center(child: CircularProgressIndicator()),
@@ -907,6 +914,104 @@ class _SecurityPanel extends StatelessWidget {
               },
             ),
         ],
+      ),
+    );
+  }
+}
+
+
+/// The one-off check for members who activated before it existed: confirm one
+/// detail from the university record, and the card is issued from then on.
+class _ConfirmIdentity extends ConsumerStatefulWidget {
+  const _ConfirmIdentity({required this.requirement, required this.onConfirmed});
+
+  final IdentityConfirmationRequired requirement;
+  final VoidCallback onConfirmed;
+
+  @override
+  ConsumerState<_ConfirmIdentity> createState() => _ConfirmIdentityState();
+}
+
+class _ConfirmIdentityState extends ConsumerState<_ConfirmIdentity> {
+  final _controller = TextEditingController();
+  bool _submitting = false;
+  String? _error;
+
+  bool get _isCgpa => widget.requirement.method == 'cgpa';
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  Future<void> _submit() async {
+    final answer = _controller.text.trim();
+    if (answer.isEmpty) {
+      setState(() => _error = _isCgpa ? 'Please enter your CGPA.' : 'Please enter your surname.');
+      return;
+    }
+    setState(() {
+      _submitting = true;
+      _error = null;
+    });
+    try {
+      final repository = await ref.read(repositoryProvider.future);
+      await repository.confirmIdentity(answer);
+      widget.onConfirmed();
+    } catch (error) {
+      if (mounted) setState(() => _error = ApiException.from(error).message);
+    } finally {
+      if (mounted) setState(() => _submitting = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 440),
+        child: ListView(
+          shrinkWrap: true,
+          padding: const EdgeInsets.fromLTRB(24, 24, 24, 32),
+          children: [
+            Icon(Icons.verified_user_outlined, size: 44, color: theme.colorScheme.primary),
+            const SizedBox(height: 16),
+            Text('Confirm it\'s you', textAlign: TextAlign.center, style: theme.textTheme.headlineSmall),
+            const SizedBox(height: 10),
+            Text(
+              'Your ID card is a credential others rely on, so we confirm one detail from your '
+              'university record before issuing it. You only need to do this once.',
+              textAlign: TextAlign.center,
+              style: theme.textTheme.bodyMedium?.copyWith(height: 1.5),
+            ),
+            const SizedBox(height: 24),
+            TextField(
+              controller: _controller,
+              enabled: !_submitting,
+              autofocus: true,
+              keyboardType: _isCgpa
+                  ? const TextInputType.numberWithOptions(decimal: true)
+                  : TextInputType.name,
+              textInputAction: TextInputAction.done,
+              onSubmitted: (_) => _submit(),
+              decoration: InputDecoration(
+                labelText: _isCgpa ? 'Your CGPA' : 'Your surname',
+                hintText: _isCgpa ? 'e.g. 3.45' : 'As on your university record',
+                helperText: widget.requirement.prompt,
+                helperMaxLines: 3,
+                errorText: _error,
+                errorMaxLines: 4,
+              ),
+            ),
+            const SizedBox(height: 20),
+            FilledButton(
+              onPressed: _submitting ? null : _submit,
+              child: Text(_submitting ? 'Checking…' : 'Confirm and show my card'),
+            ),
+          ],
+        ),
       ),
     );
   }

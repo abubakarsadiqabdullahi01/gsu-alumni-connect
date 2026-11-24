@@ -8,6 +8,7 @@ import '../../../core/config/app_config.dart';
 import '../../../core/network/api_exception.dart';
 import '../../../core/theme/app_colors.dart';
 import '../session_controller.dart';
+import 'activation_required_screen.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -50,6 +51,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           );
 
       final session = ref.read(sessionControllerProvider);
+      if (session.error is ActivationRequiredException) {
+        if (!mounted) return;
+        await Navigator.of(context).push(
+          MaterialPageRoute<void>(builder: (_) => const ActivationRequiredScreen()),
+        );
+        return;
+      }
       if (session.hasError) {
         throw ApiException.from(session.error!);
       }

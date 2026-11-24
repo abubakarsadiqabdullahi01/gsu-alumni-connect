@@ -222,6 +222,8 @@ exports.Prisma.GraduateScalarFieldEnum = {
   showActivityFeed: 'showActivityFeed',
   openToOpportunities: 'openToOpportunities',
   availableForMentorship: 'availableForMentorship',
+  activationVerifiedAt: 'activationVerifiedAt',
+  activationMethod: 'activationMethod',
   profileCompleted: 'profileCompleted',
   onboardingStep: 'onboardingStep',
   profileViews: 'profileViews',
@@ -514,6 +516,17 @@ exports.Prisma.IdCardScalarFieldEnum = {
   revokedReason: 'revokedReason'
 };
 
+exports.Prisma.AuthEventScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  kind: 'kind',
+  identifier: 'identifier',
+  userId: 'userId',
+  ip: 'ip',
+  userAgent: 'userAgent',
+  reason: 'reason'
+};
+
 exports.Prisma.AdminSettingScalarFieldEnum = {
   id: 'id',
   platformName: 'platformName',
@@ -776,6 +789,7 @@ exports.Prisma.ModelName = {
   Notification: 'Notification',
   ActivityFeedItem: 'ActivityFeedItem',
   IdCard: 'IdCard',
+  AuthEvent: 'AuthEvent',
   AdminSetting: 'AdminSetting',
   UploadAuditLog: 'UploadAuditLog',
   ImportJob: 'ImportJob',

@@ -174,6 +174,13 @@ export type ActivityFeedItem = $Result.DefaultSelection<Prisma.$ActivityFeedItem
  */
 export type IdCard = $Result.DefaultSelection<Prisma.$IdCardPayload>
 /**
+ * Model AuthEvent
+ * Security log for sign-in and activation, so abuse can be investigated after
+ * the fact. Holds what happened, which account it claimed and from where —
+ * never a password, and never the CGPA or surname that was typed.
+ */
+export type AuthEvent = $Result.DefaultSelection<Prisma.$AuthEventPayload>
+/**
  * Model AdminSetting
  * 
  */
@@ -889,6 +896,16 @@ export class PrismaClient<
   get idCard(): Prisma.IdCardDelegate<ExtArgs, ClientOptions>;
 
   /**
+   * `prisma.authEvent`: Exposes CRUD operations for the **AuthEvent** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more AuthEvents
+    * const authEvents = await prisma.authEvent.findMany()
+    * ```
+    */
+  get authEvent(): Prisma.AuthEventDelegate<ExtArgs, ClientOptions>;
+
+  /**
    * `prisma.adminSetting`: Exposes CRUD operations for the **AdminSetting** model.
     * Example usage:
     * ```ts
@@ -1392,6 +1409,7 @@ export namespace Prisma {
     Notification: 'Notification',
     ActivityFeedItem: 'ActivityFeedItem',
     IdCard: 'IdCard',
+    AuthEvent: 'AuthEvent',
     AdminSetting: 'AdminSetting',
     UploadAuditLog: 'UploadAuditLog',
     ImportJob: 'ImportJob',
@@ -1411,7 +1429,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "session" | "account" | "verification" | "twoFactor" | "graduate" | "employment" | "education" | "skill" | "endorsement" | "graduateLocation" | "achievement" | "profileBadge" | "alumniGroup" | "groupMember" | "groupPost" | "postComment" | "postReaction" | "conversation" | "conversationParticipant" | "message" | "connection" | "profileView" | "jobPosting" | "jobApplication" | "event" | "eventAttendee" | "mentorship" | "notification" | "activityFeedItem" | "idCard" | "adminSetting" | "uploadAuditLog" | "importJob" | "importJobError"
+      modelProps: "user" | "session" | "account" | "verification" | "twoFactor" | "graduate" | "employment" | "education" | "skill" | "endorsement" | "graduateLocation" | "achievement" | "profileBadge" | "alumniGroup" | "groupMember" | "groupPost" | "postComment" | "postReaction" | "conversation" | "conversationParticipant" | "message" | "connection" | "profileView" | "jobPosting" | "jobApplication" | "event" | "eventAttendee" | "mentorship" | "notification" | "activityFeedItem" | "idCard" | "authEvent" | "adminSetting" | "uploadAuditLog" | "importJob" | "importJobError"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -3709,6 +3727,80 @@ export namespace Prisma {
           }
         }
       }
+      AuthEvent: {
+        payload: Prisma.$AuthEventPayload<ExtArgs>
+        fields: Prisma.AuthEventFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.AuthEventFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AuthEventPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.AuthEventFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AuthEventPayload>
+          }
+          findFirst: {
+            args: Prisma.AuthEventFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AuthEventPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.AuthEventFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AuthEventPayload>
+          }
+          findMany: {
+            args: Prisma.AuthEventFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AuthEventPayload>[]
+          }
+          create: {
+            args: Prisma.AuthEventCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AuthEventPayload>
+          }
+          createMany: {
+            args: Prisma.AuthEventCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.AuthEventCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AuthEventPayload>[]
+          }
+          delete: {
+            args: Prisma.AuthEventDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AuthEventPayload>
+          }
+          update: {
+            args: Prisma.AuthEventUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AuthEventPayload>
+          }
+          deleteMany: {
+            args: Prisma.AuthEventDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.AuthEventUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.AuthEventUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AuthEventPayload>[]
+          }
+          upsert: {
+            args: Prisma.AuthEventUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AuthEventPayload>
+          }
+          aggregate: {
+            args: Prisma.AuthEventAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateAuthEvent>
+          }
+          groupBy: {
+            args: Prisma.AuthEventGroupByArgs<ExtArgs>
+            result: $Utils.Optional<AuthEventGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.AuthEventCountArgs<ExtArgs>
+            result: $Utils.Optional<AuthEventCountAggregateOutputType> | number
+          }
+        }
+      }
       AdminSetting: {
         payload: Prisma.$AdminSettingPayload<ExtArgs>
         fields: Prisma.AdminSettingFieldRefs
@@ -4144,6 +4236,7 @@ export namespace Prisma {
     notification?: NotificationOmit
     activityFeedItem?: ActivityFeedItemOmit
     idCard?: IdCardOmit
+    authEvent?: AuthEventOmit
     adminSetting?: AdminSettingOmit
     uploadAuditLog?: UploadAuditLogOmit
     importJob?: ImportJobOmit
@@ -10507,6 +10600,8 @@ export namespace Prisma {
     showActivityFeed: boolean | null
     openToOpportunities: boolean | null
     availableForMentorship: boolean | null
+    activationVerifiedAt: Date | null
+    activationMethod: string | null
     profileCompleted: boolean | null
     onboardingStep: number | null
     profileViews: number | null
@@ -10555,6 +10650,8 @@ export namespace Prisma {
     showActivityFeed: boolean | null
     openToOpportunities: boolean | null
     availableForMentorship: boolean | null
+    activationVerifiedAt: Date | null
+    activationMethod: string | null
     profileCompleted: boolean | null
     onboardingStep: number | null
     profileViews: number | null
@@ -10603,6 +10700,8 @@ export namespace Prisma {
     showActivityFeed: number
     openToOpportunities: number
     availableForMentorship: number
+    activationVerifiedAt: number
+    activationMethod: number
     profileCompleted: number
     onboardingStep: number
     profileViews: number
@@ -10673,6 +10772,8 @@ export namespace Prisma {
     showActivityFeed?: true
     openToOpportunities?: true
     availableForMentorship?: true
+    activationVerifiedAt?: true
+    activationMethod?: true
     profileCompleted?: true
     onboardingStep?: true
     profileViews?: true
@@ -10721,6 +10822,8 @@ export namespace Prisma {
     showActivityFeed?: true
     openToOpportunities?: true
     availableForMentorship?: true
+    activationVerifiedAt?: true
+    activationMethod?: true
     profileCompleted?: true
     onboardingStep?: true
     profileViews?: true
@@ -10769,6 +10872,8 @@ export namespace Prisma {
     showActivityFeed?: true
     openToOpportunities?: true
     availableForMentorship?: true
+    activationVerifiedAt?: true
+    activationMethod?: true
     profileCompleted?: true
     onboardingStep?: true
     profileViews?: true
@@ -10904,6 +11009,8 @@ export namespace Prisma {
     showActivityFeed: boolean
     openToOpportunities: boolean
     availableForMentorship: boolean
+    activationVerifiedAt: Date | null
+    activationMethod: string | null
     profileCompleted: boolean
     onboardingStep: number
     profileViews: number
@@ -10971,6 +11078,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: boolean
+    activationMethod?: boolean
     profileCompleted?: boolean
     onboardingStep?: boolean
     profileViews?: boolean
@@ -11048,6 +11157,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: boolean
+    activationMethod?: boolean
     profileCompleted?: boolean
     onboardingStep?: boolean
     profileViews?: boolean
@@ -11097,6 +11208,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: boolean
+    activationMethod?: boolean
     profileCompleted?: boolean
     onboardingStep?: boolean
     profileViews?: boolean
@@ -11146,6 +11259,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: boolean
+    activationMethod?: boolean
     profileCompleted?: boolean
     onboardingStep?: boolean
     profileViews?: boolean
@@ -11156,7 +11271,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type GraduateOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "registrationNo" | "fullName" | "surname" | "otherNames" | "sex" | "stateOfOrigin" | "lga" | "facultyCode" | "facultyName" | "courseCode" | "departmentName" | "cgpa" | "degreeClass" | "graduationYear" | "entryYear" | "jambNumber" | "sourceSheet" | "dateOfBirth" | "bio" | "linkedinUrl" | "twitterUrl" | "githubUrl" | "personalWebsite" | "signatureUrl" | "nyscState" | "nyscYear" | "showCgpa" | "showEmail" | "showPhone" | "showDob" | "showInDirectory" | "allowMessages" | "showActivityFeed" | "openToOpportunities" | "availableForMentorship" | "profileCompleted" | "onboardingStep" | "profileViews" | "salaryMin" | "salaryMax" | "salaryCurrency" | "createdAt" | "updatedAt", ExtArgs["result"]["graduate"]>
+  export type GraduateOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "registrationNo" | "fullName" | "surname" | "otherNames" | "sex" | "stateOfOrigin" | "lga" | "facultyCode" | "facultyName" | "courseCode" | "departmentName" | "cgpa" | "degreeClass" | "graduationYear" | "entryYear" | "jambNumber" | "sourceSheet" | "dateOfBirth" | "bio" | "linkedinUrl" | "twitterUrl" | "githubUrl" | "personalWebsite" | "signatureUrl" | "nyscState" | "nyscYear" | "showCgpa" | "showEmail" | "showPhone" | "showDob" | "showInDirectory" | "allowMessages" | "showActivityFeed" | "openToOpportunities" | "availableForMentorship" | "activationVerifiedAt" | "activationMethod" | "profileCompleted" | "onboardingStep" | "profileViews" | "salaryMin" | "salaryMax" | "salaryCurrency" | "createdAt" | "updatedAt", ExtArgs["result"]["graduate"]>
   export type GraduateInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
     employment?: boolean | Graduate$employmentArgs<ExtArgs>
@@ -11265,6 +11380,13 @@ export namespace Prisma {
       showActivityFeed: boolean
       openToOpportunities: boolean
       availableForMentorship: boolean
+      /**
+       * When this graduate proved they are who the record says — CGPA, or surname
+       * where the record has none — on top of the published default password.
+       * The ID card is withheld until it is set.
+       */
+      activationVerifiedAt: Date | null
+      activationMethod: string | null
       profileCompleted: boolean
       onboardingStep: number
       profileViews: number
@@ -11761,6 +11883,8 @@ export namespace Prisma {
     readonly showActivityFeed: FieldRef<"Graduate", 'Boolean'>
     readonly openToOpportunities: FieldRef<"Graduate", 'Boolean'>
     readonly availableForMentorship: FieldRef<"Graduate", 'Boolean'>
+    readonly activationVerifiedAt: FieldRef<"Graduate", 'DateTime'>
+    readonly activationMethod: FieldRef<"Graduate", 'String'>
     readonly profileCompleted: FieldRef<"Graduate", 'Boolean'>
     readonly onboardingStep: FieldRef<"Graduate", 'Int'>
     readonly profileViews: FieldRef<"Graduate", 'Int'>
@@ -40914,6 +41038,1040 @@ export namespace Prisma {
 
 
   /**
+   * Model AuthEvent
+   */
+
+  export type AggregateAuthEvent = {
+    _count: AuthEventCountAggregateOutputType | null
+    _min: AuthEventMinAggregateOutputType | null
+    _max: AuthEventMaxAggregateOutputType | null
+  }
+
+  export type AuthEventMinAggregateOutputType = {
+    id: string | null
+    createdAt: Date | null
+    kind: string | null
+    identifier: string | null
+    userId: string | null
+    ip: string | null
+    userAgent: string | null
+    reason: string | null
+  }
+
+  export type AuthEventMaxAggregateOutputType = {
+    id: string | null
+    createdAt: Date | null
+    kind: string | null
+    identifier: string | null
+    userId: string | null
+    ip: string | null
+    userAgent: string | null
+    reason: string | null
+  }
+
+  export type AuthEventCountAggregateOutputType = {
+    id: number
+    createdAt: number
+    kind: number
+    identifier: number
+    userId: number
+    ip: number
+    userAgent: number
+    reason: number
+    _all: number
+  }
+
+
+  export type AuthEventMinAggregateInputType = {
+    id?: true
+    createdAt?: true
+    kind?: true
+    identifier?: true
+    userId?: true
+    ip?: true
+    userAgent?: true
+    reason?: true
+  }
+
+  export type AuthEventMaxAggregateInputType = {
+    id?: true
+    createdAt?: true
+    kind?: true
+    identifier?: true
+    userId?: true
+    ip?: true
+    userAgent?: true
+    reason?: true
+  }
+
+  export type AuthEventCountAggregateInputType = {
+    id?: true
+    createdAt?: true
+    kind?: true
+    identifier?: true
+    userId?: true
+    ip?: true
+    userAgent?: true
+    reason?: true
+    _all?: true
+  }
+
+  export type AuthEventAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AuthEvent to aggregate.
+     */
+    where?: AuthEventWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AuthEvents to fetch.
+     */
+    orderBy?: AuthEventOrderByWithRelationInput | AuthEventOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: AuthEventWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AuthEvents from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AuthEvents.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned AuthEvents
+    **/
+    _count?: true | AuthEventCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: AuthEventMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: AuthEventMaxAggregateInputType
+  }
+
+  export type GetAuthEventAggregateType<T extends AuthEventAggregateArgs> = {
+        [P in keyof T & keyof AggregateAuthEvent]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateAuthEvent[P]>
+      : GetScalarType<T[P], AggregateAuthEvent[P]>
+  }
+
+
+
+
+  export type AuthEventGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AuthEventWhereInput
+    orderBy?: AuthEventOrderByWithAggregationInput | AuthEventOrderByWithAggregationInput[]
+    by: AuthEventScalarFieldEnum[] | AuthEventScalarFieldEnum
+    having?: AuthEventScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: AuthEventCountAggregateInputType | true
+    _min?: AuthEventMinAggregateInputType
+    _max?: AuthEventMaxAggregateInputType
+  }
+
+  export type AuthEventGroupByOutputType = {
+    id: string
+    createdAt: Date
+    kind: string
+    identifier: string | null
+    userId: string | null
+    ip: string | null
+    userAgent: string | null
+    reason: string | null
+    _count: AuthEventCountAggregateOutputType | null
+    _min: AuthEventMinAggregateOutputType | null
+    _max: AuthEventMaxAggregateOutputType | null
+  }
+
+  type GetAuthEventGroupByPayload<T extends AuthEventGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<AuthEventGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof AuthEventGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], AuthEventGroupByOutputType[P]>
+            : GetScalarType<T[P], AuthEventGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type AuthEventSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    createdAt?: boolean
+    kind?: boolean
+    identifier?: boolean
+    userId?: boolean
+    ip?: boolean
+    userAgent?: boolean
+    reason?: boolean
+  }, ExtArgs["result"]["authEvent"]>
+
+  export type AuthEventSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    createdAt?: boolean
+    kind?: boolean
+    identifier?: boolean
+    userId?: boolean
+    ip?: boolean
+    userAgent?: boolean
+    reason?: boolean
+  }, ExtArgs["result"]["authEvent"]>
+
+  export type AuthEventSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    createdAt?: boolean
+    kind?: boolean
+    identifier?: boolean
+    userId?: boolean
+    ip?: boolean
+    userAgent?: boolean
+    reason?: boolean
+  }, ExtArgs["result"]["authEvent"]>
+
+  export type AuthEventSelectScalar = {
+    id?: boolean
+    createdAt?: boolean
+    kind?: boolean
+    identifier?: boolean
+    userId?: boolean
+    ip?: boolean
+    userAgent?: boolean
+    reason?: boolean
+  }
+
+  export type AuthEventOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "kind" | "identifier" | "userId" | "ip" | "userAgent" | "reason", ExtArgs["result"]["authEvent"]>
+
+  export type $AuthEventPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "AuthEvent"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      createdAt: Date
+      kind: string
+      identifier: string | null
+      userId: string | null
+      ip: string | null
+      userAgent: string | null
+      reason: string | null
+    }, ExtArgs["result"]["authEvent"]>
+    composites: {}
+  }
+
+  type AuthEventGetPayload<S extends boolean | null | undefined | AuthEventDefaultArgs> = $Result.GetResult<Prisma.$AuthEventPayload, S>
+
+  type AuthEventCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<AuthEventFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: AuthEventCountAggregateInputType | true
+    }
+
+  export interface AuthEventDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['AuthEvent'], meta: { name: 'AuthEvent' } }
+    /**
+     * Find zero or one AuthEvent that matches the filter.
+     * @param {AuthEventFindUniqueArgs} args - Arguments to find a AuthEvent
+     * @example
+     * // Get one AuthEvent
+     * const authEvent = await prisma.authEvent.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends AuthEventFindUniqueArgs>(args: SelectSubset<T, AuthEventFindUniqueArgs<ExtArgs>>): Prisma__AuthEventClient<$Result.GetResult<Prisma.$AuthEventPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one AuthEvent that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {AuthEventFindUniqueOrThrowArgs} args - Arguments to find a AuthEvent
+     * @example
+     * // Get one AuthEvent
+     * const authEvent = await prisma.authEvent.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends AuthEventFindUniqueOrThrowArgs>(args: SelectSubset<T, AuthEventFindUniqueOrThrowArgs<ExtArgs>>): Prisma__AuthEventClient<$Result.GetResult<Prisma.$AuthEventPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AuthEvent that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AuthEventFindFirstArgs} args - Arguments to find a AuthEvent
+     * @example
+     * // Get one AuthEvent
+     * const authEvent = await prisma.authEvent.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends AuthEventFindFirstArgs>(args?: SelectSubset<T, AuthEventFindFirstArgs<ExtArgs>>): Prisma__AuthEventClient<$Result.GetResult<Prisma.$AuthEventPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AuthEvent that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AuthEventFindFirstOrThrowArgs} args - Arguments to find a AuthEvent
+     * @example
+     * // Get one AuthEvent
+     * const authEvent = await prisma.authEvent.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends AuthEventFindFirstOrThrowArgs>(args?: SelectSubset<T, AuthEventFindFirstOrThrowArgs<ExtArgs>>): Prisma__AuthEventClient<$Result.GetResult<Prisma.$AuthEventPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more AuthEvents that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AuthEventFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all AuthEvents
+     * const authEvents = await prisma.authEvent.findMany()
+     * 
+     * // Get first 10 AuthEvents
+     * const authEvents = await prisma.authEvent.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const authEventWithIdOnly = await prisma.authEvent.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends AuthEventFindManyArgs>(args?: SelectSubset<T, AuthEventFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AuthEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a AuthEvent.
+     * @param {AuthEventCreateArgs} args - Arguments to create a AuthEvent.
+     * @example
+     * // Create one AuthEvent
+     * const AuthEvent = await prisma.authEvent.create({
+     *   data: {
+     *     // ... data to create a AuthEvent
+     *   }
+     * })
+     * 
+     */
+    create<T extends AuthEventCreateArgs>(args: SelectSubset<T, AuthEventCreateArgs<ExtArgs>>): Prisma__AuthEventClient<$Result.GetResult<Prisma.$AuthEventPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many AuthEvents.
+     * @param {AuthEventCreateManyArgs} args - Arguments to create many AuthEvents.
+     * @example
+     * // Create many AuthEvents
+     * const authEvent = await prisma.authEvent.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends AuthEventCreateManyArgs>(args?: SelectSubset<T, AuthEventCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many AuthEvents and returns the data saved in the database.
+     * @param {AuthEventCreateManyAndReturnArgs} args - Arguments to create many AuthEvents.
+     * @example
+     * // Create many AuthEvents
+     * const authEvent = await prisma.authEvent.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many AuthEvents and only return the `id`
+     * const authEventWithIdOnly = await prisma.authEvent.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends AuthEventCreateManyAndReturnArgs>(args?: SelectSubset<T, AuthEventCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AuthEventPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a AuthEvent.
+     * @param {AuthEventDeleteArgs} args - Arguments to delete one AuthEvent.
+     * @example
+     * // Delete one AuthEvent
+     * const AuthEvent = await prisma.authEvent.delete({
+     *   where: {
+     *     // ... filter to delete one AuthEvent
+     *   }
+     * })
+     * 
+     */
+    delete<T extends AuthEventDeleteArgs>(args: SelectSubset<T, AuthEventDeleteArgs<ExtArgs>>): Prisma__AuthEventClient<$Result.GetResult<Prisma.$AuthEventPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one AuthEvent.
+     * @param {AuthEventUpdateArgs} args - Arguments to update one AuthEvent.
+     * @example
+     * // Update one AuthEvent
+     * const authEvent = await prisma.authEvent.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends AuthEventUpdateArgs>(args: SelectSubset<T, AuthEventUpdateArgs<ExtArgs>>): Prisma__AuthEventClient<$Result.GetResult<Prisma.$AuthEventPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more AuthEvents.
+     * @param {AuthEventDeleteManyArgs} args - Arguments to filter AuthEvents to delete.
+     * @example
+     * // Delete a few AuthEvents
+     * const { count } = await prisma.authEvent.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends AuthEventDeleteManyArgs>(args?: SelectSubset<T, AuthEventDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AuthEvents.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AuthEventUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many AuthEvents
+     * const authEvent = await prisma.authEvent.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends AuthEventUpdateManyArgs>(args: SelectSubset<T, AuthEventUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AuthEvents and returns the data updated in the database.
+     * @param {AuthEventUpdateManyAndReturnArgs} args - Arguments to update many AuthEvents.
+     * @example
+     * // Update many AuthEvents
+     * const authEvent = await prisma.authEvent.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more AuthEvents and only return the `id`
+     * const authEventWithIdOnly = await prisma.authEvent.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends AuthEventUpdateManyAndReturnArgs>(args: SelectSubset<T, AuthEventUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AuthEventPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one AuthEvent.
+     * @param {AuthEventUpsertArgs} args - Arguments to update or create a AuthEvent.
+     * @example
+     * // Update or create a AuthEvent
+     * const authEvent = await prisma.authEvent.upsert({
+     *   create: {
+     *     // ... data to create a AuthEvent
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the AuthEvent we want to update
+     *   }
+     * })
+     */
+    upsert<T extends AuthEventUpsertArgs>(args: SelectSubset<T, AuthEventUpsertArgs<ExtArgs>>): Prisma__AuthEventClient<$Result.GetResult<Prisma.$AuthEventPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of AuthEvents.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AuthEventCountArgs} args - Arguments to filter AuthEvents to count.
+     * @example
+     * // Count the number of AuthEvents
+     * const count = await prisma.authEvent.count({
+     *   where: {
+     *     // ... the filter for the AuthEvents we want to count
+     *   }
+     * })
+    **/
+    count<T extends AuthEventCountArgs>(
+      args?: Subset<T, AuthEventCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], AuthEventCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a AuthEvent.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AuthEventAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends AuthEventAggregateArgs>(args: Subset<T, AuthEventAggregateArgs>): Prisma.PrismaPromise<GetAuthEventAggregateType<T>>
+
+    /**
+     * Group by AuthEvent.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AuthEventGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends AuthEventGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: AuthEventGroupByArgs['orderBy'] }
+        : { orderBy?: AuthEventGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, AuthEventGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetAuthEventGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the AuthEvent model
+   */
+  readonly fields: AuthEventFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for AuthEvent.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__AuthEventClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the AuthEvent model
+   */
+  interface AuthEventFieldRefs {
+    readonly id: FieldRef<"AuthEvent", 'String'>
+    readonly createdAt: FieldRef<"AuthEvent", 'DateTime'>
+    readonly kind: FieldRef<"AuthEvent", 'String'>
+    readonly identifier: FieldRef<"AuthEvent", 'String'>
+    readonly userId: FieldRef<"AuthEvent", 'String'>
+    readonly ip: FieldRef<"AuthEvent", 'String'>
+    readonly userAgent: FieldRef<"AuthEvent", 'String'>
+    readonly reason: FieldRef<"AuthEvent", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * AuthEvent findUnique
+   */
+  export type AuthEventFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AuthEvent
+     */
+    select?: AuthEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AuthEvent
+     */
+    omit?: AuthEventOmit<ExtArgs> | null
+    /**
+     * Filter, which AuthEvent to fetch.
+     */
+    where: AuthEventWhereUniqueInput
+  }
+
+  /**
+   * AuthEvent findUniqueOrThrow
+   */
+  export type AuthEventFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AuthEvent
+     */
+    select?: AuthEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AuthEvent
+     */
+    omit?: AuthEventOmit<ExtArgs> | null
+    /**
+     * Filter, which AuthEvent to fetch.
+     */
+    where: AuthEventWhereUniqueInput
+  }
+
+  /**
+   * AuthEvent findFirst
+   */
+  export type AuthEventFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AuthEvent
+     */
+    select?: AuthEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AuthEvent
+     */
+    omit?: AuthEventOmit<ExtArgs> | null
+    /**
+     * Filter, which AuthEvent to fetch.
+     */
+    where?: AuthEventWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AuthEvents to fetch.
+     */
+    orderBy?: AuthEventOrderByWithRelationInput | AuthEventOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AuthEvents.
+     */
+    cursor?: AuthEventWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AuthEvents from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AuthEvents.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AuthEvents.
+     */
+    distinct?: AuthEventScalarFieldEnum | AuthEventScalarFieldEnum[]
+  }
+
+  /**
+   * AuthEvent findFirstOrThrow
+   */
+  export type AuthEventFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AuthEvent
+     */
+    select?: AuthEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AuthEvent
+     */
+    omit?: AuthEventOmit<ExtArgs> | null
+    /**
+     * Filter, which AuthEvent to fetch.
+     */
+    where?: AuthEventWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AuthEvents to fetch.
+     */
+    orderBy?: AuthEventOrderByWithRelationInput | AuthEventOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AuthEvents.
+     */
+    cursor?: AuthEventWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AuthEvents from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AuthEvents.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AuthEvents.
+     */
+    distinct?: AuthEventScalarFieldEnum | AuthEventScalarFieldEnum[]
+  }
+
+  /**
+   * AuthEvent findMany
+   */
+  export type AuthEventFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AuthEvent
+     */
+    select?: AuthEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AuthEvent
+     */
+    omit?: AuthEventOmit<ExtArgs> | null
+    /**
+     * Filter, which AuthEvents to fetch.
+     */
+    where?: AuthEventWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AuthEvents to fetch.
+     */
+    orderBy?: AuthEventOrderByWithRelationInput | AuthEventOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing AuthEvents.
+     */
+    cursor?: AuthEventWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AuthEvents from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AuthEvents.
+     */
+    skip?: number
+    distinct?: AuthEventScalarFieldEnum | AuthEventScalarFieldEnum[]
+  }
+
+  /**
+   * AuthEvent create
+   */
+  export type AuthEventCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AuthEvent
+     */
+    select?: AuthEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AuthEvent
+     */
+    omit?: AuthEventOmit<ExtArgs> | null
+    /**
+     * The data needed to create a AuthEvent.
+     */
+    data: XOR<AuthEventCreateInput, AuthEventUncheckedCreateInput>
+  }
+
+  /**
+   * AuthEvent createMany
+   */
+  export type AuthEventCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many AuthEvents.
+     */
+    data: AuthEventCreateManyInput | AuthEventCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * AuthEvent createManyAndReturn
+   */
+  export type AuthEventCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AuthEvent
+     */
+    select?: AuthEventSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the AuthEvent
+     */
+    omit?: AuthEventOmit<ExtArgs> | null
+    /**
+     * The data used to create many AuthEvents.
+     */
+    data: AuthEventCreateManyInput | AuthEventCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * AuthEvent update
+   */
+  export type AuthEventUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AuthEvent
+     */
+    select?: AuthEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AuthEvent
+     */
+    omit?: AuthEventOmit<ExtArgs> | null
+    /**
+     * The data needed to update a AuthEvent.
+     */
+    data: XOR<AuthEventUpdateInput, AuthEventUncheckedUpdateInput>
+    /**
+     * Choose, which AuthEvent to update.
+     */
+    where: AuthEventWhereUniqueInput
+  }
+
+  /**
+   * AuthEvent updateMany
+   */
+  export type AuthEventUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update AuthEvents.
+     */
+    data: XOR<AuthEventUpdateManyMutationInput, AuthEventUncheckedUpdateManyInput>
+    /**
+     * Filter which AuthEvents to update
+     */
+    where?: AuthEventWhereInput
+    /**
+     * Limit how many AuthEvents to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * AuthEvent updateManyAndReturn
+   */
+  export type AuthEventUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AuthEvent
+     */
+    select?: AuthEventSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the AuthEvent
+     */
+    omit?: AuthEventOmit<ExtArgs> | null
+    /**
+     * The data used to update AuthEvents.
+     */
+    data: XOR<AuthEventUpdateManyMutationInput, AuthEventUncheckedUpdateManyInput>
+    /**
+     * Filter which AuthEvents to update
+     */
+    where?: AuthEventWhereInput
+    /**
+     * Limit how many AuthEvents to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * AuthEvent upsert
+   */
+  export type AuthEventUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AuthEvent
+     */
+    select?: AuthEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AuthEvent
+     */
+    omit?: AuthEventOmit<ExtArgs> | null
+    /**
+     * The filter to search for the AuthEvent to update in case it exists.
+     */
+    where: AuthEventWhereUniqueInput
+    /**
+     * In case the AuthEvent found by the `where` argument doesn't exist, create a new AuthEvent with this data.
+     */
+    create: XOR<AuthEventCreateInput, AuthEventUncheckedCreateInput>
+    /**
+     * In case the AuthEvent was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<AuthEventUpdateInput, AuthEventUncheckedUpdateInput>
+  }
+
+  /**
+   * AuthEvent delete
+   */
+  export type AuthEventDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AuthEvent
+     */
+    select?: AuthEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AuthEvent
+     */
+    omit?: AuthEventOmit<ExtArgs> | null
+    /**
+     * Filter which AuthEvent to delete.
+     */
+    where: AuthEventWhereUniqueInput
+  }
+
+  /**
+   * AuthEvent deleteMany
+   */
+  export type AuthEventDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AuthEvents to delete
+     */
+    where?: AuthEventWhereInput
+    /**
+     * Limit how many AuthEvents to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * AuthEvent without action
+   */
+  export type AuthEventDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AuthEvent
+     */
+    select?: AuthEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AuthEvent
+     */
+    omit?: AuthEventOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Model AdminSetting
    */
 
@@ -45730,6 +46888,8 @@ export namespace Prisma {
     showActivityFeed: 'showActivityFeed',
     openToOpportunities: 'openToOpportunities',
     availableForMentorship: 'availableForMentorship',
+    activationVerifiedAt: 'activationVerifiedAt',
+    activationMethod: 'activationMethod',
     profileCompleted: 'profileCompleted',
     onboardingStep: 'onboardingStep',
     profileViews: 'profileViews',
@@ -46098,6 +47258,20 @@ export namespace Prisma {
   };
 
   export type IdCardScalarFieldEnum = (typeof IdCardScalarFieldEnum)[keyof typeof IdCardScalarFieldEnum]
+
+
+  export const AuthEventScalarFieldEnum: {
+    id: 'id',
+    createdAt: 'createdAt',
+    kind: 'kind',
+    identifier: 'identifier',
+    userId: 'userId',
+    ip: 'ip',
+    userAgent: 'userAgent',
+    reason: 'reason'
+  };
+
+  export type AuthEventScalarFieldEnum = (typeof AuthEventScalarFieldEnum)[keyof typeof AuthEventScalarFieldEnum]
 
 
   export const AdminSettingScalarFieldEnum: {
@@ -46998,6 +48172,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFilter<"Graduate"> | boolean
     openToOpportunities?: BoolFilter<"Graduate"> | boolean
     availableForMentorship?: BoolFilter<"Graduate"> | boolean
+    activationVerifiedAt?: DateTimeNullableFilter<"Graduate"> | Date | string | null
+    activationMethod?: StringNullableFilter<"Graduate"> | string | null
     profileCompleted?: BoolFilter<"Graduate"> | boolean
     onboardingStep?: IntFilter<"Graduate"> | number
     profileViews?: IntFilter<"Graduate"> | number
@@ -47074,6 +48250,8 @@ export namespace Prisma {
     showActivityFeed?: SortOrder
     openToOpportunities?: SortOrder
     availableForMentorship?: SortOrder
+    activationVerifiedAt?: SortOrderInput | SortOrder
+    activationMethod?: SortOrderInput | SortOrder
     profileCompleted?: SortOrder
     onboardingStep?: SortOrder
     profileViews?: SortOrder
@@ -47153,6 +48331,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFilter<"Graduate"> | boolean
     openToOpportunities?: BoolFilter<"Graduate"> | boolean
     availableForMentorship?: BoolFilter<"Graduate"> | boolean
+    activationVerifiedAt?: DateTimeNullableFilter<"Graduate"> | Date | string | null
+    activationMethod?: StringNullableFilter<"Graduate"> | string | null
     profileCompleted?: BoolFilter<"Graduate"> | boolean
     onboardingStep?: IntFilter<"Graduate"> | number
     profileViews?: IntFilter<"Graduate"> | number
@@ -47229,6 +48409,8 @@ export namespace Prisma {
     showActivityFeed?: SortOrder
     openToOpportunities?: SortOrder
     availableForMentorship?: SortOrder
+    activationVerifiedAt?: SortOrderInput | SortOrder
+    activationMethod?: SortOrderInput | SortOrder
     profileCompleted?: SortOrder
     onboardingStep?: SortOrder
     profileViews?: SortOrder
@@ -47285,6 +48467,8 @@ export namespace Prisma {
     showActivityFeed?: BoolWithAggregatesFilter<"Graduate"> | boolean
     openToOpportunities?: BoolWithAggregatesFilter<"Graduate"> | boolean
     availableForMentorship?: BoolWithAggregatesFilter<"Graduate"> | boolean
+    activationVerifiedAt?: DateTimeNullableWithAggregatesFilter<"Graduate"> | Date | string | null
+    activationMethod?: StringNullableWithAggregatesFilter<"Graduate"> | string | null
     profileCompleted?: BoolWithAggregatesFilter<"Graduate"> | boolean
     onboardingStep?: IntWithAggregatesFilter<"Graduate"> | number
     profileViews?: IntWithAggregatesFilter<"Graduate"> | number
@@ -49165,6 +50349,73 @@ export namespace Prisma {
     revokedReason?: StringNullableWithAggregatesFilter<"IdCard"> | string | null
   }
 
+  export type AuthEventWhereInput = {
+    AND?: AuthEventWhereInput | AuthEventWhereInput[]
+    OR?: AuthEventWhereInput[]
+    NOT?: AuthEventWhereInput | AuthEventWhereInput[]
+    id?: StringFilter<"AuthEvent"> | string
+    createdAt?: DateTimeFilter<"AuthEvent"> | Date | string
+    kind?: StringFilter<"AuthEvent"> | string
+    identifier?: StringNullableFilter<"AuthEvent"> | string | null
+    userId?: StringNullableFilter<"AuthEvent"> | string | null
+    ip?: StringNullableFilter<"AuthEvent"> | string | null
+    userAgent?: StringNullableFilter<"AuthEvent"> | string | null
+    reason?: StringNullableFilter<"AuthEvent"> | string | null
+  }
+
+  export type AuthEventOrderByWithRelationInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    kind?: SortOrder
+    identifier?: SortOrderInput | SortOrder
+    userId?: SortOrderInput | SortOrder
+    ip?: SortOrderInput | SortOrder
+    userAgent?: SortOrderInput | SortOrder
+    reason?: SortOrderInput | SortOrder
+  }
+
+  export type AuthEventWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: AuthEventWhereInput | AuthEventWhereInput[]
+    OR?: AuthEventWhereInput[]
+    NOT?: AuthEventWhereInput | AuthEventWhereInput[]
+    createdAt?: DateTimeFilter<"AuthEvent"> | Date | string
+    kind?: StringFilter<"AuthEvent"> | string
+    identifier?: StringNullableFilter<"AuthEvent"> | string | null
+    userId?: StringNullableFilter<"AuthEvent"> | string | null
+    ip?: StringNullableFilter<"AuthEvent"> | string | null
+    userAgent?: StringNullableFilter<"AuthEvent"> | string | null
+    reason?: StringNullableFilter<"AuthEvent"> | string | null
+  }, "id">
+
+  export type AuthEventOrderByWithAggregationInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    kind?: SortOrder
+    identifier?: SortOrderInput | SortOrder
+    userId?: SortOrderInput | SortOrder
+    ip?: SortOrderInput | SortOrder
+    userAgent?: SortOrderInput | SortOrder
+    reason?: SortOrderInput | SortOrder
+    _count?: AuthEventCountOrderByAggregateInput
+    _max?: AuthEventMaxOrderByAggregateInput
+    _min?: AuthEventMinOrderByAggregateInput
+  }
+
+  export type AuthEventScalarWhereWithAggregatesInput = {
+    AND?: AuthEventScalarWhereWithAggregatesInput | AuthEventScalarWhereWithAggregatesInput[]
+    OR?: AuthEventScalarWhereWithAggregatesInput[]
+    NOT?: AuthEventScalarWhereWithAggregatesInput | AuthEventScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"AuthEvent"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"AuthEvent"> | Date | string
+    kind?: StringWithAggregatesFilter<"AuthEvent"> | string
+    identifier?: StringNullableWithAggregatesFilter<"AuthEvent"> | string | null
+    userId?: StringNullableWithAggregatesFilter<"AuthEvent"> | string | null
+    ip?: StringNullableWithAggregatesFilter<"AuthEvent"> | string | null
+    userAgent?: StringNullableWithAggregatesFilter<"AuthEvent"> | string | null
+    reason?: StringNullableWithAggregatesFilter<"AuthEvent"> | string | null
+  }
+
   export type AdminSettingWhereInput = {
     AND?: AdminSettingWhereInput | AdminSettingWhereInput[]
     OR?: AdminSettingWhereInput[]
@@ -50053,6 +51304,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
     profileCompleted?: boolean
     onboardingStep?: number
     profileViews?: number
@@ -50129,6 +51382,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
     profileCompleted?: boolean
     onboardingStep?: number
     profileViews?: number
@@ -50203,6 +51458,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
     openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
     availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
     profileCompleted?: BoolFieldUpdateOperationsInput | boolean
     onboardingStep?: IntFieldUpdateOperationsInput | number
     profileViews?: IntFieldUpdateOperationsInput | number
@@ -50279,6 +51536,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
     openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
     availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
     profileCompleted?: BoolFieldUpdateOperationsInput | boolean
     onboardingStep?: IntFieldUpdateOperationsInput | number
     profileViews?: IntFieldUpdateOperationsInput | number
@@ -50354,6 +51613,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
     profileCompleted?: boolean
     onboardingStep?: number
     profileViews?: number
@@ -50401,6 +51662,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
     openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
     availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
     profileCompleted?: BoolFieldUpdateOperationsInput | boolean
     onboardingStep?: IntFieldUpdateOperationsInput | number
     profileViews?: IntFieldUpdateOperationsInput | number
@@ -50449,6 +51712,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
     openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
     availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
     profileCompleted?: BoolFieldUpdateOperationsInput | boolean
     onboardingStep?: IntFieldUpdateOperationsInput | number
     profileViews?: IntFieldUpdateOperationsInput | number
@@ -52436,6 +53701,83 @@ export namespace Prisma {
     revokedReason?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
+  export type AuthEventCreateInput = {
+    id?: string
+    createdAt?: Date | string
+    kind: string
+    identifier?: string | null
+    userId?: string | null
+    ip?: string | null
+    userAgent?: string | null
+    reason?: string | null
+  }
+
+  export type AuthEventUncheckedCreateInput = {
+    id?: string
+    createdAt?: Date | string
+    kind: string
+    identifier?: string | null
+    userId?: string | null
+    ip?: string | null
+    userAgent?: string | null
+    reason?: string | null
+  }
+
+  export type AuthEventUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    kind?: StringFieldUpdateOperationsInput | string
+    identifier?: NullableStringFieldUpdateOperationsInput | string | null
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    ip?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    reason?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type AuthEventUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    kind?: StringFieldUpdateOperationsInput | string
+    identifier?: NullableStringFieldUpdateOperationsInput | string | null
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    ip?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    reason?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type AuthEventCreateManyInput = {
+    id?: string
+    createdAt?: Date | string
+    kind: string
+    identifier?: string | null
+    userId?: string | null
+    ip?: string | null
+    userAgent?: string | null
+    reason?: string | null
+  }
+
+  export type AuthEventUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    kind?: StringFieldUpdateOperationsInput | string
+    identifier?: NullableStringFieldUpdateOperationsInput | string | null
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    ip?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    reason?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type AuthEventUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    kind?: StringFieldUpdateOperationsInput | string
+    identifier?: NullableStringFieldUpdateOperationsInput | string | null
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    ip?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    reason?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
   export type AdminSettingCreateInput = {
     id?: string
     platformName?: string
@@ -53607,6 +54949,8 @@ export namespace Prisma {
     showActivityFeed?: SortOrder
     openToOpportunities?: SortOrder
     availableForMentorship?: SortOrder
+    activationVerifiedAt?: SortOrder
+    activationMethod?: SortOrder
     profileCompleted?: SortOrder
     onboardingStep?: SortOrder
     profileViews?: SortOrder
@@ -53665,6 +55009,8 @@ export namespace Prisma {
     showActivityFeed?: SortOrder
     openToOpportunities?: SortOrder
     availableForMentorship?: SortOrder
+    activationVerifiedAt?: SortOrder
+    activationMethod?: SortOrder
     profileCompleted?: SortOrder
     onboardingStep?: SortOrder
     profileViews?: SortOrder
@@ -53713,6 +55059,8 @@ export namespace Prisma {
     showActivityFeed?: SortOrder
     openToOpportunities?: SortOrder
     availableForMentorship?: SortOrder
+    activationVerifiedAt?: SortOrder
+    activationMethod?: SortOrder
     profileCompleted?: SortOrder
     onboardingStep?: SortOrder
     profileViews?: SortOrder
@@ -55026,6 +56374,39 @@ export namespace Prisma {
     expiresAt?: SortOrder
     revokedAt?: SortOrder
     revokedReason?: SortOrder
+  }
+
+  export type AuthEventCountOrderByAggregateInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    kind?: SortOrder
+    identifier?: SortOrder
+    userId?: SortOrder
+    ip?: SortOrder
+    userAgent?: SortOrder
+    reason?: SortOrder
+  }
+
+  export type AuthEventMaxOrderByAggregateInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    kind?: SortOrder
+    identifier?: SortOrder
+    userId?: SortOrder
+    ip?: SortOrder
+    userAgent?: SortOrder
+    reason?: SortOrder
+  }
+
+  export type AuthEventMinOrderByAggregateInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    kind?: SortOrder
+    identifier?: SortOrder
+    userId?: SortOrder
+    ip?: SortOrder
+    userAgent?: SortOrder
+    reason?: SortOrder
   }
 
   export type AdminSettingCountOrderByAggregateInput = {
@@ -58462,6 +59843,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
     profileCompleted?: boolean
     onboardingStep?: number
     profileViews?: number
@@ -58536,6 +59919,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
     profileCompleted?: boolean
     onboardingStep?: number
     profileViews?: number
@@ -58718,6 +60103,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
     openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
     availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
     profileCompleted?: BoolFieldUpdateOperationsInput | boolean
     onboardingStep?: IntFieldUpdateOperationsInput | number
     profileViews?: IntFieldUpdateOperationsInput | number
@@ -58792,6 +60179,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
     openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
     availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
     profileCompleted?: BoolFieldUpdateOperationsInput | boolean
     onboardingStep?: IntFieldUpdateOperationsInput | number
     profileViews?: IntFieldUpdateOperationsInput | number
@@ -60867,6 +62256,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
     profileCompleted?: boolean
     onboardingStep?: number
     profileViews?: number
@@ -60942,6 +62333,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
     profileCompleted?: boolean
     onboardingStep?: number
     profileViews?: number
@@ -61031,6 +62424,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
     openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
     availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
     profileCompleted?: BoolFieldUpdateOperationsInput | boolean
     onboardingStep?: IntFieldUpdateOperationsInput | number
     profileViews?: IntFieldUpdateOperationsInput | number
@@ -61106,6 +62501,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
     openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
     availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
     profileCompleted?: BoolFieldUpdateOperationsInput | boolean
     onboardingStep?: IntFieldUpdateOperationsInput | number
     profileViews?: IntFieldUpdateOperationsInput | number
@@ -61179,6 +62576,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
     profileCompleted?: boolean
     onboardingStep?: number
     profileViews?: number
@@ -61254,6 +62653,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
     profileCompleted?: boolean
     onboardingStep?: number
     profileViews?: number
@@ -61343,6 +62744,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
     openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
     availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
     profileCompleted?: BoolFieldUpdateOperationsInput | boolean
     onboardingStep?: IntFieldUpdateOperationsInput | number
     profileViews?: IntFieldUpdateOperationsInput | number
@@ -61418,6 +62821,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
     openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
     availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
     profileCompleted?: BoolFieldUpdateOperationsInput | boolean
     onboardingStep?: IntFieldUpdateOperationsInput | number
     profileViews?: IntFieldUpdateOperationsInput | number
@@ -61491,6 +62896,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
     profileCompleted?: boolean
     onboardingStep?: number
     profileViews?: number
@@ -61566,6 +62973,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
     profileCompleted?: boolean
     onboardingStep?: number
     profileViews?: number
@@ -61679,6 +63088,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
     openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
     availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
     profileCompleted?: BoolFieldUpdateOperationsInput | boolean
     onboardingStep?: IntFieldUpdateOperationsInput | number
     profileViews?: IntFieldUpdateOperationsInput | number
@@ -61754,6 +63165,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
     openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
     availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
     profileCompleted?: BoolFieldUpdateOperationsInput | boolean
     onboardingStep?: IntFieldUpdateOperationsInput | number
     profileViews?: IntFieldUpdateOperationsInput | number
@@ -61843,6 +63256,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
     profileCompleted?: boolean
     onboardingStep?: number
     profileViews?: number
@@ -61918,6 +63333,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
     profileCompleted?: boolean
     onboardingStep?: number
     profileViews?: number
@@ -61996,6 +63413,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
     profileCompleted?: boolean
     onboardingStep?: number
     profileViews?: number
@@ -62071,6 +63490,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
     profileCompleted?: boolean
     onboardingStep?: number
     profileViews?: number
@@ -62181,6 +63602,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
     openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
     availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
     profileCompleted?: BoolFieldUpdateOperationsInput | boolean
     onboardingStep?: IntFieldUpdateOperationsInput | number
     profileViews?: IntFieldUpdateOperationsInput | number
@@ -62256,6 +63679,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
     openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
     availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
     profileCompleted?: BoolFieldUpdateOperationsInput | boolean
     onboardingStep?: IntFieldUpdateOperationsInput | number
     profileViews?: IntFieldUpdateOperationsInput | number
@@ -62340,6 +63765,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
     openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
     availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
     profileCompleted?: BoolFieldUpdateOperationsInput | boolean
     onboardingStep?: IntFieldUpdateOperationsInput | number
     profileViews?: IntFieldUpdateOperationsInput | number
@@ -62415,6 +63842,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
     openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
     availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
     profileCompleted?: BoolFieldUpdateOperationsInput | boolean
     onboardingStep?: IntFieldUpdateOperationsInput | number
     profileViews?: IntFieldUpdateOperationsInput | number
@@ -62515,6 +63944,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
     profileCompleted?: boolean
     onboardingStep?: number
     profileViews?: number
@@ -62590,6 +64021,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
     profileCompleted?: boolean
     onboardingStep?: number
     profileViews?: number
@@ -62679,6 +64112,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
     openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
     availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
     profileCompleted?: BoolFieldUpdateOperationsInput | boolean
     onboardingStep?: IntFieldUpdateOperationsInput | number
     profileViews?: IntFieldUpdateOperationsInput | number
@@ -62754,6 +64189,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
     openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
     availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
     profileCompleted?: BoolFieldUpdateOperationsInput | boolean
     onboardingStep?: IntFieldUpdateOperationsInput | number
     profileViews?: IntFieldUpdateOperationsInput | number
@@ -62827,6 +64264,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
     profileCompleted?: boolean
     onboardingStep?: number
     profileViews?: number
@@ -62902,6 +64341,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
     profileCompleted?: boolean
     onboardingStep?: number
     profileViews?: number
@@ -62991,6 +64432,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
     openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
     availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
     profileCompleted?: BoolFieldUpdateOperationsInput | boolean
     onboardingStep?: IntFieldUpdateOperationsInput | number
     profileViews?: IntFieldUpdateOperationsInput | number
@@ -63066,6 +64509,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
     openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
     availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
     profileCompleted?: BoolFieldUpdateOperationsInput | boolean
     onboardingStep?: IntFieldUpdateOperationsInput | number
     profileViews?: IntFieldUpdateOperationsInput | number
@@ -63139,6 +64584,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
     profileCompleted?: boolean
     onboardingStep?: number
     profileViews?: number
@@ -63214,6 +64661,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
     profileCompleted?: boolean
     onboardingStep?: number
     profileViews?: number
@@ -63303,6 +64752,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
     openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
     availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
     profileCompleted?: BoolFieldUpdateOperationsInput | boolean
     onboardingStep?: IntFieldUpdateOperationsInput | number
     profileViews?: IntFieldUpdateOperationsInput | number
@@ -63378,6 +64829,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
     openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
     availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
     profileCompleted?: BoolFieldUpdateOperationsInput | boolean
     onboardingStep?: IntFieldUpdateOperationsInput | number
     profileViews?: IntFieldUpdateOperationsInput | number
@@ -63586,6 +65039,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
     profileCompleted?: boolean
     onboardingStep?: number
     profileViews?: number
@@ -63661,6 +65116,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
     profileCompleted?: boolean
     onboardingStep?: number
     profileViews?: number
@@ -63797,6 +65254,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
     openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
     availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
     profileCompleted?: BoolFieldUpdateOperationsInput | boolean
     onboardingStep?: IntFieldUpdateOperationsInput | number
     profileViews?: IntFieldUpdateOperationsInput | number
@@ -63872,6 +65331,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
     openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
     availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
     profileCompleted?: BoolFieldUpdateOperationsInput | boolean
     onboardingStep?: IntFieldUpdateOperationsInput | number
     profileViews?: IntFieldUpdateOperationsInput | number
@@ -63986,6 +65447,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
     profileCompleted?: boolean
     onboardingStep?: number
     profileViews?: number
@@ -64061,6 +65524,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
     profileCompleted?: boolean
     onboardingStep?: number
     profileViews?: number
@@ -64249,6 +65714,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
     openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
     availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
     profileCompleted?: BoolFieldUpdateOperationsInput | boolean
     onboardingStep?: IntFieldUpdateOperationsInput | number
     profileViews?: IntFieldUpdateOperationsInput | number
@@ -64324,6 +65791,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
     openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
     availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
     profileCompleted?: BoolFieldUpdateOperationsInput | boolean
     onboardingStep?: IntFieldUpdateOperationsInput | number
     profileViews?: IntFieldUpdateOperationsInput | number
@@ -64460,6 +65929,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
     profileCompleted?: boolean
     onboardingStep?: number
     profileViews?: number
@@ -64535,6 +66006,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
     profileCompleted?: boolean
     onboardingStep?: number
     profileViews?: number
@@ -64716,6 +66189,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
     openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
     availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
     profileCompleted?: BoolFieldUpdateOperationsInput | boolean
     onboardingStep?: IntFieldUpdateOperationsInput | number
     profileViews?: IntFieldUpdateOperationsInput | number
@@ -64791,6 +66266,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
     openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
     availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
     profileCompleted?: BoolFieldUpdateOperationsInput | boolean
     onboardingStep?: IntFieldUpdateOperationsInput | number
     profileViews?: IntFieldUpdateOperationsInput | number
@@ -64942,6 +66419,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
     profileCompleted?: boolean
     onboardingStep?: number
     profileViews?: number
@@ -65017,6 +66496,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
     profileCompleted?: boolean
     onboardingStep?: number
     profileViews?: number
@@ -65143,6 +66624,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
     openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
     availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
     profileCompleted?: BoolFieldUpdateOperationsInput | boolean
     onboardingStep?: IntFieldUpdateOperationsInput | number
     profileViews?: IntFieldUpdateOperationsInput | number
@@ -65218,6 +66701,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
     openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
     availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
     profileCompleted?: BoolFieldUpdateOperationsInput | boolean
     onboardingStep?: IntFieldUpdateOperationsInput | number
     profileViews?: IntFieldUpdateOperationsInput | number
@@ -65406,6 +66891,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
     profileCompleted?: boolean
     onboardingStep?: number
     profileViews?: number
@@ -65481,6 +66968,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
     profileCompleted?: boolean
     onboardingStep?: number
     profileViews?: number
@@ -65601,6 +67090,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
     openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
     availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
     profileCompleted?: BoolFieldUpdateOperationsInput | boolean
     onboardingStep?: IntFieldUpdateOperationsInput | number
     profileViews?: IntFieldUpdateOperationsInput | number
@@ -65676,6 +67167,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
     openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
     availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
     profileCompleted?: BoolFieldUpdateOperationsInput | boolean
     onboardingStep?: IntFieldUpdateOperationsInput | number
     profileViews?: IntFieldUpdateOperationsInput | number
@@ -65774,6 +67267,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
     profileCompleted?: boolean
     onboardingStep?: number
     profileViews?: number
@@ -65849,6 +67344,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
     profileCompleted?: boolean
     onboardingStep?: number
     profileViews?: number
@@ -65969,6 +67466,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
     openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
     availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
     profileCompleted?: BoolFieldUpdateOperationsInput | boolean
     onboardingStep?: IntFieldUpdateOperationsInput | number
     profileViews?: IntFieldUpdateOperationsInput | number
@@ -66044,6 +67543,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
     openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
     availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
     profileCompleted?: BoolFieldUpdateOperationsInput | boolean
     onboardingStep?: IntFieldUpdateOperationsInput | number
     profileViews?: IntFieldUpdateOperationsInput | number
@@ -66117,6 +67618,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
     profileCompleted?: boolean
     onboardingStep?: number
     profileViews?: number
@@ -66192,6 +67695,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
     profileCompleted?: boolean
     onboardingStep?: number
     profileViews?: number
@@ -66270,6 +67775,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
     profileCompleted?: boolean
     onboardingStep?: number
     profileViews?: number
@@ -66345,6 +67852,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
     profileCompleted?: boolean
     onboardingStep?: number
     profileViews?: number
@@ -66434,6 +67943,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
     openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
     availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
     profileCompleted?: BoolFieldUpdateOperationsInput | boolean
     onboardingStep?: IntFieldUpdateOperationsInput | number
     profileViews?: IntFieldUpdateOperationsInput | number
@@ -66509,6 +68020,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
     openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
     availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
     profileCompleted?: BoolFieldUpdateOperationsInput | boolean
     onboardingStep?: IntFieldUpdateOperationsInput | number
     profileViews?: IntFieldUpdateOperationsInput | number
@@ -66593,6 +68106,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
     openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
     availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
     profileCompleted?: BoolFieldUpdateOperationsInput | boolean
     onboardingStep?: IntFieldUpdateOperationsInput | number
     profileViews?: IntFieldUpdateOperationsInput | number
@@ -66668,6 +68183,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
     openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
     availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
     profileCompleted?: BoolFieldUpdateOperationsInput | boolean
     onboardingStep?: IntFieldUpdateOperationsInput | number
     profileViews?: IntFieldUpdateOperationsInput | number
@@ -66741,6 +68258,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
     profileCompleted?: boolean
     onboardingStep?: number
     profileViews?: number
@@ -66816,6 +68335,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
     profileCompleted?: boolean
     onboardingStep?: number
     profileViews?: number
@@ -66894,6 +68415,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
     profileCompleted?: boolean
     onboardingStep?: number
     profileViews?: number
@@ -66969,6 +68492,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
     profileCompleted?: boolean
     onboardingStep?: number
     profileViews?: number
@@ -67058,6 +68583,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
     openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
     availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
     profileCompleted?: BoolFieldUpdateOperationsInput | boolean
     onboardingStep?: IntFieldUpdateOperationsInput | number
     profileViews?: IntFieldUpdateOperationsInput | number
@@ -67133,6 +68660,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
     openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
     availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
     profileCompleted?: BoolFieldUpdateOperationsInput | boolean
     onboardingStep?: IntFieldUpdateOperationsInput | number
     profileViews?: IntFieldUpdateOperationsInput | number
@@ -67217,6 +68746,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
     openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
     availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
     profileCompleted?: BoolFieldUpdateOperationsInput | boolean
     onboardingStep?: IntFieldUpdateOperationsInput | number
     profileViews?: IntFieldUpdateOperationsInput | number
@@ -67292,6 +68823,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
     openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
     availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
     profileCompleted?: BoolFieldUpdateOperationsInput | boolean
     onboardingStep?: IntFieldUpdateOperationsInput | number
     profileViews?: IntFieldUpdateOperationsInput | number
@@ -67365,6 +68898,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
     profileCompleted?: boolean
     onboardingStep?: number
     profileViews?: number
@@ -67440,6 +68975,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
     profileCompleted?: boolean
     onboardingStep?: number
     profileViews?: number
@@ -67557,6 +69094,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
     openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
     availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
     profileCompleted?: BoolFieldUpdateOperationsInput | boolean
     onboardingStep?: IntFieldUpdateOperationsInput | number
     profileViews?: IntFieldUpdateOperationsInput | number
@@ -67632,6 +69171,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
     openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
     availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
     profileCompleted?: BoolFieldUpdateOperationsInput | boolean
     onboardingStep?: IntFieldUpdateOperationsInput | number
     profileViews?: IntFieldUpdateOperationsInput | number
@@ -67776,6 +69317,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
     profileCompleted?: boolean
     onboardingStep?: number
     profileViews?: number
@@ -67851,6 +69394,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
     profileCompleted?: boolean
     onboardingStep?: number
     profileViews?: number
@@ -68001,6 +69546,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
     openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
     availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
     profileCompleted?: BoolFieldUpdateOperationsInput | boolean
     onboardingStep?: IntFieldUpdateOperationsInput | number
     profileViews?: IntFieldUpdateOperationsInput | number
@@ -68076,6 +69623,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
     openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
     availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
     profileCompleted?: BoolFieldUpdateOperationsInput | boolean
     onboardingStep?: IntFieldUpdateOperationsInput | number
     profileViews?: IntFieldUpdateOperationsInput | number
@@ -68149,6 +69698,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
     profileCompleted?: boolean
     onboardingStep?: number
     profileViews?: number
@@ -68224,6 +69775,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
     profileCompleted?: boolean
     onboardingStep?: number
     profileViews?: number
@@ -68335,6 +69888,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
     openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
     availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
     profileCompleted?: BoolFieldUpdateOperationsInput | boolean
     onboardingStep?: IntFieldUpdateOperationsInput | number
     profileViews?: IntFieldUpdateOperationsInput | number
@@ -68410,6 +69965,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
     openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
     availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
     profileCompleted?: BoolFieldUpdateOperationsInput | boolean
     onboardingStep?: IntFieldUpdateOperationsInput | number
     profileViews?: IntFieldUpdateOperationsInput | number
@@ -68536,6 +70093,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
     profileCompleted?: boolean
     onboardingStep?: number
     profileViews?: number
@@ -68611,6 +70170,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
     profileCompleted?: boolean
     onboardingStep?: number
     profileViews?: number
@@ -68743,6 +70304,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
     openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
     availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
     profileCompleted?: BoolFieldUpdateOperationsInput | boolean
     onboardingStep?: IntFieldUpdateOperationsInput | number
     profileViews?: IntFieldUpdateOperationsInput | number
@@ -68818,6 +70381,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
     openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
     availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
     profileCompleted?: BoolFieldUpdateOperationsInput | boolean
     onboardingStep?: IntFieldUpdateOperationsInput | number
     profileViews?: IntFieldUpdateOperationsInput | number
@@ -68891,6 +70456,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
     profileCompleted?: boolean
     onboardingStep?: number
     profileViews?: number
@@ -68966,6 +70533,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
     profileCompleted?: boolean
     onboardingStep?: number
     profileViews?: number
@@ -69044,6 +70613,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
     profileCompleted?: boolean
     onboardingStep?: number
     profileViews?: number
@@ -69119,6 +70690,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
     profileCompleted?: boolean
     onboardingStep?: number
     profileViews?: number
@@ -69208,6 +70781,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
     openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
     availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
     profileCompleted?: BoolFieldUpdateOperationsInput | boolean
     onboardingStep?: IntFieldUpdateOperationsInput | number
     profileViews?: IntFieldUpdateOperationsInput | number
@@ -69283,6 +70858,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
     openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
     availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
     profileCompleted?: BoolFieldUpdateOperationsInput | boolean
     onboardingStep?: IntFieldUpdateOperationsInput | number
     profileViews?: IntFieldUpdateOperationsInput | number
@@ -69367,6 +70944,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
     openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
     availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
     profileCompleted?: BoolFieldUpdateOperationsInput | boolean
     onboardingStep?: IntFieldUpdateOperationsInput | number
     profileViews?: IntFieldUpdateOperationsInput | number
@@ -69442,6 +71021,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
     openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
     availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
     profileCompleted?: BoolFieldUpdateOperationsInput | boolean
     onboardingStep?: IntFieldUpdateOperationsInput | number
     profileViews?: IntFieldUpdateOperationsInput | number
@@ -69515,6 +71096,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
     profileCompleted?: boolean
     onboardingStep?: number
     profileViews?: number
@@ -69590,6 +71173,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
     profileCompleted?: boolean
     onboardingStep?: number
     profileViews?: number
@@ -69679,6 +71264,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
     openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
     availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
     profileCompleted?: BoolFieldUpdateOperationsInput | boolean
     onboardingStep?: IntFieldUpdateOperationsInput | number
     profileViews?: IntFieldUpdateOperationsInput | number
@@ -69754,6 +71341,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
     openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
     availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
     profileCompleted?: BoolFieldUpdateOperationsInput | boolean
     onboardingStep?: IntFieldUpdateOperationsInput | number
     profileViews?: IntFieldUpdateOperationsInput | number
@@ -69827,6 +71416,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
     profileCompleted?: boolean
     onboardingStep?: number
     profileViews?: number
@@ -69902,6 +71493,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
     profileCompleted?: boolean
     onboardingStep?: number
     profileViews?: number
@@ -69991,6 +71584,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
     openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
     availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
     profileCompleted?: BoolFieldUpdateOperationsInput | boolean
     onboardingStep?: IntFieldUpdateOperationsInput | number
     profileViews?: IntFieldUpdateOperationsInput | number
@@ -70066,6 +71661,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
     openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
     availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
     profileCompleted?: BoolFieldUpdateOperationsInput | boolean
     onboardingStep?: IntFieldUpdateOperationsInput | number
     profileViews?: IntFieldUpdateOperationsInput | number
@@ -70139,6 +71736,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
     profileCompleted?: boolean
     onboardingStep?: number
     profileViews?: number
@@ -70214,6 +71813,8 @@ export namespace Prisma {
     showActivityFeed?: boolean
     openToOpportunities?: boolean
     availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
     profileCompleted?: boolean
     onboardingStep?: number
     profileViews?: number
@@ -70303,6 +71904,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
     openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
     availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
     profileCompleted?: BoolFieldUpdateOperationsInput | boolean
     onboardingStep?: IntFieldUpdateOperationsInput | number
     profileViews?: IntFieldUpdateOperationsInput | number
@@ -70378,6 +71981,8 @@ export namespace Prisma {
     showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
     openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
     availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
     profileCompleted?: BoolFieldUpdateOperationsInput | boolean
     onboardingStep?: IntFieldUpdateOperationsInput | number
     profileViews?: IntFieldUpdateOperationsInput | number

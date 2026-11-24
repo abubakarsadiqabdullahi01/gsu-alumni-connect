@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, ShieldCheck } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { IDCardPreviewPage } from "./IDCardPreviewPage";
 import { AlumniCardData, RankTier } from "./types";
@@ -107,6 +109,13 @@ export function IDCardPreviewClient() {
   const [resolvedSignature, setResolvedSignature] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+  // Members who activated before the CGPA/surname check existed confirm once
+  // here, the first time they open their card.
+  const [confirmation, setConfirmation] = useState<{ method: "cgpa" | "surname"; prompt: string } | null>(null);
+  const [answer, setAnswer] = useState("");
+  const [confirmError, setConfirmError] = useState("");
+  const [confirming, setConfirming] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
     async function run() {
@@ -114,10 +123,17 @@ export function IDCardPreviewClient() {
       setError("");
       try {
         const primary = await fetch("/api/id-cards", { cache: "no-store" });
-        const primaryJson = (await primary.json()) as IdCardApiResponse | { error?: string };
+        const primaryJson = (await primary.json()) as
+          | IdCardApiResponse
+          | { error?: string; code?: string; method?: "cgpa" | "surname"; prompt?: string };
 
         if (primary.ok && "data" in primaryJson) {
           setApiData(primaryJson.data);
+          return;
+        }
+
+        if (primary.status === 403 && "code" in primaryJson && primaryJson.code === "VERIFICATION_REQUIRED") {
+          setConfirmation({ method: primaryJson.method ?? "cgpa", prompt: primaryJson.prompt ?? "" });
           return;
         }
 
@@ -137,7 +153,36 @@ export function IDCardPreviewClient() {
     }
 
     void run();
-  }, []);
+  }, [reloadKey]);
+
+  async function submitConfirmation(e: React.FormEvent) {
+    e.preventDefault();
+    if (!answer.trim()) {
+      setConfirmError(confirmation?.method === "surname" ? "Please enter your surname." : "Please enter your CGPA.");
+      return;
+    }
+    setConfirming(true);
+    setConfirmError("");
+    try {
+      const response = await fetch("/api/activation/confirm", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ answer: answer.trim() }),
+      });
+      const payload = (await response.json().catch(() => ({}))) as { error?: string };
+      if (!response.ok) {
+        setConfirmError(payload.error ?? "We could not confirm that. Please try again.");
+        return;
+      }
+      setConfirmation(null);
+      setAnswer("");
+      setReloadKey((k) => k + 1);
+    } catch {
+      setConfirmError("Something went wrong. Please try again.");
+    } finally {
+      setConfirming(false);
+    }
+  }
 
   useEffect(() => {
     async function resolvePhotoAndSignature() {
@@ -199,6 +244,52 @@ export function IDCardPreviewClient() {
     return (
       <Card>
         <CardContent className="p-4 text-sm text-muted-foreground">Loading premium ID card studio...</CardContent>
+      </Card>
+    );
+  }
+
+  if (confirmation) {
+    return (
+      <Card className="mx-auto max-w-lg">
+        <CardContent className="flex flex-col gap-4 p-6">
+          <div className="flex items-start gap-3">
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10">
+              <ShieldCheck className="size-5 text-primary" />
+            </span>
+            <div>
+              <p className="font-semibold text-foreground">Confirm it&apos;s you</p>
+              <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                Your ID card is a credential others rely on, so we confirm one detail from your university
+                record before issuing it. You only need to do this once.
+              </p>
+            </div>
+          </div>
+          <form onSubmit={submitConfirmation} className="flex flex-col gap-3">
+            <label htmlFor="card-confirmation" className="text-sm font-semibold">
+              {confirmation.method === "cgpa" ? "Your CGPA" : "Your surname"}
+            </label>
+            <Input
+              id="card-confirmation"
+              inputMode={confirmation.method === "cgpa" ? "decimal" : "text"}
+              placeholder={confirmation.method === "cgpa" ? "e.g. 3.45" : "As on your university record"}
+              value={answer}
+              onChange={(e) => setAnswer(e.target.value)}
+              disabled={confirming}
+              autoComplete="off"
+              autoFocus
+            />
+            <p className="text-xs text-muted-foreground">{confirmation.prompt}</p>
+            {confirmError ? (
+              <p className="flex items-start gap-2 text-sm text-destructive">
+                <AlertCircle className="mt-0.5 size-4 shrink-0" />
+                {confirmError}
+              </p>
+            ) : null}
+            <Button type="submit" disabled={confirming}>
+              {confirming ? "Checking…" : "Confirm and show my card"}
+            </Button>
+          </form>
+        </CardContent>
       </Card>
     );
   }
