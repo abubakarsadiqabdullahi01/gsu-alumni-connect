@@ -12,12 +12,10 @@ import { normalizeRegistrationNo } from "@/lib/auth-identity";
 import {
   LIMITS,
   attemptVerification,
-  clearSignInFailures,
   clientIp,
   methodFor,
   promptFor,
   recordAuthEvent,
-  recordSignInFailure,
   signActivationToken,
   signInBlockedBy,
   verifyActivationToken,
@@ -80,8 +78,8 @@ const registrationSignInPlugin = {
           );
         }
 
+        // The SIGN_IN_FAILED row is the count the limit above reads.
         const fail = async (reason: string, userId?: string) => {
-          await recordSignInFailure(identifier, ip);
           await recordAuthEvent("SIGN_IN_FAILED", { identifier, userId, ip, userAgent, reason });
           return new APIError("UNAUTHORIZED", { message: INVALID_CREDENTIALS });
         };
@@ -104,8 +102,6 @@ const registrationSignInPlugin = {
         if (!(await verifyPassword(ctx.body.password, account.password))) {
           throw await fail("wrong password", user.id);
         }
-
-        await clearSignInFailures(identifier);
 
         // The default password is published, so it proves only that someone
         // knows a registration number. Before any session exists, the graduate

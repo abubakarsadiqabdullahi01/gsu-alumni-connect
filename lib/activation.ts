@@ -1,12 +1,17 @@
 import { prisma } from "@/lib/db";
-import { redisDel, redisGetCount, redisIncrWindow, redisTtl } from "@/lib/cache/redis-cache";
 import { LIMITS, cgpaMatches, methodFor, surnameMatches, type VerificationMethod } from "@/lib/activation-rules";
 
 /**
- * The stateful half of the activation check: the security log, the Redis
- * counters behind the limits, and the attempt that ties them together. The
- * rules themselves — matching, the token, the limits — live in
- * activation-rules.ts, free of the database, so they can be tested on their own.
+ * The stateful half of the activation check: the security log, the limits
+ * counted from it, and the attempt that ties them together. The rules
+ * themselves — matching, the token, the limits — live in activation-rules.ts,
+ * free of the database, so they can be tested on their own.
+ *
+ * The log is the counter. "Five wrong answers in 24 hours" is a count of
+ * ACTIVATION_FAILED rows; an unlock is an ACTIVATION_UNLOCKED row the count
+ * starts after. One source of truth, auditable after the fact, and no second
+ * system for the security gate to depend on — the Redis database these
+ * counters were first written against had been deleted for inactivity.
  */
 export * from "@/lib/activation-rules";
 
@@ -46,39 +51,60 @@ export async function recordAuthEvent(
   }
 }
 
-// ── Sign-in limits (fail open) ──────────────────────────────────────────────
-// If Redis is unreachable, sign-in carries on: an outage must not lock every
-// member out, and the activation check behind it still fails closed.
+const secondsAgo = (seconds: number) => new Date(Date.now() - seconds * 1000);
 
-const signInIdKey = (identifier: string) => `auth:signin:fail:id:${identifier}`;
-const signInIpKey = (ip: string) => `auth:signin:fail:ip:${ip}`;
+// ── Sign-in limits (fail open) ──────────────────────────────────────────────
+// Each failed sign-in is already an auth_event row, so recording a failure is
+// recording the event. If the count can't be read, sign-in carries on: an
+// outage must not lock every member out, and the activation check behind it
+// still fails closed. A success does not reset the count — at worst a member
+// who has just signed in waits out the rest of a 15-minute window.
 
 export async function signInBlockedBy(identifier: string, ip: string): Promise<"identifier" | "ip" | null> {
-  const [byId, byIp] = await Promise.all([redisGetCount(signInIdKey(identifier)), redisGetCount(signInIpKey(ip))]);
-  if (byId == null || byIp == null) {
-    console.warn("[auth] sign-in limiter unavailable; allowing the attempt");
+  const since = secondsAgo(LIMITS.signInWindowSeconds);
+  try {
+    const [byId, byIp] = await Promise.all([
+      prisma.authEvent.count({ where: { kind: "SIGN_IN_FAILED", identifier, createdAt: { gt: since } } }),
+      prisma.authEvent.count({ where: { kind: "SIGN_IN_FAILED", ip, createdAt: { gt: since } } }),
+    ]);
+    if (byId >= LIMITS.signInFailuresPerIdentifier) return "identifier";
+    if (byIp >= LIMITS.signInFailuresPerIp) return "ip";
+    return null;
+  } catch (error) {
+    console.warn("[auth] sign-in limiter unavailable; allowing the attempt", error);
     return null;
   }
-  if (byId >= LIMITS.signInFailuresPerIdentifier) return "identifier";
-  if (byIp >= LIMITS.signInFailuresPerIp) return "ip";
-  return null;
 }
 
-export async function recordSignInFailure(identifier: string, ip: string): Promise<void> {
-  await Promise.all([
-    redisIncrWindow(signInIdKey(identifier), LIMITS.signInWindowSeconds),
-    redisIncrWindow(signInIpKey(ip), LIMITS.signInWindowSeconds),
-  ]);
+// ── Activation lock (fail closed) ───────────────────────────────────────────
+
+/**
+ * Wrong answers that still count against this registration number: within
+ * the last 24 hours, and after its most recent success or Secretariat unlock.
+ * The lock lifts when the count drops below five — when enough of the counted
+ * failures age past 24 hours.
+ */
+export async function activationLockState(registrationNo: string): Promise<{ failures: number; lockedUntil: Date | null }> {
+  const reset = await prisma.authEvent.findFirst({
+    where: { identifier: registrationNo, kind: { in: ["ACTIVATION_SUCCEEDED", "ACTIVATION_UNLOCKED"] } },
+    orderBy: { createdAt: "desc" },
+    select: { createdAt: true },
+  });
+  const windowStart = secondsAgo(LIMITS.activationLockSeconds);
+  const since = reset && reset.createdAt > windowStart ? reset.createdAt : windowStart;
+
+  const failures = await prisma.authEvent.findMany({
+    where: { identifier: registrationNo, kind: "ACTIVATION_FAILED", createdAt: { gt: since } },
+    orderBy: { createdAt: "asc" },
+    select: { createdAt: true },
+  });
+
+  const limit = LIMITS.activationFailuresPerIdentifier;
+  if (failures.length < limit) return { failures: failures.length, lockedUntil: null };
+  // Unlocks once only limit-1 failures remain inside the window.
+  const pivot = failures[failures.length - limit].createdAt;
+  return { failures: failures.length, lockedUntil: new Date(pivot.getTime() + LIMITS.activationLockSeconds * 1000) };
 }
-
-export async function clearSignInFailures(identifier: string): Promise<void> {
-  await redisDel(signInIdKey(identifier));
-}
-
-// ── Activation check (fail closed) ──────────────────────────────────────────
-
-export const activationFailKey = (registrationNo: string) => `auth:activation:fail:${registrationNo}`;
-const activationIpKey = (ip: string) => `auth:activation:ip:${ip}`;
 
 export type VerificationOutcome =
   | { ok: true; method: VerificationMethod }
@@ -90,6 +116,12 @@ type VerifiableGraduate = {
   fullName: string;
   surname: string | null;
   cgpa: { toString(): string } | null;
+};
+
+const UNAVAILABLE: VerificationOutcome = {
+  ok: false,
+  status: 503,
+  message: "Activation is briefly unavailable. Please try again shortly.",
 };
 
 /**
@@ -108,23 +140,33 @@ export async function attemptVerification(input: {
   const identifier = graduate.registrationNo;
   const method = methodFor(graduate);
   const log = { identifier, userId, ip, userAgent };
+  const limit = LIMITS.activationFailuresPerIdentifier;
 
-  const attemptsFromIp = await redisIncrWindow(activationIpKey(ip), LIMITS.activationIpWindowSeconds);
-  if (attemptsFromIp == null) {
-    return { ok: false, status: 503, message: "Activation is briefly unavailable. Please try again shortly." };
+  let attemptsFromIp: number;
+  let lock: Awaited<ReturnType<typeof activationLockState>>;
+  try {
+    [attemptsFromIp, lock] = await Promise.all([
+      prisma.authEvent.count({
+        where: {
+          ip,
+          kind: { in: ["ACTIVATION_FAILED", "ACTIVATION_SUCCEEDED"] },
+          createdAt: { gt: secondsAgo(LIMITS.activationIpWindowSeconds) },
+        },
+      }),
+      activationLockState(identifier),
+    ]);
+  } catch (error) {
+    console.error("[auth] activation limits unavailable; refusing the attempt", error);
+    return UNAVAILABLE;
   }
-  if (attemptsFromIp > LIMITS.activationAttemptsPerIp) {
-    await recordAuthEvent("ACTIVATION_RATE_LIMITED", { ...log, reason: `ip attempts ${attemptsFromIp}` });
+
+  if (attemptsFromIp >= LIMITS.activationAttemptsPerIp) {
+    await recordAuthEvent("ACTIVATION_RATE_LIMITED", { ...log, reason: `${attemptsFromIp} attempts from this ip in the last hour` });
     return { ok: false, status: 429, message: "Too many activation attempts from this network. Please try again later." };
   }
 
-  const failures = await redisGetCount(activationFailKey(identifier));
-  if (failures == null) {
-    return { ok: false, status: 503, message: "Activation is briefly unavailable. Please try again shortly." };
-  }
-  if (failures >= LIMITS.activationFailuresPerIdentifier) {
-    const ttl = await redisTtl(activationFailKey(identifier));
-    await recordAuthEvent("ACTIVATION_LOCKED", { ...log, reason: `locked; ${ttl ?? "?"}s remaining` });
+  if (lock.lockedUntil) {
+    await recordAuthEvent("ACTIVATION_LOCKED", { ...log, reason: `locked until ${lock.lockedUntil.toISOString()}` });
     return {
       ok: false,
       status: 423,
@@ -136,9 +178,9 @@ export async function attemptVerification(input: {
   const correct = method === "cgpa" ? cgpaMatches(answer, graduate.cgpa) : surnameMatches(answer, graduate);
 
   if (!correct) {
-    const count = (await redisIncrWindow(activationFailKey(identifier), LIMITS.activationLockSeconds)) ?? failures + 1;
-    const remaining = Math.max(0, LIMITS.activationFailuresPerIdentifier - count);
-    await recordAuthEvent("ACTIVATION_FAILED", { ...log, reason: `${method} mismatch; attempt ${count} of ${LIMITS.activationFailuresPerIdentifier}` });
+    const count = lock.failures + 1;
+    const remaining = Math.max(0, limit - count);
+    await recordAuthEvent("ACTIVATION_FAILED", { ...log, reason: `${method} mismatch; attempt ${count} of ${limit}` });
     return {
       ok: false,
       status: remaining === 0 ? 423 : 400,
@@ -150,11 +192,11 @@ export async function attemptVerification(input: {
     };
   }
 
-  await redisDel(activationFailKey(identifier));
   await prisma.graduate.update({
     where: { id: graduate.id },
     data: { activationVerifiedAt: new Date(), activationMethod: method },
   });
+  // Also resets the wrong-answer count: it starts after this row.
   await recordAuthEvent("ACTIVATION_SUCCEEDED", { ...log, reason: method });
   return { ok: true, method };
 }

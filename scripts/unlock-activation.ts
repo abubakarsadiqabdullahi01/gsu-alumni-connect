@@ -5,8 +5,9 @@
  * Five wrong CGPA or surname answers lock activation for 24 hours. When the
  * graduate is genuine — a surname spelled differently on the record, a CGPA
  * remembered wrongly — the Secretariat confirms who they are by its own
- * means, then runs this. It clears the lock and the sign-in pause, and records
- * who it was for and why in the security log.
+ * means, then runs this. It writes an unlock to the security log, with who
+ * ran it for and why; wrong answers before that row stop counting. A
+ * sign-in pause (5 failed passwords in 15 minutes) is short and clears itself.
  *
  *   npx tsx scripts/unlock-activation.ts UG19/SCCS/1073 --reason "ID checked in person"
  *   npx tsx scripts/unlock-activation.ts UG19/SCCS/1073 --status
@@ -43,8 +44,7 @@ async function main() {
 
   const { prisma } = await import("../lib/db");
   const { normalizeRegistrationNo } = await import("../lib/auth-identity");
-  const { activationFailKey, recordAuthEvent, LIMITS } = await import("../lib/activation");
-  const { redisDel, redisGetCount, redisTtl } = await import("../lib/cache/redis-cache");
+  const { activationLockState, recordAuthEvent, LIMITS } = await import("../lib/activation");
 
   const registrationNo = normalizeRegistrationNo(raw);
   const user = await prisma.user.findUnique({
@@ -58,26 +58,20 @@ async function main() {
     process.exit(1);
   }
 
-  const failKey = activationFailKey(registrationNo);
-  const signInKey = `auth:signin:fail:id:${registrationNo}`;
-  const [failures, ttl, signInFailures] = await Promise.all([
-    redisGetCount(failKey),
-    redisTtl(failKey),
-    redisGetCount(signInKey),
-  ]);
+  const { failures, lockedUntil } = await activationLockState(registrationNo);
+  const signInFailures = await prisma.authEvent.count({
+    where: {
+      identifier: registrationNo,
+      kind: "SIGN_IN_FAILED",
+      createdAt: { gt: new Date(Date.now() - LIMITS.signInWindowSeconds * 1000) },
+    },
+  });
 
-  if (failures == null) {
-    console.log("\n  Redis is unreachable — cannot read or clear the lock. Check IMPORT_QUEUE_REDIS_URL.\n");
-    await prisma.$disconnect();
-    process.exit(1);
-  }
-
-  const locked = failures >= LIMITS.activationFailuresPerIdentifier;
   console.log(`
   ${user.name}  (${registrationNo})
   account            ${user.accountStatus}${user.defaultPassword ? ", default password" : ""}
-  activation         ${locked ? "LOCKED" : "not locked"} — ${failures} wrong answer${failures === 1 ? "" : "s"}${ttl ? `, clears itself in ${Math.ceil(ttl / 3600)}h` : ""}
-  sign-in failures   ${signInFailures ?? "?"} in the current 15-minute window
+  activation         ${lockedUntil ? `LOCKED until ${lockedUntil.toISOString()}` : "not locked"} — ${failures} wrong answer${failures === 1 ? "" : "s"} counting
+  sign-in failures   ${signInFailures} in the last 15 minutes${signInFailures >= LIMITS.signInFailuresPerIdentifier ? " (paused; clears itself)" : ""}
 `);
 
   if (process.argv.includes("--status")) {
@@ -92,7 +86,6 @@ async function main() {
     process.exit(1);
   }
 
-  await redisDel(failKey, signInKey);
   await recordAuthEvent("ACTIVATION_UNLOCKED", {
     identifier: registrationNo,
     userId: user.id,
