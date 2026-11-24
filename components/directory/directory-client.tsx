@@ -31,7 +31,6 @@ type DirectoryItem = {
   departmentName: string | null;
   facultyName: string | null;
   graduationYear: string | null;
-  degreeClass: string | null;
   stateOfOrigin: string | null;
   bio: string | null;
   openToOpportunities: boolean;
@@ -50,14 +49,6 @@ type DirectoryClientProps = {
     total: number;
     totalPages: number;
   };
-};
-
-const degreeLabels: Record<string, string> = {
-  FIRST_CLASS: "1st Class",
-  SECOND_CLASS_UPPER: "2nd Upper",
-  SECOND_CLASS_LOWER: "2nd Lower",
-  THIRD_CLASS: "3rd Class",
-  PASS: "Pass",
 };
 
 function initials(name: string) {
@@ -320,11 +311,6 @@ export function DirectoryClient({
                       <Badge variant="secondary" className="text-[10px]">
                         <GraduationCap className="mr-1 size-2.5" />
                         {grad.graduationYear}
-                      </Badge>
-                    ) : null}
-                    {grad.degreeClass ? (
-                      <Badge variant="outline" className="text-[10px]">
-                        {degreeLabels[grad.degreeClass] ?? grad.degreeClass}
                       </Badge>
                     ) : null}
                     {grad.stateOfOrigin ? (

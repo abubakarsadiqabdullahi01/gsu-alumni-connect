@@ -37,7 +37,6 @@ export async function GET(req: NextRequest) {
         departmentName: string | null;
         facultyName: string | null;
         graduationYear: string | null;
-        degreeClass: string | null;
         stateOfOrigin: string | null;
         bio: string | null;
         openToOpportunities: boolean;
@@ -90,7 +89,6 @@ export async function GET(req: NextRequest) {
           departmentName: true,
           facultyName: true,
           graduationYear: true,
-          degreeClass: true,
           stateOfOrigin: true,
           bio: true,
           openToOpportunities: true,
