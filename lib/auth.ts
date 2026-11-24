@@ -111,6 +111,12 @@ export const auth = betterAuth({
   // ── Email + password (registration-number login handled by custom endpoint) ──
   emailAndPassword: {
     enabled: true,
+    // Accounts exist only because the Secretariat imported a graduation record.
+    // Left enabled, Better Auth's public /sign-up/email let anyone create one —
+    // under an unclaimed graduate's registration number if they liked. The
+    // admin setting "self-registration off" was a database flag nothing here
+    // read. Sign-in, activation and password reset do not use this route.
+    disableSignUp: true,
     resetPasswordTokenExpiresIn: 60 * 60,
     revokeSessionsOnPasswordReset: true,
 
