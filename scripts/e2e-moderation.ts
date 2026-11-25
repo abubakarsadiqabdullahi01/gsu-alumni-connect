@@ -140,6 +140,13 @@ async function main() {
     check("Alice no longer sees Bola in the directory", !(await sees(ca, b.graduateId)));
     check("Bola no longer sees Alice in the directory", !(await sees(cb, a.graduateId)));
     check("Chidi still sees both", (await sees(cc, a.graduateId)) && (await sees(cc, b.graduateId)));
+    const finds = async (cookie: string, id: string) => {
+      const d = await call(`/api/search?q=MOD%20TESTER`, { method: "GET", cookie });
+      return ((d.json.alumni as { id: string }[]) ?? []).some((i) => i.id === id);
+    };
+    check("Alice no longer finds Bola in search", !(await finds(ca, b.graduateId)));
+    check("Bola no longer finds Alice in search", !(await finds(cb, a.graduateId)));
+    check("Chidi still finds both in search", (await finds(cc, a.graduateId)) && (await finds(cc, b.graduateId)));
     r = await call(`/api/directory/${a.graduateId}`, { method: "GET", cookie: cb });
     check("Bola opening Alice's profile → 404", r.status === 404, `HTTP ${r.status}`);
     r = await call(`/api/groups/${group.id}/posts`, { method: "GET", cookie: ca });

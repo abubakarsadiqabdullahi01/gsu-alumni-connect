@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { isFeatureEnabled } from "@/lib/platform-settings";
+import { blockedIds } from "@/lib/moderation";
 
 /**
  * One search bar across alumni, groups, jobs and events.
@@ -33,10 +34,12 @@ export async function GET(req: NextRequest) {
       });
     }
 
-    const [jobsEnabled, groupsEnabled] = await Promise.all([
+    const [jobsEnabled, groupsEnabled, me] = await Promise.all([
       isFeatureEnabled("featureJobBoard"),
       isFeatureEnabled("featureGroups"),
+      prisma.graduate.findUnique({ where: { userId: session.user.id }, select: { id: true } }),
     ]);
+    const blocked = me ? await blockedIds(me.id) : [];
 
     const contains = { contains: query, mode: "insensitive" as const };
 
@@ -45,6 +48,7 @@ export async function GET(req: NextRequest) {
         where: {
           showInDirectory: true,
           user: { accountStatus: "ACTIVE" },
+          ...(blocked.length ? { id: { notIn: blocked } } : {}),
           OR: [
             { fullName: contains },
             { registrationNo: contains },
