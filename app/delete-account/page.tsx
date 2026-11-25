@@ -29,7 +29,10 @@ export default function DeleteAccountPage() {
         </li>
         <li>Choose <strong>Delete account</strong> and enter your password to confirm.</li>
       </ol>
-      <p>Deletion happens straight away and signs you out on every device.</p>
+      <p>
+        Deletion happens straight away and signs you out on that device. Any other device still signed in to
+        the account is signed out within five minutes.
+      </p>
 
       <h2 id="how">Or ask the Secretariat</h2>
       <p>If you cannot sign in:</p>

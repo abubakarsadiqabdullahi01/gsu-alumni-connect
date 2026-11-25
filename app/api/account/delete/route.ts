@@ -46,9 +46,10 @@ export async function POST(request: NextRequest) {
   await recordAuthEvent("ACCOUNT_DELETED", { identifier, ip, userAgent, reason: `member request; ${result.filesRemoved} files removed` });
 
   const response = NextResponse.json({ ok: true });
-  // The session row is gone with the user; clear the cookie too.
-  for (const name of ["better-auth.session_token", "__Secure-better-auth.session_token"]) {
-    response.cookies.set(name, "", { maxAge: 0, path: "/" });
+  // The session row is gone with the user. Clear every auth cookie too: the
+  // 5-minute session cache cookie would otherwise still read as signed in.
+  for (const { name } of request.cookies.getAll()) {
+    if (/^(__Secure-)?better-auth\./.test(name)) response.cookies.set(name, "", { maxAge: 0, path: "/" });
   }
   return response;
 }
