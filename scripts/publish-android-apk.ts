@@ -269,9 +269,10 @@ async function main() {
       secretAccessKey: requiredEnv("AWS_SECRET_ACCESS_KEY"),
     },
     forcePathStyle: false,
-    // A stalled part must time out, or withRetries never gets to retry it:
+    // A stalled part must throw, or withRetries never gets to retry it (the SDK
+    // only warns by default). 15 minutes: a slow link takes ~6 per 8 MB part;
     // with no timeout, one dead socket hung the upload for an hour.
-    requestHandler: { requestTimeout: 300_000, connectionTimeout: 20_000 },
+    requestHandler: { requestTimeout: 900_000, throwOnRequestTimeout: true, connectionTimeout: 20_000 },
   });
 
   // Multipart, sequential, one part at a time. A single 55 MB PUT does not
