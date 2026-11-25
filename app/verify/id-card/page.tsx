@@ -113,7 +113,6 @@ export default async function VerifyIdCardPage({ searchParams }: VerifyPageProps
             <p><strong>State of Origin:</strong> {details?.stateOfOrigin ?? "Not Available"}</p>
             <p><strong>Year of Graduation:</strong> {details?.graduationYear ?? "Not Available"}</p>
             <p><strong>Gender:</strong> {details?.gender ?? "Unknown"}</p>
-            <p><strong>Rank:</strong> {details?.rank ?? "Not Available"}</p>
             <p><strong>Issued:</strong> {formatDate(verification.issuedAt)}</p>
             <p><strong>Card Expires:</strong> {formatDate(verification.expiresAt)}</p>
           </CardContent>

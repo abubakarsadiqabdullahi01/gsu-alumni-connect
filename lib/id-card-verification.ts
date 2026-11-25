@@ -27,7 +27,6 @@ export type CardVerification = {
     graduationYear: string;
     discipline: string;
     gender: "Male" | "Female" | "Unknown";
-    rank: string;
   } | null;
 };
 
@@ -38,14 +37,6 @@ export type CardVerificationParams = {
   legacyAlumniNumber?: string;
   legacyExpiresAtUnix?: number;
 };
-
-function formatDegreeClass(value: string | null): string {
-  if (!value) return "Alumni Member";
-  return value
-    .split("_")
-    .map((chunk) => chunk.charAt(0) + chunk.slice(1).toLowerCase())
-    .join(" ");
-}
 
 function fail(status: CardVerificationStatus, reason: string): CardVerification {
   return { status, verified: false, reason, issuedAt: null, expiresAt: null, data: null };
@@ -100,7 +91,6 @@ export async function resolveCardVerification(
           stateOfOrigin: true,
           graduationYear: true,
           departmentName: true,
-          degreeClass: true,
           sex: true,
         },
       },
@@ -142,7 +132,6 @@ export async function resolveCardVerification(
       graduationYear: graduate.graduationYear ?? "Not Provided",
       discipline: graduate.departmentName ?? "Not Provided",
       gender: graduate.sex === "F" ? "Female" : graduate.sex === "M" ? "Male" : "Unknown",
-      rank: formatDegreeClass(graduate.degreeClass),
     },
   };
 }

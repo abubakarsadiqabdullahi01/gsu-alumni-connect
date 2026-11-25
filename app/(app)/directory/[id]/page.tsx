@@ -56,8 +56,6 @@ export default async function DirectoryProfilePage({ params }: { params: Promise
       showInDirectory: true,
       showEmail: true,
       showPhone: true,
-      showDob: true,
-      showCgpa: true,
       dateOfBirth: true,
       linkedinUrl: true,
       openToOpportunities: true,
@@ -111,14 +109,17 @@ export default async function DirectoryProfilePage({ params }: { params: Promise
   const isAdmin = session.user.role === "admin";
   const canBypassPrivacy = isSelf || isAdmin;
 
-  if (!graduate.showInDirectory && !canBypassPrivacy) {
+  // Someone who never activated is not a member: their record is the
+  // university's, and /api/directory/[id] already refuses it.
+  if ((!graduate.showInDirectory || graduate.user.accountStatus !== "ACTIVE") && !canBypassPrivacy) {
     notFound();
   }
 
   const canSeeEmail = canBypassPrivacy || graduate.showEmail;
   const canSeePhone = canBypassPrivacy || graduate.showPhone;
-  const canSeeDob = canBypassPrivacy || graduate.showDob;
-  const canSeeCgpa = canBypassPrivacy || graduate.showCgpa;
+  // Academic standing and date of birth are the graduate's own business —
+  // shown to them and to administrators, never to other members.
+  const canSeeAcademicRecord = canBypassPrivacy;
 
   return (
     <>
@@ -158,7 +159,7 @@ export default async function DirectoryProfilePage({ params }: { params: Promise
                 <div className="mt-2 flex flex-wrap gap-2">
                   <Badge variant="outline">{graduate.user.accountStatus}</Badge>
                   {graduate.graduationYear ? <Badge variant="secondary">{graduate.graduationYear}</Badge> : null}
-                  {graduate.degreeClass ? <Badge variant="outline">{graduate.degreeClass.replace(/_/g, " ")}</Badge> : null}
+                  {canSeeAcademicRecord && graduate.degreeClass ? <Badge variant="outline">{graduate.degreeClass.replace(/_/g, " ")}</Badge> : null}
                   {graduate.openToOpportunities ? <Badge>Open to Work</Badge> : null}
                   {graduate.availableForMentorship ? (
                     <Badge variant="outline">
@@ -263,26 +264,26 @@ export default async function DirectoryProfilePage({ params }: { params: Promise
                   </p>
                   <p className="font-medium">{canSeePhone ? display(graduate.user.phone) : "Hidden by user"}</p>
                 </div>
-                <div className="rounded-md border p-3">
-                  <p className="flex items-center gap-2 text-muted-foreground">
-                    <Calendar className="size-3.5" />
-                    Date of Birth
-                  </p>
-                  <p className="font-medium">
-                    {canSeeDob && graduate.dateOfBirth
-                      ? new Date(graduate.dateOfBirth).toLocaleDateString()
-                      : canSeeDob
-                        ? "Not available"
-                        : "Hidden by user"}
-                  </p>
-                </div>
-                <div className="rounded-md border p-3">
-                  <p className="flex items-center gap-2 text-muted-foreground">
-                    <Shield className="size-3.5" />
-                    CGPA
-                  </p>
-                  <p className="font-medium">{canSeeCgpa ? (graduate.cgpa ? graduate.cgpa.toString() : "Not available") : "Hidden by user"}</p>
-                </div>
+                {canSeeAcademicRecord ? (
+                  <>
+                    <div className="rounded-md border p-3">
+                      <p className="flex items-center gap-2 text-muted-foreground">
+                        <Calendar className="size-3.5" />
+                        Date of Birth
+                      </p>
+                      <p className="font-medium">
+                        {graduate.dateOfBirth ? new Date(graduate.dateOfBirth).toLocaleDateString() : "Not available"}
+                      </p>
+                    </div>
+                    <div className="rounded-md border p-3">
+                      <p className="flex items-center gap-2 text-muted-foreground">
+                        <Shield className="size-3.5" />
+                        CGPA
+                      </p>
+                      <p className="font-medium">{graduate.cgpa ? graduate.cgpa.toString() : "Not available"}</p>
+                    </div>
+                  </>
+                ) : null}
                 <div className="rounded-md border p-3">
                   <p className="flex items-center gap-2 text-muted-foreground">
                     <MapPin className="size-3.5" />

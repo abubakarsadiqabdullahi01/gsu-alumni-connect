@@ -121,13 +121,6 @@ export function SettingsForm({ initialData }: SettingsFormProps) {
               <CardContent className="space-y-3">
                 <div className="flex items-center justify-between rounded-md border p-3">
                   <div>
-                    <p className="text-sm font-medium">Show CGPA</p>
-                    <p className="text-xs text-muted-foreground">Display your CGPA on your profile.</p>
-                  </div>
-                  <Switch checked={settings.showCgpa} onCheckedChange={(v) => setToggle("showCgpa", v)} />
-                </div>
-                <div className="flex items-center justify-between rounded-md border p-3">
-                  <div>
                     <p className="text-sm font-medium">Show Email</p>
                     <p className="text-xs text-muted-foreground">Allow alumni to view your email on profile.</p>
                   </div>
@@ -139,13 +132,6 @@ export function SettingsForm({ initialData }: SettingsFormProps) {
                     <p className="text-xs text-muted-foreground">Allow alumni to view your phone on profile.</p>
                   </div>
                   <Switch checked={settings.showPhone} onCheckedChange={(v) => setToggle("showPhone", v)} />
-                </div>
-                <div className="flex items-center justify-between rounded-md border p-3">
-                  <div>
-                    <p className="text-sm font-medium">Show Date of Birth</p>
-                    <p className="text-xs text-muted-foreground">Show your date of birth on your profile.</p>
-                  </div>
-                  <Switch checked={settings.showDob} onCheckedChange={(v) => setToggle("showDob", v)} />
                 </div>
                 <div className="flex items-center justify-between rounded-md border p-3">
                   <div>

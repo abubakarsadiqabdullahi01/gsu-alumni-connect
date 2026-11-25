@@ -158,22 +158,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         current.copyWith(showPhone: value),
                         {'showPhone': value},
                       ),
-                    ),
-                    _SettingSwitch(
-                      title: 'Show date of birth',
-                      value: current.showDob,
-                      onChanged: (value) => _update(
-                        current.copyWith(showDob: value),
-                        {'showDob': value},
-                      ),
-                    ),
-                    _SettingSwitch(
-                      title: 'Show CGPA',
-                      value: current.showCgpa,
-                      onChanged: (value) => _update(
-                        current.copyWith(showCgpa: value),
-                        {'showCgpa': value},
-                      ),
+                      // Date of birth and CGPA no longer have switches: the
+                      // server never shows them to other members, so a switch
+                      // would promise a choice the platform does not offer.
                       isLast: true,
                     ),
                   ],

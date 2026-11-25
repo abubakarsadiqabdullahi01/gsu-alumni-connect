@@ -3,11 +3,14 @@ import 'package:dio/dio.dart';
 /// A network failure translated into something worth showing a human.
 class ApiException implements Exception {
   const ApiException(this.message,
-      {this.statusCode, this.isNetworkIssue = false});
+      {this.statusCode, this.isNetworkIssue = false, this.body});
 
   final String message;
   final int? statusCode;
   final bool isNetworkIssue;
+
+  /// The server's JSON error body, for callers that need its `code`.
+  final Map<String, dynamic>? body;
 
   bool get isUnauthorized => statusCode == 401;
 
@@ -63,6 +66,7 @@ class ApiException implements Exception {
     return ApiException(
       serverMessage ?? _defaultForStatus(status),
       statusCode: status,
+      body: data is Map ? Map<String, dynamic>.from(data) : null,
     );
   }
 
@@ -80,4 +84,24 @@ class ApiException implements Exception {
 
   @override
   String toString() => message;
+}
+
+
+/// A correct default password on an account that is not yet activated.
+///
+/// Activation needs a check against the university record, and it happens on
+/// the website only — the app has no activation flow of its own, so it sends
+/// the graduate there and has them come back with their new password.
+class ActivationRequiredException implements Exception {
+  const ActivationRequiredException();
+}
+
+/// A member who activated before the record check existed must confirm one
+/// detail from their record, once, before their ID card is issued.
+class IdentityConfirmationRequired implements Exception {
+  const IdentityConfirmationRequired({required this.method, required this.prompt});
+
+  /// "cgpa", or "surname" for records without a CGPA.
+  final String method;
+  final String prompt;
 }

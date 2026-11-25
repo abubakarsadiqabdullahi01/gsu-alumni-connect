@@ -62,8 +62,6 @@ export async function GET(req: NextRequest, ctx: RouteCtx) {
         allowMessages: true,
         showEmail: true,
         showPhone: true,
-        showDob: true,
-        showCgpa: true,
         cgpa: true,
         dateOfBirth: true,
         user: { select: { image: true, email: true, phone: true, lastSeenAt: true } },
@@ -142,7 +140,6 @@ export async function GET(req: NextRequest, ctx: RouteCtx) {
       departmentName: graduate.departmentName,
       facultyName: graduate.facultyName,
       graduationYear: graduate.graduationYear,
-      degreeClass: graduate.degreeClass,
       bio: graduate.bio,
       stateOfOrigin: graduate.stateOfOrigin,
       lga: graduate.lga,
@@ -153,9 +150,15 @@ export async function GET(req: NextRequest, ctx: RouteCtx) {
       // Present only when the owner opted in, or when you are looking at yourself.
       email: isSelf || graduate.showEmail ? graduate.user?.email ?? null : null,
       phone: isSelf || graduate.showPhone ? graduate.user?.phone ?? null : null,
-      dateOfBirth:
-        isSelf || graduate.showDob ? graduate.dateOfBirth?.toISOString() ?? null : null,
-      cgpa: isSelf || graduate.showCgpa ? graduate.cgpa?.toString() ?? null : null,
+
+      // Academic standing and date of birth are never shown to other members —
+      // not by default and not by opt-in. CGPA and degree class came from the
+      // university's records, not from the graduate, and both are the kind of
+      // detail an employer should hear from the graduate rather than read off
+      // a directory.
+      degreeClass: isSelf ? graduate.degreeClass : null,
+      dateOfBirth: isSelf ? graduate.dateOfBirth?.toISOString() ?? null : null,
+      cgpa: isSelf ? graduate.cgpa?.toString() ?? null : null,
 
       links: {
         linkedin: graduate.linkedinUrl,

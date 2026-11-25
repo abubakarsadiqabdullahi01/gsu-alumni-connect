@@ -3,6 +3,7 @@ import { z } from "zod";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { signCardId, signIdCardPayload } from "@/lib/id-card-security";
+import { methodFor, promptFor } from "@/lib/activation";
 
 const FRONT_TEMPLATE_URL = "/images/id-card-template/Front-ID.png";
 const BACK_TEMPLATE_URL = "/images/id-card-template/Back-ID.png";
@@ -158,6 +159,39 @@ function buildSampleResponse(origin: string) {
   });
 }
 
+/**
+ * Why this graduate cannot be issued a card yet, or null when they can.
+ *
+ * The card is what a stranger trusts. With the default password published,
+ * an ACTIVE status alone proves too little, so the card also waits for the
+ * CGPA/surname check — including for members who activated before it existed.
+ */
+function cardRefusal(graduate: {
+  cgpa: unknown;
+  activationVerifiedAt: Date | null;
+  user: { accountStatus: string };
+}) {
+  if (graduate.user.accountStatus !== "ACTIVE") {
+    return NextResponse.json(
+      { error: "Complete account activation before your ID card can be issued.", code: "NOT_ACTIVE" },
+      { status: 403 }
+    );
+  }
+  if (!graduate.activationVerifiedAt) {
+    const method = methodFor(graduate);
+    return NextResponse.json(
+      {
+        error: "Confirm your identity once to receive your ID card.",
+        code: "VERIFICATION_REQUIRED",
+        method,
+        prompt: promptFor(method),
+      },
+      { status: 403 }
+    );
+  }
+  return null;
+}
+
 async function getSession(request: NextRequest) {
   const session = await auth.api.getSession({ headers: request.headers });
   if (!session) {
@@ -186,6 +220,7 @@ export async function GET(request: NextRequest) {
         user: {
           select: {
             image: true,
+            accountStatus: true,
           },
         },
       },
@@ -194,6 +229,9 @@ export async function GET(request: NextRequest) {
     if (!graduate) {
       return NextResponse.json({ error: "Graduate profile not found." }, { status: 404 });
     }
+
+    const refusal = cardRefusal(graduate);
+    if (refusal) return refusal;
 
     const payload = idCardPayloadSchema.parse({
       fullName: graduate.fullName,
@@ -259,7 +297,7 @@ export async function POST(request: NextRequest) {
     // with no graduate behind it would produce a card that verifies to nothing.
     const graduate = await prisma.graduate.findUnique({
       where: { registrationNo: parsed.data.alumniNumber },
-      select: { id: true },
+      select: { id: true, cgpa: true, activationVerifiedAt: true, user: { select: { accountStatus: true } } },
     });
 
     if (!graduate) {
@@ -268,6 +306,9 @@ export async function POST(request: NextRequest) {
         { status: 404 }
       );
     }
+
+    const refusal = cardRefusal(graduate);
+    if (refusal) return refusal;
 
     const card = await getOrIssueCard(graduate.id, parsed.data);
 

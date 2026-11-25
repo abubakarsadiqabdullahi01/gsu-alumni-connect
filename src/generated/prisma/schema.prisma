@@ -339,14 +339,19 @@ model Graduate {
   availableForMentorship Boolean @default(false) @map("available_for_mentorship")
 
   // â”€â”€ System â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-  profileCompleted Boolean  @default(false) @map("profile_completed")
-  onboardingStep   Int      @default(0) @map("onboarding_step") // 0-5 so user can resume
-  profileViews     Int      @default(0) @map("profile_views")
-  salaryMin        Decimal? @map("salary_min") @db.Decimal(14, 2) // private â€” admin only
-  salaryMax        Decimal? @map("salary_max") @db.Decimal(14, 2) // private â€” admin only
-  salaryCurrency   String   @default("NGN") @map("salary_currency")
-  createdAt        DateTime @default(now()) @map("created_at")
-  updatedAt        DateTime @updatedAt @map("updated_at")
+  /// When this graduate proved they are who the record says — CGPA, or surname
+  /// where the record has none — on top of the published default password.
+  /// The ID card is withheld until it is set.
+  activationVerifiedAt DateTime? @map("activation_verified_at")
+  activationMethod     String?   @map("activation_method") // "cgpa" | "surname"
+  profileCompleted     Boolean   @default(false) @map("profile_completed")
+  onboardingStep       Int       @default(0) @map("onboarding_step") // 0-5 so user can resume
+  profileViews         Int       @default(0) @map("profile_views")
+  salaryMin            Decimal?  @map("salary_min") @db.Decimal(14, 2) // private â€” admin only
+  salaryMax            Decimal?  @map("salary_max") @db.Decimal(14, 2) // private â€” admin only
+  salaryCurrency       String    @default("NGN") @map("salary_currency")
+  createdAt            DateTime  @default(now()) @map("created_at")
+  updatedAt            DateTime  @updatedAt @map("updated_at")
 
   // â”€â”€ Relations â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   employment           Employment[]
@@ -912,6 +917,25 @@ model IdCard {
   @@index([graduateId, issuedAt(sort: Desc)])
   @@index([alumniNumber])
   @@map("id_card")
+}
+
+/// Security log for sign-in and activation, so abuse can be investigated after
+/// the fact. Holds what happened, which account it claimed and from where —
+/// never a password, and never the CGPA or surname that was typed.
+model AuthEvent {
+  id         String   @id @default(uuid())
+  createdAt  DateTime @default(now()) @map("created_at")
+  kind       String // SIGN_IN_FAILED | SIGN_IN_RATE_LIMITED | ACTIVATION_REQUIRED | ACTIVATION_FAILED | ACTIVATION_LOCKED | ACTIVATION_RATE_LIMITED | ACTIVATION_SUCCEEDED | ACTIVATION_UNLOCKED
+  identifier String? // registration number or email as entered, normalised
+  userId     String?  @map("user_id")
+  ip         String?
+  userAgent  String?  @map("user_agent")
+  reason     String?
+
+  @@index([identifier, createdAt(sort: Desc)])
+  @@index([ip, createdAt(sort: Desc)])
+  @@index([createdAt(sort: Desc)])
+  @@map("auth_event")
 }
 
 model AdminSetting {

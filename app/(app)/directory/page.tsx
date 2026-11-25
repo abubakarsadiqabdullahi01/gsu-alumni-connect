@@ -26,7 +26,6 @@ export default async function DirectoryPage() {
         departmentName: true,
         facultyName: true,
         graduationYear: true,
-        degreeClass: true,
         stateOfOrigin: true,
         bio: true,
         openToOpportunities: true,
