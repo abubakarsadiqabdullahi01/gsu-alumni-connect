@@ -200,6 +200,18 @@ export type ImportJob = $Result.DefaultSelection<Prisma.$ImportJobPayload>
  * 
  */
 export type ImportJobError = $Result.DefaultSelection<Prisma.$ImportJobErrorPayload>
+/**
+ * Model ContentReport
+ * A member's report of a post, comment, message or profile, reviewed by the
+ * Secretariat at /admin/reports.
+ */
+export type ContentReport = $Result.DefaultSelection<Prisma.$ContentReportPayload>
+/**
+ * Model MemberBlock
+ * blocker no longer sees blocked's content; blocked can no longer find,
+ * message or connect with blocker.
+ */
+export type MemberBlock = $Result.DefaultSelection<Prisma.$MemberBlockPayload>
 
 /**
  * Enums
@@ -394,6 +406,37 @@ export const ImportJobStatus: {
 
 export type ImportJobStatus = (typeof ImportJobStatus)[keyof typeof ImportJobStatus]
 
+
+export const ReportTarget: {
+  POST: 'POST',
+  COMMENT: 'COMMENT',
+  MESSAGE: 'MESSAGE',
+  PROFILE: 'PROFILE'
+};
+
+export type ReportTarget = (typeof ReportTarget)[keyof typeof ReportTarget]
+
+
+export const ReportReason: {
+  SPAM: 'SPAM',
+  HARASSMENT: 'HARASSMENT',
+  INAPPROPRIATE: 'INAPPROPRIATE',
+  IMPERSONATION: 'IMPERSONATION',
+  SCAM: 'SCAM',
+  OTHER: 'OTHER'
+};
+
+export type ReportReason = (typeof ReportReason)[keyof typeof ReportReason]
+
+
+export const ReportStatus: {
+  OPEN: 'OPEN',
+  ACTIONED: 'ACTIONED',
+  DISMISSED: 'DISMISSED'
+};
+
+export type ReportStatus = (typeof ReportStatus)[keyof typeof ReportStatus]
+
 }
 
 export type AccountStatus = $Enums.AccountStatus
@@ -463,6 +506,18 @@ export const UploadStatus: typeof $Enums.UploadStatus
 export type ImportJobStatus = $Enums.ImportJobStatus
 
 export const ImportJobStatus: typeof $Enums.ImportJobStatus
+
+export type ReportTarget = $Enums.ReportTarget
+
+export const ReportTarget: typeof $Enums.ReportTarget
+
+export type ReportReason = $Enums.ReportReason
+
+export const ReportReason: typeof $Enums.ReportReason
+
+export type ReportStatus = $Enums.ReportStatus
+
+export const ReportStatus: typeof $Enums.ReportStatus
 
 /**
  * ##  Prisma Client ʲˢ
@@ -944,6 +999,26 @@ export class PrismaClient<
     * ```
     */
   get importJobError(): Prisma.ImportJobErrorDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.contentReport`: Exposes CRUD operations for the **ContentReport** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ContentReports
+    * const contentReports = await prisma.contentReport.findMany()
+    * ```
+    */
+  get contentReport(): Prisma.ContentReportDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.memberBlock`: Exposes CRUD operations for the **MemberBlock** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more MemberBlocks
+    * const memberBlocks = await prisma.memberBlock.findMany()
+    * ```
+    */
+  get memberBlock(): Prisma.MemberBlockDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -1413,7 +1488,9 @@ export namespace Prisma {
     AdminSetting: 'AdminSetting',
     UploadAuditLog: 'UploadAuditLog',
     ImportJob: 'ImportJob',
-    ImportJobError: 'ImportJobError'
+    ImportJobError: 'ImportJobError',
+    ContentReport: 'ContentReport',
+    MemberBlock: 'MemberBlock'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -1429,7 +1506,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "session" | "account" | "verification" | "twoFactor" | "graduate" | "employment" | "education" | "skill" | "endorsement" | "graduateLocation" | "achievement" | "profileBadge" | "alumniGroup" | "groupMember" | "groupPost" | "postComment" | "postReaction" | "conversation" | "conversationParticipant" | "message" | "connection" | "profileView" | "jobPosting" | "jobApplication" | "event" | "eventAttendee" | "mentorship" | "notification" | "activityFeedItem" | "idCard" | "authEvent" | "adminSetting" | "uploadAuditLog" | "importJob" | "importJobError"
+      modelProps: "user" | "session" | "account" | "verification" | "twoFactor" | "graduate" | "employment" | "education" | "skill" | "endorsement" | "graduateLocation" | "achievement" | "profileBadge" | "alumniGroup" | "groupMember" | "groupPost" | "postComment" | "postReaction" | "conversation" | "conversationParticipant" | "message" | "connection" | "profileView" | "jobPosting" | "jobApplication" | "event" | "eventAttendee" | "mentorship" | "notification" | "activityFeedItem" | "idCard" | "authEvent" | "adminSetting" | "uploadAuditLog" | "importJob" | "importJobError" | "contentReport" | "memberBlock"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -4097,6 +4174,154 @@ export namespace Prisma {
           }
         }
       }
+      ContentReport: {
+        payload: Prisma.$ContentReportPayload<ExtArgs>
+        fields: Prisma.ContentReportFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ContentReportFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContentReportPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ContentReportFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContentReportPayload>
+          }
+          findFirst: {
+            args: Prisma.ContentReportFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContentReportPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ContentReportFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContentReportPayload>
+          }
+          findMany: {
+            args: Prisma.ContentReportFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContentReportPayload>[]
+          }
+          create: {
+            args: Prisma.ContentReportCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContentReportPayload>
+          }
+          createMany: {
+            args: Prisma.ContentReportCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ContentReportCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContentReportPayload>[]
+          }
+          delete: {
+            args: Prisma.ContentReportDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContentReportPayload>
+          }
+          update: {
+            args: Prisma.ContentReportUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContentReportPayload>
+          }
+          deleteMany: {
+            args: Prisma.ContentReportDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ContentReportUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ContentReportUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContentReportPayload>[]
+          }
+          upsert: {
+            args: Prisma.ContentReportUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContentReportPayload>
+          }
+          aggregate: {
+            args: Prisma.ContentReportAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateContentReport>
+          }
+          groupBy: {
+            args: Prisma.ContentReportGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ContentReportGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ContentReportCountArgs<ExtArgs>
+            result: $Utils.Optional<ContentReportCountAggregateOutputType> | number
+          }
+        }
+      }
+      MemberBlock: {
+        payload: Prisma.$MemberBlockPayload<ExtArgs>
+        fields: Prisma.MemberBlockFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.MemberBlockFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MemberBlockPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.MemberBlockFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MemberBlockPayload>
+          }
+          findFirst: {
+            args: Prisma.MemberBlockFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MemberBlockPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.MemberBlockFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MemberBlockPayload>
+          }
+          findMany: {
+            args: Prisma.MemberBlockFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MemberBlockPayload>[]
+          }
+          create: {
+            args: Prisma.MemberBlockCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MemberBlockPayload>
+          }
+          createMany: {
+            args: Prisma.MemberBlockCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.MemberBlockCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MemberBlockPayload>[]
+          }
+          delete: {
+            args: Prisma.MemberBlockDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MemberBlockPayload>
+          }
+          update: {
+            args: Prisma.MemberBlockUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MemberBlockPayload>
+          }
+          deleteMany: {
+            args: Prisma.MemberBlockDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.MemberBlockUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.MemberBlockUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MemberBlockPayload>[]
+          }
+          upsert: {
+            args: Prisma.MemberBlockUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MemberBlockPayload>
+          }
+          aggregate: {
+            args: Prisma.MemberBlockAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateMemberBlock>
+          }
+          groupBy: {
+            args: Prisma.MemberBlockGroupByArgs<ExtArgs>
+            result: $Utils.Optional<MemberBlockGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.MemberBlockCountArgs<ExtArgs>
+            result: $Utils.Optional<MemberBlockCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -4241,6 +4466,8 @@ export namespace Prisma {
     uploadAuditLog?: UploadAuditLogOmit
     importJob?: ImportJobOmit
     importJobError?: ImportJobErrorOmit
+    contentReport?: ContentReportOmit
+    memberBlock?: MemberBlockOmit
   }
 
   /* Types for Logging */
@@ -4396,6 +4623,10 @@ export namespace Prisma {
     profileViewsLog: number
     profileViewsGiven: number
     idCards: number
+    reportsMade: number
+    reportsAgainst: number
+    blocksMade: number
+    blocksReceived: number
   }
 
   export type GraduateCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4425,6 +4656,10 @@ export namespace Prisma {
     profileViewsLog?: boolean | GraduateCountOutputTypeCountProfileViewsLogArgs
     profileViewsGiven?: boolean | GraduateCountOutputTypeCountProfileViewsGivenArgs
     idCards?: boolean | GraduateCountOutputTypeCountIdCardsArgs
+    reportsMade?: boolean | GraduateCountOutputTypeCountReportsMadeArgs
+    reportsAgainst?: boolean | GraduateCountOutputTypeCountReportsAgainstArgs
+    blocksMade?: boolean | GraduateCountOutputTypeCountBlocksMadeArgs
+    blocksReceived?: boolean | GraduateCountOutputTypeCountBlocksReceivedArgs
   }
 
   // Custom InputTypes
@@ -4618,6 +4853,34 @@ export namespace Prisma {
    */
   export type GraduateCountOutputTypeCountIdCardsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: IdCardWhereInput
+  }
+
+  /**
+   * GraduateCountOutputType without action
+   */
+  export type GraduateCountOutputTypeCountReportsMadeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ContentReportWhereInput
+  }
+
+  /**
+   * GraduateCountOutputType without action
+   */
+  export type GraduateCountOutputTypeCountReportsAgainstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ContentReportWhereInput
+  }
+
+  /**
+   * GraduateCountOutputType without action
+   */
+  export type GraduateCountOutputTypeCountBlocksMadeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MemberBlockWhereInput
+  }
+
+  /**
+   * GraduateCountOutputType without action
+   */
+  export type GraduateCountOutputTypeCountBlocksReceivedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MemberBlockWhereInput
   }
 
 
@@ -11116,6 +11379,10 @@ export namespace Prisma {
     profileViewsLog?: boolean | Graduate$profileViewsLogArgs<ExtArgs>
     profileViewsGiven?: boolean | Graduate$profileViewsGivenArgs<ExtArgs>
     idCards?: boolean | Graduate$idCardsArgs<ExtArgs>
+    reportsMade?: boolean | Graduate$reportsMadeArgs<ExtArgs>
+    reportsAgainst?: boolean | Graduate$reportsAgainstArgs<ExtArgs>
+    blocksMade?: boolean | Graduate$blocksMadeArgs<ExtArgs>
+    blocksReceived?: boolean | Graduate$blocksReceivedArgs<ExtArgs>
     _count?: boolean | GraduateCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["graduate"]>
 
@@ -11301,6 +11568,10 @@ export namespace Prisma {
     profileViewsLog?: boolean | Graduate$profileViewsLogArgs<ExtArgs>
     profileViewsGiven?: boolean | Graduate$profileViewsGivenArgs<ExtArgs>
     idCards?: boolean | Graduate$idCardsArgs<ExtArgs>
+    reportsMade?: boolean | Graduate$reportsMadeArgs<ExtArgs>
+    reportsAgainst?: boolean | Graduate$reportsAgainstArgs<ExtArgs>
+    blocksMade?: boolean | Graduate$blocksMadeArgs<ExtArgs>
+    blocksReceived?: boolean | Graduate$blocksReceivedArgs<ExtArgs>
     _count?: boolean | GraduateCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type GraduateIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -11341,6 +11612,10 @@ export namespace Prisma {
       profileViewsLog: Prisma.$ProfileViewPayload<ExtArgs>[]
       profileViewsGiven: Prisma.$ProfileViewPayload<ExtArgs>[]
       idCards: Prisma.$IdCardPayload<ExtArgs>[]
+      reportsMade: Prisma.$ContentReportPayload<ExtArgs>[]
+      reportsAgainst: Prisma.$ContentReportPayload<ExtArgs>[]
+      blocksMade: Prisma.$MemberBlockPayload<ExtArgs>[]
+      blocksReceived: Prisma.$MemberBlockPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -11817,6 +12092,10 @@ export namespace Prisma {
     profileViewsLog<T extends Graduate$profileViewsLogArgs<ExtArgs> = {}>(args?: Subset<T, Graduate$profileViewsLogArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProfileViewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     profileViewsGiven<T extends Graduate$profileViewsGivenArgs<ExtArgs> = {}>(args?: Subset<T, Graduate$profileViewsGivenArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProfileViewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     idCards<T extends Graduate$idCardsArgs<ExtArgs> = {}>(args?: Subset<T, Graduate$idCardsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$IdCardPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    reportsMade<T extends Graduate$reportsMadeArgs<ExtArgs> = {}>(args?: Subset<T, Graduate$reportsMadeArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ContentReportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    reportsAgainst<T extends Graduate$reportsAgainstArgs<ExtArgs> = {}>(args?: Subset<T, Graduate$reportsAgainstArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ContentReportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    blocksMade<T extends Graduate$blocksMadeArgs<ExtArgs> = {}>(args?: Subset<T, Graduate$blocksMadeArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MemberBlockPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    blocksReceived<T extends Graduate$blocksReceivedArgs<ExtArgs> = {}>(args?: Subset<T, Graduate$blocksReceivedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MemberBlockPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -12929,6 +13208,102 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: IdCardScalarFieldEnum | IdCardScalarFieldEnum[]
+  }
+
+  /**
+   * Graduate.reportsMade
+   */
+  export type Graduate$reportsMadeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContentReport
+     */
+    select?: ContentReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ContentReport
+     */
+    omit?: ContentReportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ContentReportInclude<ExtArgs> | null
+    where?: ContentReportWhereInput
+    orderBy?: ContentReportOrderByWithRelationInput | ContentReportOrderByWithRelationInput[]
+    cursor?: ContentReportWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ContentReportScalarFieldEnum | ContentReportScalarFieldEnum[]
+  }
+
+  /**
+   * Graduate.reportsAgainst
+   */
+  export type Graduate$reportsAgainstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContentReport
+     */
+    select?: ContentReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ContentReport
+     */
+    omit?: ContentReportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ContentReportInclude<ExtArgs> | null
+    where?: ContentReportWhereInput
+    orderBy?: ContentReportOrderByWithRelationInput | ContentReportOrderByWithRelationInput[]
+    cursor?: ContentReportWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ContentReportScalarFieldEnum | ContentReportScalarFieldEnum[]
+  }
+
+  /**
+   * Graduate.blocksMade
+   */
+  export type Graduate$blocksMadeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MemberBlock
+     */
+    select?: MemberBlockSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MemberBlock
+     */
+    omit?: MemberBlockOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MemberBlockInclude<ExtArgs> | null
+    where?: MemberBlockWhereInput
+    orderBy?: MemberBlockOrderByWithRelationInput | MemberBlockOrderByWithRelationInput[]
+    cursor?: MemberBlockWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: MemberBlockScalarFieldEnum | MemberBlockScalarFieldEnum[]
+  }
+
+  /**
+   * Graduate.blocksReceived
+   */
+  export type Graduate$blocksReceivedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MemberBlock
+     */
+    select?: MemberBlockSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MemberBlock
+     */
+    omit?: MemberBlockOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MemberBlockInclude<ExtArgs> | null
+    where?: MemberBlockWhereInput
+    orderBy?: MemberBlockOrderByWithRelationInput | MemberBlockOrderByWithRelationInput[]
+    cursor?: MemberBlockWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: MemberBlockScalarFieldEnum | MemberBlockScalarFieldEnum[]
   }
 
   /**
@@ -46758,6 +47133,2225 @@ export namespace Prisma {
 
 
   /**
+   * Model ContentReport
+   */
+
+  export type AggregateContentReport = {
+    _count: ContentReportCountAggregateOutputType | null
+    _min: ContentReportMinAggregateOutputType | null
+    _max: ContentReportMaxAggregateOutputType | null
+  }
+
+  export type ContentReportMinAggregateOutputType = {
+    id: string | null
+    reporterId: string | null
+    targetType: $Enums.ReportTarget | null
+    targetId: string | null
+    subjectId: string | null
+    reason: $Enums.ReportReason | null
+    details: string | null
+    status: $Enums.ReportStatus | null
+    createdAt: Date | null
+    reviewedAt: Date | null
+    reviewedBy: string | null
+    resolution: string | null
+  }
+
+  export type ContentReportMaxAggregateOutputType = {
+    id: string | null
+    reporterId: string | null
+    targetType: $Enums.ReportTarget | null
+    targetId: string | null
+    subjectId: string | null
+    reason: $Enums.ReportReason | null
+    details: string | null
+    status: $Enums.ReportStatus | null
+    createdAt: Date | null
+    reviewedAt: Date | null
+    reviewedBy: string | null
+    resolution: string | null
+  }
+
+  export type ContentReportCountAggregateOutputType = {
+    id: number
+    reporterId: number
+    targetType: number
+    targetId: number
+    subjectId: number
+    reason: number
+    details: number
+    status: number
+    createdAt: number
+    reviewedAt: number
+    reviewedBy: number
+    resolution: number
+    _all: number
+  }
+
+
+  export type ContentReportMinAggregateInputType = {
+    id?: true
+    reporterId?: true
+    targetType?: true
+    targetId?: true
+    subjectId?: true
+    reason?: true
+    details?: true
+    status?: true
+    createdAt?: true
+    reviewedAt?: true
+    reviewedBy?: true
+    resolution?: true
+  }
+
+  export type ContentReportMaxAggregateInputType = {
+    id?: true
+    reporterId?: true
+    targetType?: true
+    targetId?: true
+    subjectId?: true
+    reason?: true
+    details?: true
+    status?: true
+    createdAt?: true
+    reviewedAt?: true
+    reviewedBy?: true
+    resolution?: true
+  }
+
+  export type ContentReportCountAggregateInputType = {
+    id?: true
+    reporterId?: true
+    targetType?: true
+    targetId?: true
+    subjectId?: true
+    reason?: true
+    details?: true
+    status?: true
+    createdAt?: true
+    reviewedAt?: true
+    reviewedBy?: true
+    resolution?: true
+    _all?: true
+  }
+
+  export type ContentReportAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ContentReport to aggregate.
+     */
+    where?: ContentReportWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ContentReports to fetch.
+     */
+    orderBy?: ContentReportOrderByWithRelationInput | ContentReportOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ContentReportWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ContentReports from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ContentReports.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ContentReports
+    **/
+    _count?: true | ContentReportCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ContentReportMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ContentReportMaxAggregateInputType
+  }
+
+  export type GetContentReportAggregateType<T extends ContentReportAggregateArgs> = {
+        [P in keyof T & keyof AggregateContentReport]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateContentReport[P]>
+      : GetScalarType<T[P], AggregateContentReport[P]>
+  }
+
+
+
+
+  export type ContentReportGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ContentReportWhereInput
+    orderBy?: ContentReportOrderByWithAggregationInput | ContentReportOrderByWithAggregationInput[]
+    by: ContentReportScalarFieldEnum[] | ContentReportScalarFieldEnum
+    having?: ContentReportScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ContentReportCountAggregateInputType | true
+    _min?: ContentReportMinAggregateInputType
+    _max?: ContentReportMaxAggregateInputType
+  }
+
+  export type ContentReportGroupByOutputType = {
+    id: string
+    reporterId: string
+    targetType: $Enums.ReportTarget
+    targetId: string
+    subjectId: string | null
+    reason: $Enums.ReportReason
+    details: string | null
+    status: $Enums.ReportStatus
+    createdAt: Date
+    reviewedAt: Date | null
+    reviewedBy: string | null
+    resolution: string | null
+    _count: ContentReportCountAggregateOutputType | null
+    _min: ContentReportMinAggregateOutputType | null
+    _max: ContentReportMaxAggregateOutputType | null
+  }
+
+  type GetContentReportGroupByPayload<T extends ContentReportGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ContentReportGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ContentReportGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ContentReportGroupByOutputType[P]>
+            : GetScalarType<T[P], ContentReportGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ContentReportSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    reporterId?: boolean
+    targetType?: boolean
+    targetId?: boolean
+    subjectId?: boolean
+    reason?: boolean
+    details?: boolean
+    status?: boolean
+    createdAt?: boolean
+    reviewedAt?: boolean
+    reviewedBy?: boolean
+    resolution?: boolean
+    reporter?: boolean | GraduateDefaultArgs<ExtArgs>
+    subject?: boolean | ContentReport$subjectArgs<ExtArgs>
+  }, ExtArgs["result"]["contentReport"]>
+
+  export type ContentReportSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    reporterId?: boolean
+    targetType?: boolean
+    targetId?: boolean
+    subjectId?: boolean
+    reason?: boolean
+    details?: boolean
+    status?: boolean
+    createdAt?: boolean
+    reviewedAt?: boolean
+    reviewedBy?: boolean
+    resolution?: boolean
+    reporter?: boolean | GraduateDefaultArgs<ExtArgs>
+    subject?: boolean | ContentReport$subjectArgs<ExtArgs>
+  }, ExtArgs["result"]["contentReport"]>
+
+  export type ContentReportSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    reporterId?: boolean
+    targetType?: boolean
+    targetId?: boolean
+    subjectId?: boolean
+    reason?: boolean
+    details?: boolean
+    status?: boolean
+    createdAt?: boolean
+    reviewedAt?: boolean
+    reviewedBy?: boolean
+    resolution?: boolean
+    reporter?: boolean | GraduateDefaultArgs<ExtArgs>
+    subject?: boolean | ContentReport$subjectArgs<ExtArgs>
+  }, ExtArgs["result"]["contentReport"]>
+
+  export type ContentReportSelectScalar = {
+    id?: boolean
+    reporterId?: boolean
+    targetType?: boolean
+    targetId?: boolean
+    subjectId?: boolean
+    reason?: boolean
+    details?: boolean
+    status?: boolean
+    createdAt?: boolean
+    reviewedAt?: boolean
+    reviewedBy?: boolean
+    resolution?: boolean
+  }
+
+  export type ContentReportOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "reporterId" | "targetType" | "targetId" | "subjectId" | "reason" | "details" | "status" | "createdAt" | "reviewedAt" | "reviewedBy" | "resolution", ExtArgs["result"]["contentReport"]>
+  export type ContentReportInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    reporter?: boolean | GraduateDefaultArgs<ExtArgs>
+    subject?: boolean | ContentReport$subjectArgs<ExtArgs>
+  }
+  export type ContentReportIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    reporter?: boolean | GraduateDefaultArgs<ExtArgs>
+    subject?: boolean | ContentReport$subjectArgs<ExtArgs>
+  }
+  export type ContentReportIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    reporter?: boolean | GraduateDefaultArgs<ExtArgs>
+    subject?: boolean | ContentReport$subjectArgs<ExtArgs>
+  }
+
+  export type $ContentReportPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ContentReport"
+    objects: {
+      reporter: Prisma.$GraduatePayload<ExtArgs>
+      subject: Prisma.$GraduatePayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      reporterId: string
+      targetType: $Enums.ReportTarget
+      targetId: string
+      /**
+       * Who wrote the reported content, so repeat offenders stand out.
+       */
+      subjectId: string | null
+      reason: $Enums.ReportReason
+      details: string | null
+      status: $Enums.ReportStatus
+      createdAt: Date
+      reviewedAt: Date | null
+      reviewedBy: string | null
+      resolution: string | null
+    }, ExtArgs["result"]["contentReport"]>
+    composites: {}
+  }
+
+  type ContentReportGetPayload<S extends boolean | null | undefined | ContentReportDefaultArgs> = $Result.GetResult<Prisma.$ContentReportPayload, S>
+
+  type ContentReportCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ContentReportFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ContentReportCountAggregateInputType | true
+    }
+
+  export interface ContentReportDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ContentReport'], meta: { name: 'ContentReport' } }
+    /**
+     * Find zero or one ContentReport that matches the filter.
+     * @param {ContentReportFindUniqueArgs} args - Arguments to find a ContentReport
+     * @example
+     * // Get one ContentReport
+     * const contentReport = await prisma.contentReport.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ContentReportFindUniqueArgs>(args: SelectSubset<T, ContentReportFindUniqueArgs<ExtArgs>>): Prisma__ContentReportClient<$Result.GetResult<Prisma.$ContentReportPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ContentReport that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ContentReportFindUniqueOrThrowArgs} args - Arguments to find a ContentReport
+     * @example
+     * // Get one ContentReport
+     * const contentReport = await prisma.contentReport.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ContentReportFindUniqueOrThrowArgs>(args: SelectSubset<T, ContentReportFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ContentReportClient<$Result.GetResult<Prisma.$ContentReportPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ContentReport that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ContentReportFindFirstArgs} args - Arguments to find a ContentReport
+     * @example
+     * // Get one ContentReport
+     * const contentReport = await prisma.contentReport.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ContentReportFindFirstArgs>(args?: SelectSubset<T, ContentReportFindFirstArgs<ExtArgs>>): Prisma__ContentReportClient<$Result.GetResult<Prisma.$ContentReportPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ContentReport that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ContentReportFindFirstOrThrowArgs} args - Arguments to find a ContentReport
+     * @example
+     * // Get one ContentReport
+     * const contentReport = await prisma.contentReport.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ContentReportFindFirstOrThrowArgs>(args?: SelectSubset<T, ContentReportFindFirstOrThrowArgs<ExtArgs>>): Prisma__ContentReportClient<$Result.GetResult<Prisma.$ContentReportPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ContentReports that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ContentReportFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ContentReports
+     * const contentReports = await prisma.contentReport.findMany()
+     * 
+     * // Get first 10 ContentReports
+     * const contentReports = await prisma.contentReport.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const contentReportWithIdOnly = await prisma.contentReport.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ContentReportFindManyArgs>(args?: SelectSubset<T, ContentReportFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ContentReportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ContentReport.
+     * @param {ContentReportCreateArgs} args - Arguments to create a ContentReport.
+     * @example
+     * // Create one ContentReport
+     * const ContentReport = await prisma.contentReport.create({
+     *   data: {
+     *     // ... data to create a ContentReport
+     *   }
+     * })
+     * 
+     */
+    create<T extends ContentReportCreateArgs>(args: SelectSubset<T, ContentReportCreateArgs<ExtArgs>>): Prisma__ContentReportClient<$Result.GetResult<Prisma.$ContentReportPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ContentReports.
+     * @param {ContentReportCreateManyArgs} args - Arguments to create many ContentReports.
+     * @example
+     * // Create many ContentReports
+     * const contentReport = await prisma.contentReport.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ContentReportCreateManyArgs>(args?: SelectSubset<T, ContentReportCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ContentReports and returns the data saved in the database.
+     * @param {ContentReportCreateManyAndReturnArgs} args - Arguments to create many ContentReports.
+     * @example
+     * // Create many ContentReports
+     * const contentReport = await prisma.contentReport.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ContentReports and only return the `id`
+     * const contentReportWithIdOnly = await prisma.contentReport.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ContentReportCreateManyAndReturnArgs>(args?: SelectSubset<T, ContentReportCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ContentReportPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a ContentReport.
+     * @param {ContentReportDeleteArgs} args - Arguments to delete one ContentReport.
+     * @example
+     * // Delete one ContentReport
+     * const ContentReport = await prisma.contentReport.delete({
+     *   where: {
+     *     // ... filter to delete one ContentReport
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ContentReportDeleteArgs>(args: SelectSubset<T, ContentReportDeleteArgs<ExtArgs>>): Prisma__ContentReportClient<$Result.GetResult<Prisma.$ContentReportPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ContentReport.
+     * @param {ContentReportUpdateArgs} args - Arguments to update one ContentReport.
+     * @example
+     * // Update one ContentReport
+     * const contentReport = await prisma.contentReport.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ContentReportUpdateArgs>(args: SelectSubset<T, ContentReportUpdateArgs<ExtArgs>>): Prisma__ContentReportClient<$Result.GetResult<Prisma.$ContentReportPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ContentReports.
+     * @param {ContentReportDeleteManyArgs} args - Arguments to filter ContentReports to delete.
+     * @example
+     * // Delete a few ContentReports
+     * const { count } = await prisma.contentReport.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ContentReportDeleteManyArgs>(args?: SelectSubset<T, ContentReportDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ContentReports.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ContentReportUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ContentReports
+     * const contentReport = await prisma.contentReport.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ContentReportUpdateManyArgs>(args: SelectSubset<T, ContentReportUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ContentReports and returns the data updated in the database.
+     * @param {ContentReportUpdateManyAndReturnArgs} args - Arguments to update many ContentReports.
+     * @example
+     * // Update many ContentReports
+     * const contentReport = await prisma.contentReport.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more ContentReports and only return the `id`
+     * const contentReportWithIdOnly = await prisma.contentReport.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ContentReportUpdateManyAndReturnArgs>(args: SelectSubset<T, ContentReportUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ContentReportPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one ContentReport.
+     * @param {ContentReportUpsertArgs} args - Arguments to update or create a ContentReport.
+     * @example
+     * // Update or create a ContentReport
+     * const contentReport = await prisma.contentReport.upsert({
+     *   create: {
+     *     // ... data to create a ContentReport
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ContentReport we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ContentReportUpsertArgs>(args: SelectSubset<T, ContentReportUpsertArgs<ExtArgs>>): Prisma__ContentReportClient<$Result.GetResult<Prisma.$ContentReportPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ContentReports.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ContentReportCountArgs} args - Arguments to filter ContentReports to count.
+     * @example
+     * // Count the number of ContentReports
+     * const count = await prisma.contentReport.count({
+     *   where: {
+     *     // ... the filter for the ContentReports we want to count
+     *   }
+     * })
+    **/
+    count<T extends ContentReportCountArgs>(
+      args?: Subset<T, ContentReportCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ContentReportCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ContentReport.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ContentReportAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ContentReportAggregateArgs>(args: Subset<T, ContentReportAggregateArgs>): Prisma.PrismaPromise<GetContentReportAggregateType<T>>
+
+    /**
+     * Group by ContentReport.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ContentReportGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ContentReportGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ContentReportGroupByArgs['orderBy'] }
+        : { orderBy?: ContentReportGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ContentReportGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetContentReportGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ContentReport model
+   */
+  readonly fields: ContentReportFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ContentReport.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ContentReportClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    reporter<T extends GraduateDefaultArgs<ExtArgs> = {}>(args?: Subset<T, GraduateDefaultArgs<ExtArgs>>): Prisma__GraduateClient<$Result.GetResult<Prisma.$GraduatePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    subject<T extends ContentReport$subjectArgs<ExtArgs> = {}>(args?: Subset<T, ContentReport$subjectArgs<ExtArgs>>): Prisma__GraduateClient<$Result.GetResult<Prisma.$GraduatePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ContentReport model
+   */
+  interface ContentReportFieldRefs {
+    readonly id: FieldRef<"ContentReport", 'String'>
+    readonly reporterId: FieldRef<"ContentReport", 'String'>
+    readonly targetType: FieldRef<"ContentReport", 'ReportTarget'>
+    readonly targetId: FieldRef<"ContentReport", 'String'>
+    readonly subjectId: FieldRef<"ContentReport", 'String'>
+    readonly reason: FieldRef<"ContentReport", 'ReportReason'>
+    readonly details: FieldRef<"ContentReport", 'String'>
+    readonly status: FieldRef<"ContentReport", 'ReportStatus'>
+    readonly createdAt: FieldRef<"ContentReport", 'DateTime'>
+    readonly reviewedAt: FieldRef<"ContentReport", 'DateTime'>
+    readonly reviewedBy: FieldRef<"ContentReport", 'String'>
+    readonly resolution: FieldRef<"ContentReport", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ContentReport findUnique
+   */
+  export type ContentReportFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContentReport
+     */
+    select?: ContentReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ContentReport
+     */
+    omit?: ContentReportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ContentReportInclude<ExtArgs> | null
+    /**
+     * Filter, which ContentReport to fetch.
+     */
+    where: ContentReportWhereUniqueInput
+  }
+
+  /**
+   * ContentReport findUniqueOrThrow
+   */
+  export type ContentReportFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContentReport
+     */
+    select?: ContentReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ContentReport
+     */
+    omit?: ContentReportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ContentReportInclude<ExtArgs> | null
+    /**
+     * Filter, which ContentReport to fetch.
+     */
+    where: ContentReportWhereUniqueInput
+  }
+
+  /**
+   * ContentReport findFirst
+   */
+  export type ContentReportFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContentReport
+     */
+    select?: ContentReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ContentReport
+     */
+    omit?: ContentReportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ContentReportInclude<ExtArgs> | null
+    /**
+     * Filter, which ContentReport to fetch.
+     */
+    where?: ContentReportWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ContentReports to fetch.
+     */
+    orderBy?: ContentReportOrderByWithRelationInput | ContentReportOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ContentReports.
+     */
+    cursor?: ContentReportWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ContentReports from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ContentReports.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ContentReports.
+     */
+    distinct?: ContentReportScalarFieldEnum | ContentReportScalarFieldEnum[]
+  }
+
+  /**
+   * ContentReport findFirstOrThrow
+   */
+  export type ContentReportFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContentReport
+     */
+    select?: ContentReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ContentReport
+     */
+    omit?: ContentReportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ContentReportInclude<ExtArgs> | null
+    /**
+     * Filter, which ContentReport to fetch.
+     */
+    where?: ContentReportWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ContentReports to fetch.
+     */
+    orderBy?: ContentReportOrderByWithRelationInput | ContentReportOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ContentReports.
+     */
+    cursor?: ContentReportWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ContentReports from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ContentReports.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ContentReports.
+     */
+    distinct?: ContentReportScalarFieldEnum | ContentReportScalarFieldEnum[]
+  }
+
+  /**
+   * ContentReport findMany
+   */
+  export type ContentReportFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContentReport
+     */
+    select?: ContentReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ContentReport
+     */
+    omit?: ContentReportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ContentReportInclude<ExtArgs> | null
+    /**
+     * Filter, which ContentReports to fetch.
+     */
+    where?: ContentReportWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ContentReports to fetch.
+     */
+    orderBy?: ContentReportOrderByWithRelationInput | ContentReportOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ContentReports.
+     */
+    cursor?: ContentReportWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ContentReports from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ContentReports.
+     */
+    skip?: number
+    distinct?: ContentReportScalarFieldEnum | ContentReportScalarFieldEnum[]
+  }
+
+  /**
+   * ContentReport create
+   */
+  export type ContentReportCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContentReport
+     */
+    select?: ContentReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ContentReport
+     */
+    omit?: ContentReportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ContentReportInclude<ExtArgs> | null
+    /**
+     * The data needed to create a ContentReport.
+     */
+    data: XOR<ContentReportCreateInput, ContentReportUncheckedCreateInput>
+  }
+
+  /**
+   * ContentReport createMany
+   */
+  export type ContentReportCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ContentReports.
+     */
+    data: ContentReportCreateManyInput | ContentReportCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ContentReport createManyAndReturn
+   */
+  export type ContentReportCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContentReport
+     */
+    select?: ContentReportSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ContentReport
+     */
+    omit?: ContentReportOmit<ExtArgs> | null
+    /**
+     * The data used to create many ContentReports.
+     */
+    data: ContentReportCreateManyInput | ContentReportCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ContentReportIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ContentReport update
+   */
+  export type ContentReportUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContentReport
+     */
+    select?: ContentReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ContentReport
+     */
+    omit?: ContentReportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ContentReportInclude<ExtArgs> | null
+    /**
+     * The data needed to update a ContentReport.
+     */
+    data: XOR<ContentReportUpdateInput, ContentReportUncheckedUpdateInput>
+    /**
+     * Choose, which ContentReport to update.
+     */
+    where: ContentReportWhereUniqueInput
+  }
+
+  /**
+   * ContentReport updateMany
+   */
+  export type ContentReportUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ContentReports.
+     */
+    data: XOR<ContentReportUpdateManyMutationInput, ContentReportUncheckedUpdateManyInput>
+    /**
+     * Filter which ContentReports to update
+     */
+    where?: ContentReportWhereInput
+    /**
+     * Limit how many ContentReports to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ContentReport updateManyAndReturn
+   */
+  export type ContentReportUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContentReport
+     */
+    select?: ContentReportSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ContentReport
+     */
+    omit?: ContentReportOmit<ExtArgs> | null
+    /**
+     * The data used to update ContentReports.
+     */
+    data: XOR<ContentReportUpdateManyMutationInput, ContentReportUncheckedUpdateManyInput>
+    /**
+     * Filter which ContentReports to update
+     */
+    where?: ContentReportWhereInput
+    /**
+     * Limit how many ContentReports to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ContentReportIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ContentReport upsert
+   */
+  export type ContentReportUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContentReport
+     */
+    select?: ContentReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ContentReport
+     */
+    omit?: ContentReportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ContentReportInclude<ExtArgs> | null
+    /**
+     * The filter to search for the ContentReport to update in case it exists.
+     */
+    where: ContentReportWhereUniqueInput
+    /**
+     * In case the ContentReport found by the `where` argument doesn't exist, create a new ContentReport with this data.
+     */
+    create: XOR<ContentReportCreateInput, ContentReportUncheckedCreateInput>
+    /**
+     * In case the ContentReport was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ContentReportUpdateInput, ContentReportUncheckedUpdateInput>
+  }
+
+  /**
+   * ContentReport delete
+   */
+  export type ContentReportDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContentReport
+     */
+    select?: ContentReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ContentReport
+     */
+    omit?: ContentReportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ContentReportInclude<ExtArgs> | null
+    /**
+     * Filter which ContentReport to delete.
+     */
+    where: ContentReportWhereUniqueInput
+  }
+
+  /**
+   * ContentReport deleteMany
+   */
+  export type ContentReportDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ContentReports to delete
+     */
+    where?: ContentReportWhereInput
+    /**
+     * Limit how many ContentReports to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * ContentReport.subject
+   */
+  export type ContentReport$subjectArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Graduate
+     */
+    select?: GraduateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Graduate
+     */
+    omit?: GraduateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GraduateInclude<ExtArgs> | null
+    where?: GraduateWhereInput
+  }
+
+  /**
+   * ContentReport without action
+   */
+  export type ContentReportDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContentReport
+     */
+    select?: ContentReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ContentReport
+     */
+    omit?: ContentReportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ContentReportInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model MemberBlock
+   */
+
+  export type AggregateMemberBlock = {
+    _count: MemberBlockCountAggregateOutputType | null
+    _min: MemberBlockMinAggregateOutputType | null
+    _max: MemberBlockMaxAggregateOutputType | null
+  }
+
+  export type MemberBlockMinAggregateOutputType = {
+    blockerId: string | null
+    blockedId: string | null
+    createdAt: Date | null
+  }
+
+  export type MemberBlockMaxAggregateOutputType = {
+    blockerId: string | null
+    blockedId: string | null
+    createdAt: Date | null
+  }
+
+  export type MemberBlockCountAggregateOutputType = {
+    blockerId: number
+    blockedId: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type MemberBlockMinAggregateInputType = {
+    blockerId?: true
+    blockedId?: true
+    createdAt?: true
+  }
+
+  export type MemberBlockMaxAggregateInputType = {
+    blockerId?: true
+    blockedId?: true
+    createdAt?: true
+  }
+
+  export type MemberBlockCountAggregateInputType = {
+    blockerId?: true
+    blockedId?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type MemberBlockAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which MemberBlock to aggregate.
+     */
+    where?: MemberBlockWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MemberBlocks to fetch.
+     */
+    orderBy?: MemberBlockOrderByWithRelationInput | MemberBlockOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: MemberBlockWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MemberBlocks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MemberBlocks.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned MemberBlocks
+    **/
+    _count?: true | MemberBlockCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: MemberBlockMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: MemberBlockMaxAggregateInputType
+  }
+
+  export type GetMemberBlockAggregateType<T extends MemberBlockAggregateArgs> = {
+        [P in keyof T & keyof AggregateMemberBlock]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateMemberBlock[P]>
+      : GetScalarType<T[P], AggregateMemberBlock[P]>
+  }
+
+
+
+
+  export type MemberBlockGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MemberBlockWhereInput
+    orderBy?: MemberBlockOrderByWithAggregationInput | MemberBlockOrderByWithAggregationInput[]
+    by: MemberBlockScalarFieldEnum[] | MemberBlockScalarFieldEnum
+    having?: MemberBlockScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: MemberBlockCountAggregateInputType | true
+    _min?: MemberBlockMinAggregateInputType
+    _max?: MemberBlockMaxAggregateInputType
+  }
+
+  export type MemberBlockGroupByOutputType = {
+    blockerId: string
+    blockedId: string
+    createdAt: Date
+    _count: MemberBlockCountAggregateOutputType | null
+    _min: MemberBlockMinAggregateOutputType | null
+    _max: MemberBlockMaxAggregateOutputType | null
+  }
+
+  type GetMemberBlockGroupByPayload<T extends MemberBlockGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<MemberBlockGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof MemberBlockGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], MemberBlockGroupByOutputType[P]>
+            : GetScalarType<T[P], MemberBlockGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type MemberBlockSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    blockerId?: boolean
+    blockedId?: boolean
+    createdAt?: boolean
+    blocker?: boolean | GraduateDefaultArgs<ExtArgs>
+    blocked?: boolean | GraduateDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["memberBlock"]>
+
+  export type MemberBlockSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    blockerId?: boolean
+    blockedId?: boolean
+    createdAt?: boolean
+    blocker?: boolean | GraduateDefaultArgs<ExtArgs>
+    blocked?: boolean | GraduateDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["memberBlock"]>
+
+  export type MemberBlockSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    blockerId?: boolean
+    blockedId?: boolean
+    createdAt?: boolean
+    blocker?: boolean | GraduateDefaultArgs<ExtArgs>
+    blocked?: boolean | GraduateDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["memberBlock"]>
+
+  export type MemberBlockSelectScalar = {
+    blockerId?: boolean
+    blockedId?: boolean
+    createdAt?: boolean
+  }
+
+  export type MemberBlockOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"blockerId" | "blockedId" | "createdAt", ExtArgs["result"]["memberBlock"]>
+  export type MemberBlockInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    blocker?: boolean | GraduateDefaultArgs<ExtArgs>
+    blocked?: boolean | GraduateDefaultArgs<ExtArgs>
+  }
+  export type MemberBlockIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    blocker?: boolean | GraduateDefaultArgs<ExtArgs>
+    blocked?: boolean | GraduateDefaultArgs<ExtArgs>
+  }
+  export type MemberBlockIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    blocker?: boolean | GraduateDefaultArgs<ExtArgs>
+    blocked?: boolean | GraduateDefaultArgs<ExtArgs>
+  }
+
+  export type $MemberBlockPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "MemberBlock"
+    objects: {
+      blocker: Prisma.$GraduatePayload<ExtArgs>
+      blocked: Prisma.$GraduatePayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      blockerId: string
+      blockedId: string
+      createdAt: Date
+    }, ExtArgs["result"]["memberBlock"]>
+    composites: {}
+  }
+
+  type MemberBlockGetPayload<S extends boolean | null | undefined | MemberBlockDefaultArgs> = $Result.GetResult<Prisma.$MemberBlockPayload, S>
+
+  type MemberBlockCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<MemberBlockFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: MemberBlockCountAggregateInputType | true
+    }
+
+  export interface MemberBlockDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['MemberBlock'], meta: { name: 'MemberBlock' } }
+    /**
+     * Find zero or one MemberBlock that matches the filter.
+     * @param {MemberBlockFindUniqueArgs} args - Arguments to find a MemberBlock
+     * @example
+     * // Get one MemberBlock
+     * const memberBlock = await prisma.memberBlock.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends MemberBlockFindUniqueArgs>(args: SelectSubset<T, MemberBlockFindUniqueArgs<ExtArgs>>): Prisma__MemberBlockClient<$Result.GetResult<Prisma.$MemberBlockPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one MemberBlock that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {MemberBlockFindUniqueOrThrowArgs} args - Arguments to find a MemberBlock
+     * @example
+     * // Get one MemberBlock
+     * const memberBlock = await prisma.memberBlock.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends MemberBlockFindUniqueOrThrowArgs>(args: SelectSubset<T, MemberBlockFindUniqueOrThrowArgs<ExtArgs>>): Prisma__MemberBlockClient<$Result.GetResult<Prisma.$MemberBlockPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first MemberBlock that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MemberBlockFindFirstArgs} args - Arguments to find a MemberBlock
+     * @example
+     * // Get one MemberBlock
+     * const memberBlock = await prisma.memberBlock.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends MemberBlockFindFirstArgs>(args?: SelectSubset<T, MemberBlockFindFirstArgs<ExtArgs>>): Prisma__MemberBlockClient<$Result.GetResult<Prisma.$MemberBlockPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first MemberBlock that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MemberBlockFindFirstOrThrowArgs} args - Arguments to find a MemberBlock
+     * @example
+     * // Get one MemberBlock
+     * const memberBlock = await prisma.memberBlock.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends MemberBlockFindFirstOrThrowArgs>(args?: SelectSubset<T, MemberBlockFindFirstOrThrowArgs<ExtArgs>>): Prisma__MemberBlockClient<$Result.GetResult<Prisma.$MemberBlockPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more MemberBlocks that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MemberBlockFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all MemberBlocks
+     * const memberBlocks = await prisma.memberBlock.findMany()
+     * 
+     * // Get first 10 MemberBlocks
+     * const memberBlocks = await prisma.memberBlock.findMany({ take: 10 })
+     * 
+     * // Only select the `blockerId`
+     * const memberBlockWithBlockerIdOnly = await prisma.memberBlock.findMany({ select: { blockerId: true } })
+     * 
+     */
+    findMany<T extends MemberBlockFindManyArgs>(args?: SelectSubset<T, MemberBlockFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MemberBlockPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a MemberBlock.
+     * @param {MemberBlockCreateArgs} args - Arguments to create a MemberBlock.
+     * @example
+     * // Create one MemberBlock
+     * const MemberBlock = await prisma.memberBlock.create({
+     *   data: {
+     *     // ... data to create a MemberBlock
+     *   }
+     * })
+     * 
+     */
+    create<T extends MemberBlockCreateArgs>(args: SelectSubset<T, MemberBlockCreateArgs<ExtArgs>>): Prisma__MemberBlockClient<$Result.GetResult<Prisma.$MemberBlockPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many MemberBlocks.
+     * @param {MemberBlockCreateManyArgs} args - Arguments to create many MemberBlocks.
+     * @example
+     * // Create many MemberBlocks
+     * const memberBlock = await prisma.memberBlock.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends MemberBlockCreateManyArgs>(args?: SelectSubset<T, MemberBlockCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many MemberBlocks and returns the data saved in the database.
+     * @param {MemberBlockCreateManyAndReturnArgs} args - Arguments to create many MemberBlocks.
+     * @example
+     * // Create many MemberBlocks
+     * const memberBlock = await prisma.memberBlock.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many MemberBlocks and only return the `blockerId`
+     * const memberBlockWithBlockerIdOnly = await prisma.memberBlock.createManyAndReturn({
+     *   select: { blockerId: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends MemberBlockCreateManyAndReturnArgs>(args?: SelectSubset<T, MemberBlockCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MemberBlockPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a MemberBlock.
+     * @param {MemberBlockDeleteArgs} args - Arguments to delete one MemberBlock.
+     * @example
+     * // Delete one MemberBlock
+     * const MemberBlock = await prisma.memberBlock.delete({
+     *   where: {
+     *     // ... filter to delete one MemberBlock
+     *   }
+     * })
+     * 
+     */
+    delete<T extends MemberBlockDeleteArgs>(args: SelectSubset<T, MemberBlockDeleteArgs<ExtArgs>>): Prisma__MemberBlockClient<$Result.GetResult<Prisma.$MemberBlockPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one MemberBlock.
+     * @param {MemberBlockUpdateArgs} args - Arguments to update one MemberBlock.
+     * @example
+     * // Update one MemberBlock
+     * const memberBlock = await prisma.memberBlock.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends MemberBlockUpdateArgs>(args: SelectSubset<T, MemberBlockUpdateArgs<ExtArgs>>): Prisma__MemberBlockClient<$Result.GetResult<Prisma.$MemberBlockPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more MemberBlocks.
+     * @param {MemberBlockDeleteManyArgs} args - Arguments to filter MemberBlocks to delete.
+     * @example
+     * // Delete a few MemberBlocks
+     * const { count } = await prisma.memberBlock.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends MemberBlockDeleteManyArgs>(args?: SelectSubset<T, MemberBlockDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more MemberBlocks.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MemberBlockUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many MemberBlocks
+     * const memberBlock = await prisma.memberBlock.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends MemberBlockUpdateManyArgs>(args: SelectSubset<T, MemberBlockUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more MemberBlocks and returns the data updated in the database.
+     * @param {MemberBlockUpdateManyAndReturnArgs} args - Arguments to update many MemberBlocks.
+     * @example
+     * // Update many MemberBlocks
+     * const memberBlock = await prisma.memberBlock.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more MemberBlocks and only return the `blockerId`
+     * const memberBlockWithBlockerIdOnly = await prisma.memberBlock.updateManyAndReturn({
+     *   select: { blockerId: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends MemberBlockUpdateManyAndReturnArgs>(args: SelectSubset<T, MemberBlockUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MemberBlockPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one MemberBlock.
+     * @param {MemberBlockUpsertArgs} args - Arguments to update or create a MemberBlock.
+     * @example
+     * // Update or create a MemberBlock
+     * const memberBlock = await prisma.memberBlock.upsert({
+     *   create: {
+     *     // ... data to create a MemberBlock
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the MemberBlock we want to update
+     *   }
+     * })
+     */
+    upsert<T extends MemberBlockUpsertArgs>(args: SelectSubset<T, MemberBlockUpsertArgs<ExtArgs>>): Prisma__MemberBlockClient<$Result.GetResult<Prisma.$MemberBlockPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of MemberBlocks.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MemberBlockCountArgs} args - Arguments to filter MemberBlocks to count.
+     * @example
+     * // Count the number of MemberBlocks
+     * const count = await prisma.memberBlock.count({
+     *   where: {
+     *     // ... the filter for the MemberBlocks we want to count
+     *   }
+     * })
+    **/
+    count<T extends MemberBlockCountArgs>(
+      args?: Subset<T, MemberBlockCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], MemberBlockCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a MemberBlock.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MemberBlockAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends MemberBlockAggregateArgs>(args: Subset<T, MemberBlockAggregateArgs>): Prisma.PrismaPromise<GetMemberBlockAggregateType<T>>
+
+    /**
+     * Group by MemberBlock.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MemberBlockGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends MemberBlockGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: MemberBlockGroupByArgs['orderBy'] }
+        : { orderBy?: MemberBlockGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, MemberBlockGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetMemberBlockGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the MemberBlock model
+   */
+  readonly fields: MemberBlockFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for MemberBlock.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__MemberBlockClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    blocker<T extends GraduateDefaultArgs<ExtArgs> = {}>(args?: Subset<T, GraduateDefaultArgs<ExtArgs>>): Prisma__GraduateClient<$Result.GetResult<Prisma.$GraduatePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    blocked<T extends GraduateDefaultArgs<ExtArgs> = {}>(args?: Subset<T, GraduateDefaultArgs<ExtArgs>>): Prisma__GraduateClient<$Result.GetResult<Prisma.$GraduatePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the MemberBlock model
+   */
+  interface MemberBlockFieldRefs {
+    readonly blockerId: FieldRef<"MemberBlock", 'String'>
+    readonly blockedId: FieldRef<"MemberBlock", 'String'>
+    readonly createdAt: FieldRef<"MemberBlock", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * MemberBlock findUnique
+   */
+  export type MemberBlockFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MemberBlock
+     */
+    select?: MemberBlockSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MemberBlock
+     */
+    omit?: MemberBlockOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MemberBlockInclude<ExtArgs> | null
+    /**
+     * Filter, which MemberBlock to fetch.
+     */
+    where: MemberBlockWhereUniqueInput
+  }
+
+  /**
+   * MemberBlock findUniqueOrThrow
+   */
+  export type MemberBlockFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MemberBlock
+     */
+    select?: MemberBlockSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MemberBlock
+     */
+    omit?: MemberBlockOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MemberBlockInclude<ExtArgs> | null
+    /**
+     * Filter, which MemberBlock to fetch.
+     */
+    where: MemberBlockWhereUniqueInput
+  }
+
+  /**
+   * MemberBlock findFirst
+   */
+  export type MemberBlockFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MemberBlock
+     */
+    select?: MemberBlockSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MemberBlock
+     */
+    omit?: MemberBlockOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MemberBlockInclude<ExtArgs> | null
+    /**
+     * Filter, which MemberBlock to fetch.
+     */
+    where?: MemberBlockWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MemberBlocks to fetch.
+     */
+    orderBy?: MemberBlockOrderByWithRelationInput | MemberBlockOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for MemberBlocks.
+     */
+    cursor?: MemberBlockWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MemberBlocks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MemberBlocks.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of MemberBlocks.
+     */
+    distinct?: MemberBlockScalarFieldEnum | MemberBlockScalarFieldEnum[]
+  }
+
+  /**
+   * MemberBlock findFirstOrThrow
+   */
+  export type MemberBlockFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MemberBlock
+     */
+    select?: MemberBlockSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MemberBlock
+     */
+    omit?: MemberBlockOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MemberBlockInclude<ExtArgs> | null
+    /**
+     * Filter, which MemberBlock to fetch.
+     */
+    where?: MemberBlockWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MemberBlocks to fetch.
+     */
+    orderBy?: MemberBlockOrderByWithRelationInput | MemberBlockOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for MemberBlocks.
+     */
+    cursor?: MemberBlockWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MemberBlocks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MemberBlocks.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of MemberBlocks.
+     */
+    distinct?: MemberBlockScalarFieldEnum | MemberBlockScalarFieldEnum[]
+  }
+
+  /**
+   * MemberBlock findMany
+   */
+  export type MemberBlockFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MemberBlock
+     */
+    select?: MemberBlockSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MemberBlock
+     */
+    omit?: MemberBlockOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MemberBlockInclude<ExtArgs> | null
+    /**
+     * Filter, which MemberBlocks to fetch.
+     */
+    where?: MemberBlockWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MemberBlocks to fetch.
+     */
+    orderBy?: MemberBlockOrderByWithRelationInput | MemberBlockOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing MemberBlocks.
+     */
+    cursor?: MemberBlockWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MemberBlocks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MemberBlocks.
+     */
+    skip?: number
+    distinct?: MemberBlockScalarFieldEnum | MemberBlockScalarFieldEnum[]
+  }
+
+  /**
+   * MemberBlock create
+   */
+  export type MemberBlockCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MemberBlock
+     */
+    select?: MemberBlockSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MemberBlock
+     */
+    omit?: MemberBlockOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MemberBlockInclude<ExtArgs> | null
+    /**
+     * The data needed to create a MemberBlock.
+     */
+    data: XOR<MemberBlockCreateInput, MemberBlockUncheckedCreateInput>
+  }
+
+  /**
+   * MemberBlock createMany
+   */
+  export type MemberBlockCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many MemberBlocks.
+     */
+    data: MemberBlockCreateManyInput | MemberBlockCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * MemberBlock createManyAndReturn
+   */
+  export type MemberBlockCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MemberBlock
+     */
+    select?: MemberBlockSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the MemberBlock
+     */
+    omit?: MemberBlockOmit<ExtArgs> | null
+    /**
+     * The data used to create many MemberBlocks.
+     */
+    data: MemberBlockCreateManyInput | MemberBlockCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MemberBlockIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * MemberBlock update
+   */
+  export type MemberBlockUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MemberBlock
+     */
+    select?: MemberBlockSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MemberBlock
+     */
+    omit?: MemberBlockOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MemberBlockInclude<ExtArgs> | null
+    /**
+     * The data needed to update a MemberBlock.
+     */
+    data: XOR<MemberBlockUpdateInput, MemberBlockUncheckedUpdateInput>
+    /**
+     * Choose, which MemberBlock to update.
+     */
+    where: MemberBlockWhereUniqueInput
+  }
+
+  /**
+   * MemberBlock updateMany
+   */
+  export type MemberBlockUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update MemberBlocks.
+     */
+    data: XOR<MemberBlockUpdateManyMutationInput, MemberBlockUncheckedUpdateManyInput>
+    /**
+     * Filter which MemberBlocks to update
+     */
+    where?: MemberBlockWhereInput
+    /**
+     * Limit how many MemberBlocks to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * MemberBlock updateManyAndReturn
+   */
+  export type MemberBlockUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MemberBlock
+     */
+    select?: MemberBlockSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the MemberBlock
+     */
+    omit?: MemberBlockOmit<ExtArgs> | null
+    /**
+     * The data used to update MemberBlocks.
+     */
+    data: XOR<MemberBlockUpdateManyMutationInput, MemberBlockUncheckedUpdateManyInput>
+    /**
+     * Filter which MemberBlocks to update
+     */
+    where?: MemberBlockWhereInput
+    /**
+     * Limit how many MemberBlocks to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MemberBlockIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * MemberBlock upsert
+   */
+  export type MemberBlockUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MemberBlock
+     */
+    select?: MemberBlockSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MemberBlock
+     */
+    omit?: MemberBlockOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MemberBlockInclude<ExtArgs> | null
+    /**
+     * The filter to search for the MemberBlock to update in case it exists.
+     */
+    where: MemberBlockWhereUniqueInput
+    /**
+     * In case the MemberBlock found by the `where` argument doesn't exist, create a new MemberBlock with this data.
+     */
+    create: XOR<MemberBlockCreateInput, MemberBlockUncheckedCreateInput>
+    /**
+     * In case the MemberBlock was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<MemberBlockUpdateInput, MemberBlockUncheckedUpdateInput>
+  }
+
+  /**
+   * MemberBlock delete
+   */
+  export type MemberBlockDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MemberBlock
+     */
+    select?: MemberBlockSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MemberBlock
+     */
+    omit?: MemberBlockOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MemberBlockInclude<ExtArgs> | null
+    /**
+     * Filter which MemberBlock to delete.
+     */
+    where: MemberBlockWhereUniqueInput
+  }
+
+  /**
+   * MemberBlock deleteMany
+   */
+  export type MemberBlockDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which MemberBlocks to delete
+     */
+    where?: MemberBlockWhereInput
+    /**
+     * Limit how many MemberBlocks to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * MemberBlock without action
+   */
+  export type MemberBlockDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MemberBlock
+     */
+    select?: MemberBlockSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MemberBlock
+     */
+    omit?: MemberBlockOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MemberBlockInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -47352,6 +49946,33 @@ export namespace Prisma {
   export type ImportJobErrorScalarFieldEnum = (typeof ImportJobErrorScalarFieldEnum)[keyof typeof ImportJobErrorScalarFieldEnum]
 
 
+  export const ContentReportScalarFieldEnum: {
+    id: 'id',
+    reporterId: 'reporterId',
+    targetType: 'targetType',
+    targetId: 'targetId',
+    subjectId: 'subjectId',
+    reason: 'reason',
+    details: 'details',
+    status: 'status',
+    createdAt: 'createdAt',
+    reviewedAt: 'reviewedAt',
+    reviewedBy: 'reviewedBy',
+    resolution: 'resolution'
+  };
+
+  export type ContentReportScalarFieldEnum = (typeof ContentReportScalarFieldEnum)[keyof typeof ContentReportScalarFieldEnum]
+
+
+  export const MemberBlockScalarFieldEnum: {
+    blockerId: 'blockerId',
+    blockedId: 'blockedId',
+    createdAt: 'createdAt'
+  };
+
+  export type MemberBlockScalarFieldEnum = (typeof MemberBlockScalarFieldEnum)[keyof typeof MemberBlockScalarFieldEnum]
+
+
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
@@ -47710,6 +50331,48 @@ export namespace Prisma {
    * Reference to a field of type 'ImportJobStatus[]'
    */
   export type ListEnumImportJobStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ImportJobStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'ReportTarget'
+   */
+  export type EnumReportTargetFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ReportTarget'>
+    
+
+
+  /**
+   * Reference to a field of type 'ReportTarget[]'
+   */
+  export type ListEnumReportTargetFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ReportTarget[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'ReportReason'
+   */
+  export type EnumReportReasonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ReportReason'>
+    
+
+
+  /**
+   * Reference to a field of type 'ReportReason[]'
+   */
+  export type ListEnumReportReasonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ReportReason[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'ReportStatus'
+   */
+  export type EnumReportStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ReportStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'ReportStatus[]'
+   */
+  export type ListEnumReportStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ReportStatus[]'>
     
 
 
@@ -48210,6 +50873,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewListRelationFilter
     profileViewsGiven?: ProfileViewListRelationFilter
     idCards?: IdCardListRelationFilter
+    reportsMade?: ContentReportListRelationFilter
+    reportsAgainst?: ContentReportListRelationFilter
+    blocksMade?: MemberBlockListRelationFilter
+    blocksReceived?: MemberBlockListRelationFilter
   }
 
   export type GraduateOrderByWithRelationInput = {
@@ -48288,6 +50955,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewOrderByRelationAggregateInput
     profileViewsGiven?: ProfileViewOrderByRelationAggregateInput
     idCards?: IdCardOrderByRelationAggregateInput
+    reportsMade?: ContentReportOrderByRelationAggregateInput
+    reportsAgainst?: ContentReportOrderByRelationAggregateInput
+    blocksMade?: MemberBlockOrderByRelationAggregateInput
+    blocksReceived?: MemberBlockOrderByRelationAggregateInput
   }
 
   export type GraduateWhereUniqueInput = Prisma.AtLeast<{
@@ -48369,6 +51040,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewListRelationFilter
     profileViewsGiven?: ProfileViewListRelationFilter
     idCards?: IdCardListRelationFilter
+    reportsMade?: ContentReportListRelationFilter
+    reportsAgainst?: ContentReportListRelationFilter
+    blocksMade?: MemberBlockListRelationFilter
+    blocksReceived?: MemberBlockListRelationFilter
   }, "id" | "userId" | "registrationNo">
 
   export type GraduateOrderByWithAggregationInput = {
@@ -50806,6 +53481,149 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"ImportJobError"> | Date | string
   }
 
+  export type ContentReportWhereInput = {
+    AND?: ContentReportWhereInput | ContentReportWhereInput[]
+    OR?: ContentReportWhereInput[]
+    NOT?: ContentReportWhereInput | ContentReportWhereInput[]
+    id?: StringFilter<"ContentReport"> | string
+    reporterId?: StringFilter<"ContentReport"> | string
+    targetType?: EnumReportTargetFilter<"ContentReport"> | $Enums.ReportTarget
+    targetId?: StringFilter<"ContentReport"> | string
+    subjectId?: StringNullableFilter<"ContentReport"> | string | null
+    reason?: EnumReportReasonFilter<"ContentReport"> | $Enums.ReportReason
+    details?: StringNullableFilter<"ContentReport"> | string | null
+    status?: EnumReportStatusFilter<"ContentReport"> | $Enums.ReportStatus
+    createdAt?: DateTimeFilter<"ContentReport"> | Date | string
+    reviewedAt?: DateTimeNullableFilter<"ContentReport"> | Date | string | null
+    reviewedBy?: StringNullableFilter<"ContentReport"> | string | null
+    resolution?: StringNullableFilter<"ContentReport"> | string | null
+    reporter?: XOR<GraduateScalarRelationFilter, GraduateWhereInput>
+    subject?: XOR<GraduateNullableScalarRelationFilter, GraduateWhereInput> | null
+  }
+
+  export type ContentReportOrderByWithRelationInput = {
+    id?: SortOrder
+    reporterId?: SortOrder
+    targetType?: SortOrder
+    targetId?: SortOrder
+    subjectId?: SortOrderInput | SortOrder
+    reason?: SortOrder
+    details?: SortOrderInput | SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    reviewedAt?: SortOrderInput | SortOrder
+    reviewedBy?: SortOrderInput | SortOrder
+    resolution?: SortOrderInput | SortOrder
+    reporter?: GraduateOrderByWithRelationInput
+    subject?: GraduateOrderByWithRelationInput
+  }
+
+  export type ContentReportWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    reporterId_targetType_targetId?: ContentReportReporterIdTargetTypeTargetIdCompoundUniqueInput
+    AND?: ContentReportWhereInput | ContentReportWhereInput[]
+    OR?: ContentReportWhereInput[]
+    NOT?: ContentReportWhereInput | ContentReportWhereInput[]
+    reporterId?: StringFilter<"ContentReport"> | string
+    targetType?: EnumReportTargetFilter<"ContentReport"> | $Enums.ReportTarget
+    targetId?: StringFilter<"ContentReport"> | string
+    subjectId?: StringNullableFilter<"ContentReport"> | string | null
+    reason?: EnumReportReasonFilter<"ContentReport"> | $Enums.ReportReason
+    details?: StringNullableFilter<"ContentReport"> | string | null
+    status?: EnumReportStatusFilter<"ContentReport"> | $Enums.ReportStatus
+    createdAt?: DateTimeFilter<"ContentReport"> | Date | string
+    reviewedAt?: DateTimeNullableFilter<"ContentReport"> | Date | string | null
+    reviewedBy?: StringNullableFilter<"ContentReport"> | string | null
+    resolution?: StringNullableFilter<"ContentReport"> | string | null
+    reporter?: XOR<GraduateScalarRelationFilter, GraduateWhereInput>
+    subject?: XOR<GraduateNullableScalarRelationFilter, GraduateWhereInput> | null
+  }, "id" | "reporterId_targetType_targetId">
+
+  export type ContentReportOrderByWithAggregationInput = {
+    id?: SortOrder
+    reporterId?: SortOrder
+    targetType?: SortOrder
+    targetId?: SortOrder
+    subjectId?: SortOrderInput | SortOrder
+    reason?: SortOrder
+    details?: SortOrderInput | SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    reviewedAt?: SortOrderInput | SortOrder
+    reviewedBy?: SortOrderInput | SortOrder
+    resolution?: SortOrderInput | SortOrder
+    _count?: ContentReportCountOrderByAggregateInput
+    _max?: ContentReportMaxOrderByAggregateInput
+    _min?: ContentReportMinOrderByAggregateInput
+  }
+
+  export type ContentReportScalarWhereWithAggregatesInput = {
+    AND?: ContentReportScalarWhereWithAggregatesInput | ContentReportScalarWhereWithAggregatesInput[]
+    OR?: ContentReportScalarWhereWithAggregatesInput[]
+    NOT?: ContentReportScalarWhereWithAggregatesInput | ContentReportScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"ContentReport"> | string
+    reporterId?: StringWithAggregatesFilter<"ContentReport"> | string
+    targetType?: EnumReportTargetWithAggregatesFilter<"ContentReport"> | $Enums.ReportTarget
+    targetId?: StringWithAggregatesFilter<"ContentReport"> | string
+    subjectId?: StringNullableWithAggregatesFilter<"ContentReport"> | string | null
+    reason?: EnumReportReasonWithAggregatesFilter<"ContentReport"> | $Enums.ReportReason
+    details?: StringNullableWithAggregatesFilter<"ContentReport"> | string | null
+    status?: EnumReportStatusWithAggregatesFilter<"ContentReport"> | $Enums.ReportStatus
+    createdAt?: DateTimeWithAggregatesFilter<"ContentReport"> | Date | string
+    reviewedAt?: DateTimeNullableWithAggregatesFilter<"ContentReport"> | Date | string | null
+    reviewedBy?: StringNullableWithAggregatesFilter<"ContentReport"> | string | null
+    resolution?: StringNullableWithAggregatesFilter<"ContentReport"> | string | null
+  }
+
+  export type MemberBlockWhereInput = {
+    AND?: MemberBlockWhereInput | MemberBlockWhereInput[]
+    OR?: MemberBlockWhereInput[]
+    NOT?: MemberBlockWhereInput | MemberBlockWhereInput[]
+    blockerId?: StringFilter<"MemberBlock"> | string
+    blockedId?: StringFilter<"MemberBlock"> | string
+    createdAt?: DateTimeFilter<"MemberBlock"> | Date | string
+    blocker?: XOR<GraduateScalarRelationFilter, GraduateWhereInput>
+    blocked?: XOR<GraduateScalarRelationFilter, GraduateWhereInput>
+  }
+
+  export type MemberBlockOrderByWithRelationInput = {
+    blockerId?: SortOrder
+    blockedId?: SortOrder
+    createdAt?: SortOrder
+    blocker?: GraduateOrderByWithRelationInput
+    blocked?: GraduateOrderByWithRelationInput
+  }
+
+  export type MemberBlockWhereUniqueInput = Prisma.AtLeast<{
+    blockerId_blockedId?: MemberBlockBlockerIdBlockedIdCompoundUniqueInput
+    AND?: MemberBlockWhereInput | MemberBlockWhereInput[]
+    OR?: MemberBlockWhereInput[]
+    NOT?: MemberBlockWhereInput | MemberBlockWhereInput[]
+    blockerId?: StringFilter<"MemberBlock"> | string
+    blockedId?: StringFilter<"MemberBlock"> | string
+    createdAt?: DateTimeFilter<"MemberBlock"> | Date | string
+    blocker?: XOR<GraduateScalarRelationFilter, GraduateWhereInput>
+    blocked?: XOR<GraduateScalarRelationFilter, GraduateWhereInput>
+  }, "blockerId_blockedId">
+
+  export type MemberBlockOrderByWithAggregationInput = {
+    blockerId?: SortOrder
+    blockedId?: SortOrder
+    createdAt?: SortOrder
+    _count?: MemberBlockCountOrderByAggregateInput
+    _max?: MemberBlockMaxOrderByAggregateInput
+    _min?: MemberBlockMinOrderByAggregateInput
+  }
+
+  export type MemberBlockScalarWhereWithAggregatesInput = {
+    AND?: MemberBlockScalarWhereWithAggregatesInput | MemberBlockScalarWhereWithAggregatesInput[]
+    OR?: MemberBlockScalarWhereWithAggregatesInput[]
+    NOT?: MemberBlockScalarWhereWithAggregatesInput | MemberBlockScalarWhereWithAggregatesInput[]
+    blockerId?: StringWithAggregatesFilter<"MemberBlock"> | string
+    blockedId?: StringWithAggregatesFilter<"MemberBlock"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"MemberBlock"> | Date | string
+  }
+
   export type UserCreateInput = {
     id?: string
     name: string
@@ -51342,6 +54160,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewCreateNestedManyWithoutViewerInput
     idCards?: IdCardCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockCreateNestedManyWithoutBlockedInput
   }
 
   export type GraduateUncheckedCreateInput = {
@@ -51419,6 +54241,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUncheckedCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewUncheckedCreateNestedManyWithoutViewerInput
     idCards?: IdCardUncheckedCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportUncheckedCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockUncheckedCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockUncheckedCreateNestedManyWithoutBlockedInput
   }
 
   export type GraduateUpdateInput = {
@@ -51496,6 +54322,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUpdateManyWithoutViewerNestedInput
     idCards?: IdCardUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUpdateManyWithoutBlockedNestedInput
   }
 
   export type GraduateUncheckedUpdateInput = {
@@ -51573,6 +54403,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUncheckedUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUncheckedUpdateManyWithoutViewerNestedInput
     idCards?: IdCardUncheckedUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUncheckedUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUncheckedUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUncheckedUpdateManyWithoutBlockedNestedInput
   }
 
   export type GraduateCreateManyInput = {
@@ -54243,6 +57077,149 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type ContentReportCreateInput = {
+    id?: string
+    targetType: $Enums.ReportTarget
+    targetId: string
+    reason: $Enums.ReportReason
+    details?: string | null
+    status?: $Enums.ReportStatus
+    createdAt?: Date | string
+    reviewedAt?: Date | string | null
+    reviewedBy?: string | null
+    resolution?: string | null
+    reporter: GraduateCreateNestedOneWithoutReportsMadeInput
+    subject?: GraduateCreateNestedOneWithoutReportsAgainstInput
+  }
+
+  export type ContentReportUncheckedCreateInput = {
+    id?: string
+    reporterId: string
+    targetType: $Enums.ReportTarget
+    targetId: string
+    subjectId?: string | null
+    reason: $Enums.ReportReason
+    details?: string | null
+    status?: $Enums.ReportStatus
+    createdAt?: Date | string
+    reviewedAt?: Date | string | null
+    reviewedBy?: string | null
+    resolution?: string | null
+  }
+
+  export type ContentReportUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    targetType?: EnumReportTargetFieldUpdateOperationsInput | $Enums.ReportTarget
+    targetId?: StringFieldUpdateOperationsInput | string
+    reason?: EnumReportReasonFieldUpdateOperationsInput | $Enums.ReportReason
+    details?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    resolution?: NullableStringFieldUpdateOperationsInput | string | null
+    reporter?: GraduateUpdateOneRequiredWithoutReportsMadeNestedInput
+    subject?: GraduateUpdateOneWithoutReportsAgainstNestedInput
+  }
+
+  export type ContentReportUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reporterId?: StringFieldUpdateOperationsInput | string
+    targetType?: EnumReportTargetFieldUpdateOperationsInput | $Enums.ReportTarget
+    targetId?: StringFieldUpdateOperationsInput | string
+    subjectId?: NullableStringFieldUpdateOperationsInput | string | null
+    reason?: EnumReportReasonFieldUpdateOperationsInput | $Enums.ReportReason
+    details?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    resolution?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type ContentReportCreateManyInput = {
+    id?: string
+    reporterId: string
+    targetType: $Enums.ReportTarget
+    targetId: string
+    subjectId?: string | null
+    reason: $Enums.ReportReason
+    details?: string | null
+    status?: $Enums.ReportStatus
+    createdAt?: Date | string
+    reviewedAt?: Date | string | null
+    reviewedBy?: string | null
+    resolution?: string | null
+  }
+
+  export type ContentReportUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    targetType?: EnumReportTargetFieldUpdateOperationsInput | $Enums.ReportTarget
+    targetId?: StringFieldUpdateOperationsInput | string
+    reason?: EnumReportReasonFieldUpdateOperationsInput | $Enums.ReportReason
+    details?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    resolution?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type ContentReportUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reporterId?: StringFieldUpdateOperationsInput | string
+    targetType?: EnumReportTargetFieldUpdateOperationsInput | $Enums.ReportTarget
+    targetId?: StringFieldUpdateOperationsInput | string
+    subjectId?: NullableStringFieldUpdateOperationsInput | string | null
+    reason?: EnumReportReasonFieldUpdateOperationsInput | $Enums.ReportReason
+    details?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    resolution?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type MemberBlockCreateInput = {
+    createdAt?: Date | string
+    blocker: GraduateCreateNestedOneWithoutBlocksMadeInput
+    blocked: GraduateCreateNestedOneWithoutBlocksReceivedInput
+  }
+
+  export type MemberBlockUncheckedCreateInput = {
+    blockerId: string
+    blockedId: string
+    createdAt?: Date | string
+  }
+
+  export type MemberBlockUpdateInput = {
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    blocker?: GraduateUpdateOneRequiredWithoutBlocksMadeNestedInput
+    blocked?: GraduateUpdateOneRequiredWithoutBlocksReceivedNestedInput
+  }
+
+  export type MemberBlockUncheckedUpdateInput = {
+    blockerId?: StringFieldUpdateOperationsInput | string
+    blockedId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MemberBlockCreateManyInput = {
+    blockerId: string
+    blockedId: string
+    createdAt?: Date | string
+  }
+
+  export type MemberBlockUpdateManyMutationInput = {
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MemberBlockUncheckedUpdateManyInput = {
+    blockerId?: StringFieldUpdateOperationsInput | string
+    blockedId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -54823,6 +57800,18 @@ export namespace Prisma {
     none?: IdCardWhereInput
   }
 
+  export type ContentReportListRelationFilter = {
+    every?: ContentReportWhereInput
+    some?: ContentReportWhereInput
+    none?: ContentReportWhereInput
+  }
+
+  export type MemberBlockListRelationFilter = {
+    every?: MemberBlockWhereInput
+    some?: MemberBlockWhereInput
+    none?: MemberBlockWhereInput
+  }
+
   export type EmploymentOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -54908,6 +57897,14 @@ export namespace Prisma {
   }
 
   export type IdCardOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type ContentReportOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type MemberBlockOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -56700,6 +59697,131 @@ export namespace Prisma {
     rowNumber?: SortOrder
   }
 
+  export type EnumReportTargetFilter<$PrismaModel = never> = {
+    equals?: $Enums.ReportTarget | EnumReportTargetFieldRefInput<$PrismaModel>
+    in?: $Enums.ReportTarget[] | ListEnumReportTargetFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ReportTarget[] | ListEnumReportTargetFieldRefInput<$PrismaModel>
+    not?: NestedEnumReportTargetFilter<$PrismaModel> | $Enums.ReportTarget
+  }
+
+  export type EnumReportReasonFilter<$PrismaModel = never> = {
+    equals?: $Enums.ReportReason | EnumReportReasonFieldRefInput<$PrismaModel>
+    in?: $Enums.ReportReason[] | ListEnumReportReasonFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ReportReason[] | ListEnumReportReasonFieldRefInput<$PrismaModel>
+    not?: NestedEnumReportReasonFilter<$PrismaModel> | $Enums.ReportReason
+  }
+
+  export type EnumReportStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.ReportStatus | EnumReportStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ReportStatus[] | ListEnumReportStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ReportStatus[] | ListEnumReportStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumReportStatusFilter<$PrismaModel> | $Enums.ReportStatus
+  }
+
+  export type ContentReportReporterIdTargetTypeTargetIdCompoundUniqueInput = {
+    reporterId: string
+    targetType: $Enums.ReportTarget
+    targetId: string
+  }
+
+  export type ContentReportCountOrderByAggregateInput = {
+    id?: SortOrder
+    reporterId?: SortOrder
+    targetType?: SortOrder
+    targetId?: SortOrder
+    subjectId?: SortOrder
+    reason?: SortOrder
+    details?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    reviewedAt?: SortOrder
+    reviewedBy?: SortOrder
+    resolution?: SortOrder
+  }
+
+  export type ContentReportMaxOrderByAggregateInput = {
+    id?: SortOrder
+    reporterId?: SortOrder
+    targetType?: SortOrder
+    targetId?: SortOrder
+    subjectId?: SortOrder
+    reason?: SortOrder
+    details?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    reviewedAt?: SortOrder
+    reviewedBy?: SortOrder
+    resolution?: SortOrder
+  }
+
+  export type ContentReportMinOrderByAggregateInput = {
+    id?: SortOrder
+    reporterId?: SortOrder
+    targetType?: SortOrder
+    targetId?: SortOrder
+    subjectId?: SortOrder
+    reason?: SortOrder
+    details?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    reviewedAt?: SortOrder
+    reviewedBy?: SortOrder
+    resolution?: SortOrder
+  }
+
+  export type EnumReportTargetWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ReportTarget | EnumReportTargetFieldRefInput<$PrismaModel>
+    in?: $Enums.ReportTarget[] | ListEnumReportTargetFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ReportTarget[] | ListEnumReportTargetFieldRefInput<$PrismaModel>
+    not?: NestedEnumReportTargetWithAggregatesFilter<$PrismaModel> | $Enums.ReportTarget
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumReportTargetFilter<$PrismaModel>
+    _max?: NestedEnumReportTargetFilter<$PrismaModel>
+  }
+
+  export type EnumReportReasonWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ReportReason | EnumReportReasonFieldRefInput<$PrismaModel>
+    in?: $Enums.ReportReason[] | ListEnumReportReasonFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ReportReason[] | ListEnumReportReasonFieldRefInput<$PrismaModel>
+    not?: NestedEnumReportReasonWithAggregatesFilter<$PrismaModel> | $Enums.ReportReason
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumReportReasonFilter<$PrismaModel>
+    _max?: NestedEnumReportReasonFilter<$PrismaModel>
+  }
+
+  export type EnumReportStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ReportStatus | EnumReportStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ReportStatus[] | ListEnumReportStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ReportStatus[] | ListEnumReportStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumReportStatusWithAggregatesFilter<$PrismaModel> | $Enums.ReportStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumReportStatusFilter<$PrismaModel>
+    _max?: NestedEnumReportStatusFilter<$PrismaModel>
+  }
+
+  export type MemberBlockBlockerIdBlockedIdCompoundUniqueInput = {
+    blockerId: string
+    blockedId: string
+  }
+
+  export type MemberBlockCountOrderByAggregateInput = {
+    blockerId?: SortOrder
+    blockedId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type MemberBlockMaxOrderByAggregateInput = {
+    blockerId?: SortOrder
+    blockedId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type MemberBlockMinOrderByAggregateInput = {
+    blockerId?: SortOrder
+    blockedId?: SortOrder
+    createdAt?: SortOrder
+  }
+
   export type SessionCreateNestedManyWithoutUserInput = {
     create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
     connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
@@ -57122,6 +60244,34 @@ export namespace Prisma {
     connect?: IdCardWhereUniqueInput | IdCardWhereUniqueInput[]
   }
 
+  export type ContentReportCreateNestedManyWithoutReporterInput = {
+    create?: XOR<ContentReportCreateWithoutReporterInput, ContentReportUncheckedCreateWithoutReporterInput> | ContentReportCreateWithoutReporterInput[] | ContentReportUncheckedCreateWithoutReporterInput[]
+    connectOrCreate?: ContentReportCreateOrConnectWithoutReporterInput | ContentReportCreateOrConnectWithoutReporterInput[]
+    createMany?: ContentReportCreateManyReporterInputEnvelope
+    connect?: ContentReportWhereUniqueInput | ContentReportWhereUniqueInput[]
+  }
+
+  export type ContentReportCreateNestedManyWithoutSubjectInput = {
+    create?: XOR<ContentReportCreateWithoutSubjectInput, ContentReportUncheckedCreateWithoutSubjectInput> | ContentReportCreateWithoutSubjectInput[] | ContentReportUncheckedCreateWithoutSubjectInput[]
+    connectOrCreate?: ContentReportCreateOrConnectWithoutSubjectInput | ContentReportCreateOrConnectWithoutSubjectInput[]
+    createMany?: ContentReportCreateManySubjectInputEnvelope
+    connect?: ContentReportWhereUniqueInput | ContentReportWhereUniqueInput[]
+  }
+
+  export type MemberBlockCreateNestedManyWithoutBlockerInput = {
+    create?: XOR<MemberBlockCreateWithoutBlockerInput, MemberBlockUncheckedCreateWithoutBlockerInput> | MemberBlockCreateWithoutBlockerInput[] | MemberBlockUncheckedCreateWithoutBlockerInput[]
+    connectOrCreate?: MemberBlockCreateOrConnectWithoutBlockerInput | MemberBlockCreateOrConnectWithoutBlockerInput[]
+    createMany?: MemberBlockCreateManyBlockerInputEnvelope
+    connect?: MemberBlockWhereUniqueInput | MemberBlockWhereUniqueInput[]
+  }
+
+  export type MemberBlockCreateNestedManyWithoutBlockedInput = {
+    create?: XOR<MemberBlockCreateWithoutBlockedInput, MemberBlockUncheckedCreateWithoutBlockedInput> | MemberBlockCreateWithoutBlockedInput[] | MemberBlockUncheckedCreateWithoutBlockedInput[]
+    connectOrCreate?: MemberBlockCreateOrConnectWithoutBlockedInput | MemberBlockCreateOrConnectWithoutBlockedInput[]
+    createMany?: MemberBlockCreateManyBlockedInputEnvelope
+    connect?: MemberBlockWhereUniqueInput | MemberBlockWhereUniqueInput[]
+  }
+
   export type EmploymentUncheckedCreateNestedManyWithoutGraduateInput = {
     create?: XOR<EmploymentCreateWithoutGraduateInput, EmploymentUncheckedCreateWithoutGraduateInput> | EmploymentCreateWithoutGraduateInput[] | EmploymentUncheckedCreateWithoutGraduateInput[]
     connectOrCreate?: EmploymentCreateOrConnectWithoutGraduateInput | EmploymentCreateOrConnectWithoutGraduateInput[]
@@ -57308,6 +60458,34 @@ export namespace Prisma {
     connectOrCreate?: IdCardCreateOrConnectWithoutGraduateInput | IdCardCreateOrConnectWithoutGraduateInput[]
     createMany?: IdCardCreateManyGraduateInputEnvelope
     connect?: IdCardWhereUniqueInput | IdCardWhereUniqueInput[]
+  }
+
+  export type ContentReportUncheckedCreateNestedManyWithoutReporterInput = {
+    create?: XOR<ContentReportCreateWithoutReporterInput, ContentReportUncheckedCreateWithoutReporterInput> | ContentReportCreateWithoutReporterInput[] | ContentReportUncheckedCreateWithoutReporterInput[]
+    connectOrCreate?: ContentReportCreateOrConnectWithoutReporterInput | ContentReportCreateOrConnectWithoutReporterInput[]
+    createMany?: ContentReportCreateManyReporterInputEnvelope
+    connect?: ContentReportWhereUniqueInput | ContentReportWhereUniqueInput[]
+  }
+
+  export type ContentReportUncheckedCreateNestedManyWithoutSubjectInput = {
+    create?: XOR<ContentReportCreateWithoutSubjectInput, ContentReportUncheckedCreateWithoutSubjectInput> | ContentReportCreateWithoutSubjectInput[] | ContentReportUncheckedCreateWithoutSubjectInput[]
+    connectOrCreate?: ContentReportCreateOrConnectWithoutSubjectInput | ContentReportCreateOrConnectWithoutSubjectInput[]
+    createMany?: ContentReportCreateManySubjectInputEnvelope
+    connect?: ContentReportWhereUniqueInput | ContentReportWhereUniqueInput[]
+  }
+
+  export type MemberBlockUncheckedCreateNestedManyWithoutBlockerInput = {
+    create?: XOR<MemberBlockCreateWithoutBlockerInput, MemberBlockUncheckedCreateWithoutBlockerInput> | MemberBlockCreateWithoutBlockerInput[] | MemberBlockUncheckedCreateWithoutBlockerInput[]
+    connectOrCreate?: MemberBlockCreateOrConnectWithoutBlockerInput | MemberBlockCreateOrConnectWithoutBlockerInput[]
+    createMany?: MemberBlockCreateManyBlockerInputEnvelope
+    connect?: MemberBlockWhereUniqueInput | MemberBlockWhereUniqueInput[]
+  }
+
+  export type MemberBlockUncheckedCreateNestedManyWithoutBlockedInput = {
+    create?: XOR<MemberBlockCreateWithoutBlockedInput, MemberBlockUncheckedCreateWithoutBlockedInput> | MemberBlockCreateWithoutBlockedInput[] | MemberBlockUncheckedCreateWithoutBlockedInput[]
+    connectOrCreate?: MemberBlockCreateOrConnectWithoutBlockedInput | MemberBlockCreateOrConnectWithoutBlockedInput[]
+    createMany?: MemberBlockCreateManyBlockedInputEnvelope
+    connect?: MemberBlockWhereUniqueInput | MemberBlockWhereUniqueInput[]
   }
 
   export type NullableEnumSexFieldUpdateOperationsInput = {
@@ -57724,6 +60902,62 @@ export namespace Prisma {
     deleteMany?: IdCardScalarWhereInput | IdCardScalarWhereInput[]
   }
 
+  export type ContentReportUpdateManyWithoutReporterNestedInput = {
+    create?: XOR<ContentReportCreateWithoutReporterInput, ContentReportUncheckedCreateWithoutReporterInput> | ContentReportCreateWithoutReporterInput[] | ContentReportUncheckedCreateWithoutReporterInput[]
+    connectOrCreate?: ContentReportCreateOrConnectWithoutReporterInput | ContentReportCreateOrConnectWithoutReporterInput[]
+    upsert?: ContentReportUpsertWithWhereUniqueWithoutReporterInput | ContentReportUpsertWithWhereUniqueWithoutReporterInput[]
+    createMany?: ContentReportCreateManyReporterInputEnvelope
+    set?: ContentReportWhereUniqueInput | ContentReportWhereUniqueInput[]
+    disconnect?: ContentReportWhereUniqueInput | ContentReportWhereUniqueInput[]
+    delete?: ContentReportWhereUniqueInput | ContentReportWhereUniqueInput[]
+    connect?: ContentReportWhereUniqueInput | ContentReportWhereUniqueInput[]
+    update?: ContentReportUpdateWithWhereUniqueWithoutReporterInput | ContentReportUpdateWithWhereUniqueWithoutReporterInput[]
+    updateMany?: ContentReportUpdateManyWithWhereWithoutReporterInput | ContentReportUpdateManyWithWhereWithoutReporterInput[]
+    deleteMany?: ContentReportScalarWhereInput | ContentReportScalarWhereInput[]
+  }
+
+  export type ContentReportUpdateManyWithoutSubjectNestedInput = {
+    create?: XOR<ContentReportCreateWithoutSubjectInput, ContentReportUncheckedCreateWithoutSubjectInput> | ContentReportCreateWithoutSubjectInput[] | ContentReportUncheckedCreateWithoutSubjectInput[]
+    connectOrCreate?: ContentReportCreateOrConnectWithoutSubjectInput | ContentReportCreateOrConnectWithoutSubjectInput[]
+    upsert?: ContentReportUpsertWithWhereUniqueWithoutSubjectInput | ContentReportUpsertWithWhereUniqueWithoutSubjectInput[]
+    createMany?: ContentReportCreateManySubjectInputEnvelope
+    set?: ContentReportWhereUniqueInput | ContentReportWhereUniqueInput[]
+    disconnect?: ContentReportWhereUniqueInput | ContentReportWhereUniqueInput[]
+    delete?: ContentReportWhereUniqueInput | ContentReportWhereUniqueInput[]
+    connect?: ContentReportWhereUniqueInput | ContentReportWhereUniqueInput[]
+    update?: ContentReportUpdateWithWhereUniqueWithoutSubjectInput | ContentReportUpdateWithWhereUniqueWithoutSubjectInput[]
+    updateMany?: ContentReportUpdateManyWithWhereWithoutSubjectInput | ContentReportUpdateManyWithWhereWithoutSubjectInput[]
+    deleteMany?: ContentReportScalarWhereInput | ContentReportScalarWhereInput[]
+  }
+
+  export type MemberBlockUpdateManyWithoutBlockerNestedInput = {
+    create?: XOR<MemberBlockCreateWithoutBlockerInput, MemberBlockUncheckedCreateWithoutBlockerInput> | MemberBlockCreateWithoutBlockerInput[] | MemberBlockUncheckedCreateWithoutBlockerInput[]
+    connectOrCreate?: MemberBlockCreateOrConnectWithoutBlockerInput | MemberBlockCreateOrConnectWithoutBlockerInput[]
+    upsert?: MemberBlockUpsertWithWhereUniqueWithoutBlockerInput | MemberBlockUpsertWithWhereUniqueWithoutBlockerInput[]
+    createMany?: MemberBlockCreateManyBlockerInputEnvelope
+    set?: MemberBlockWhereUniqueInput | MemberBlockWhereUniqueInput[]
+    disconnect?: MemberBlockWhereUniqueInput | MemberBlockWhereUniqueInput[]
+    delete?: MemberBlockWhereUniqueInput | MemberBlockWhereUniqueInput[]
+    connect?: MemberBlockWhereUniqueInput | MemberBlockWhereUniqueInput[]
+    update?: MemberBlockUpdateWithWhereUniqueWithoutBlockerInput | MemberBlockUpdateWithWhereUniqueWithoutBlockerInput[]
+    updateMany?: MemberBlockUpdateManyWithWhereWithoutBlockerInput | MemberBlockUpdateManyWithWhereWithoutBlockerInput[]
+    deleteMany?: MemberBlockScalarWhereInput | MemberBlockScalarWhereInput[]
+  }
+
+  export type MemberBlockUpdateManyWithoutBlockedNestedInput = {
+    create?: XOR<MemberBlockCreateWithoutBlockedInput, MemberBlockUncheckedCreateWithoutBlockedInput> | MemberBlockCreateWithoutBlockedInput[] | MemberBlockUncheckedCreateWithoutBlockedInput[]
+    connectOrCreate?: MemberBlockCreateOrConnectWithoutBlockedInput | MemberBlockCreateOrConnectWithoutBlockedInput[]
+    upsert?: MemberBlockUpsertWithWhereUniqueWithoutBlockedInput | MemberBlockUpsertWithWhereUniqueWithoutBlockedInput[]
+    createMany?: MemberBlockCreateManyBlockedInputEnvelope
+    set?: MemberBlockWhereUniqueInput | MemberBlockWhereUniqueInput[]
+    disconnect?: MemberBlockWhereUniqueInput | MemberBlockWhereUniqueInput[]
+    delete?: MemberBlockWhereUniqueInput | MemberBlockWhereUniqueInput[]
+    connect?: MemberBlockWhereUniqueInput | MemberBlockWhereUniqueInput[]
+    update?: MemberBlockUpdateWithWhereUniqueWithoutBlockedInput | MemberBlockUpdateWithWhereUniqueWithoutBlockedInput[]
+    updateMany?: MemberBlockUpdateManyWithWhereWithoutBlockedInput | MemberBlockUpdateManyWithWhereWithoutBlockedInput[]
+    deleteMany?: MemberBlockScalarWhereInput | MemberBlockScalarWhereInput[]
+  }
+
   export type EmploymentUncheckedUpdateManyWithoutGraduateNestedInput = {
     create?: XOR<EmploymentCreateWithoutGraduateInput, EmploymentUncheckedCreateWithoutGraduateInput> | EmploymentCreateWithoutGraduateInput[] | EmploymentUncheckedCreateWithoutGraduateInput[]
     connectOrCreate?: EmploymentCreateOrConnectWithoutGraduateInput | EmploymentCreateOrConnectWithoutGraduateInput[]
@@ -58096,6 +61330,62 @@ export namespace Prisma {
     update?: IdCardUpdateWithWhereUniqueWithoutGraduateInput | IdCardUpdateWithWhereUniqueWithoutGraduateInput[]
     updateMany?: IdCardUpdateManyWithWhereWithoutGraduateInput | IdCardUpdateManyWithWhereWithoutGraduateInput[]
     deleteMany?: IdCardScalarWhereInput | IdCardScalarWhereInput[]
+  }
+
+  export type ContentReportUncheckedUpdateManyWithoutReporterNestedInput = {
+    create?: XOR<ContentReportCreateWithoutReporterInput, ContentReportUncheckedCreateWithoutReporterInput> | ContentReportCreateWithoutReporterInput[] | ContentReportUncheckedCreateWithoutReporterInput[]
+    connectOrCreate?: ContentReportCreateOrConnectWithoutReporterInput | ContentReportCreateOrConnectWithoutReporterInput[]
+    upsert?: ContentReportUpsertWithWhereUniqueWithoutReporterInput | ContentReportUpsertWithWhereUniqueWithoutReporterInput[]
+    createMany?: ContentReportCreateManyReporterInputEnvelope
+    set?: ContentReportWhereUniqueInput | ContentReportWhereUniqueInput[]
+    disconnect?: ContentReportWhereUniqueInput | ContentReportWhereUniqueInput[]
+    delete?: ContentReportWhereUniqueInput | ContentReportWhereUniqueInput[]
+    connect?: ContentReportWhereUniqueInput | ContentReportWhereUniqueInput[]
+    update?: ContentReportUpdateWithWhereUniqueWithoutReporterInput | ContentReportUpdateWithWhereUniqueWithoutReporterInput[]
+    updateMany?: ContentReportUpdateManyWithWhereWithoutReporterInput | ContentReportUpdateManyWithWhereWithoutReporterInput[]
+    deleteMany?: ContentReportScalarWhereInput | ContentReportScalarWhereInput[]
+  }
+
+  export type ContentReportUncheckedUpdateManyWithoutSubjectNestedInput = {
+    create?: XOR<ContentReportCreateWithoutSubjectInput, ContentReportUncheckedCreateWithoutSubjectInput> | ContentReportCreateWithoutSubjectInput[] | ContentReportUncheckedCreateWithoutSubjectInput[]
+    connectOrCreate?: ContentReportCreateOrConnectWithoutSubjectInput | ContentReportCreateOrConnectWithoutSubjectInput[]
+    upsert?: ContentReportUpsertWithWhereUniqueWithoutSubjectInput | ContentReportUpsertWithWhereUniqueWithoutSubjectInput[]
+    createMany?: ContentReportCreateManySubjectInputEnvelope
+    set?: ContentReportWhereUniqueInput | ContentReportWhereUniqueInput[]
+    disconnect?: ContentReportWhereUniqueInput | ContentReportWhereUniqueInput[]
+    delete?: ContentReportWhereUniqueInput | ContentReportWhereUniqueInput[]
+    connect?: ContentReportWhereUniqueInput | ContentReportWhereUniqueInput[]
+    update?: ContentReportUpdateWithWhereUniqueWithoutSubjectInput | ContentReportUpdateWithWhereUniqueWithoutSubjectInput[]
+    updateMany?: ContentReportUpdateManyWithWhereWithoutSubjectInput | ContentReportUpdateManyWithWhereWithoutSubjectInput[]
+    deleteMany?: ContentReportScalarWhereInput | ContentReportScalarWhereInput[]
+  }
+
+  export type MemberBlockUncheckedUpdateManyWithoutBlockerNestedInput = {
+    create?: XOR<MemberBlockCreateWithoutBlockerInput, MemberBlockUncheckedCreateWithoutBlockerInput> | MemberBlockCreateWithoutBlockerInput[] | MemberBlockUncheckedCreateWithoutBlockerInput[]
+    connectOrCreate?: MemberBlockCreateOrConnectWithoutBlockerInput | MemberBlockCreateOrConnectWithoutBlockerInput[]
+    upsert?: MemberBlockUpsertWithWhereUniqueWithoutBlockerInput | MemberBlockUpsertWithWhereUniqueWithoutBlockerInput[]
+    createMany?: MemberBlockCreateManyBlockerInputEnvelope
+    set?: MemberBlockWhereUniqueInput | MemberBlockWhereUniqueInput[]
+    disconnect?: MemberBlockWhereUniqueInput | MemberBlockWhereUniqueInput[]
+    delete?: MemberBlockWhereUniqueInput | MemberBlockWhereUniqueInput[]
+    connect?: MemberBlockWhereUniqueInput | MemberBlockWhereUniqueInput[]
+    update?: MemberBlockUpdateWithWhereUniqueWithoutBlockerInput | MemberBlockUpdateWithWhereUniqueWithoutBlockerInput[]
+    updateMany?: MemberBlockUpdateManyWithWhereWithoutBlockerInput | MemberBlockUpdateManyWithWhereWithoutBlockerInput[]
+    deleteMany?: MemberBlockScalarWhereInput | MemberBlockScalarWhereInput[]
+  }
+
+  export type MemberBlockUncheckedUpdateManyWithoutBlockedNestedInput = {
+    create?: XOR<MemberBlockCreateWithoutBlockedInput, MemberBlockUncheckedCreateWithoutBlockedInput> | MemberBlockCreateWithoutBlockedInput[] | MemberBlockUncheckedCreateWithoutBlockedInput[]
+    connectOrCreate?: MemberBlockCreateOrConnectWithoutBlockedInput | MemberBlockCreateOrConnectWithoutBlockedInput[]
+    upsert?: MemberBlockUpsertWithWhereUniqueWithoutBlockedInput | MemberBlockUpsertWithWhereUniqueWithoutBlockedInput[]
+    createMany?: MemberBlockCreateManyBlockedInputEnvelope
+    set?: MemberBlockWhereUniqueInput | MemberBlockWhereUniqueInput[]
+    disconnect?: MemberBlockWhereUniqueInput | MemberBlockWhereUniqueInput[]
+    delete?: MemberBlockWhereUniqueInput | MemberBlockWhereUniqueInput[]
+    connect?: MemberBlockWhereUniqueInput | MemberBlockWhereUniqueInput[]
+    update?: MemberBlockUpdateWithWhereUniqueWithoutBlockedInput | MemberBlockUpdateWithWhereUniqueWithoutBlockedInput[]
+    updateMany?: MemberBlockUpdateManyWithWhereWithoutBlockedInput | MemberBlockUpdateManyWithWhereWithoutBlockedInput[]
+    deleteMany?: MemberBlockScalarWhereInput | MemberBlockScalarWhereInput[]
   }
 
   export type GraduateCreateNestedOneWithoutEmploymentInput = {
@@ -59159,6 +62449,76 @@ export namespace Prisma {
     update?: XOR<XOR<ImportJobUpdateToOneWithWhereWithoutErrorsInput, ImportJobUpdateWithoutErrorsInput>, ImportJobUncheckedUpdateWithoutErrorsInput>
   }
 
+  export type GraduateCreateNestedOneWithoutReportsMadeInput = {
+    create?: XOR<GraduateCreateWithoutReportsMadeInput, GraduateUncheckedCreateWithoutReportsMadeInput>
+    connectOrCreate?: GraduateCreateOrConnectWithoutReportsMadeInput
+    connect?: GraduateWhereUniqueInput
+  }
+
+  export type GraduateCreateNestedOneWithoutReportsAgainstInput = {
+    create?: XOR<GraduateCreateWithoutReportsAgainstInput, GraduateUncheckedCreateWithoutReportsAgainstInput>
+    connectOrCreate?: GraduateCreateOrConnectWithoutReportsAgainstInput
+    connect?: GraduateWhereUniqueInput
+  }
+
+  export type EnumReportTargetFieldUpdateOperationsInput = {
+    set?: $Enums.ReportTarget
+  }
+
+  export type EnumReportReasonFieldUpdateOperationsInput = {
+    set?: $Enums.ReportReason
+  }
+
+  export type EnumReportStatusFieldUpdateOperationsInput = {
+    set?: $Enums.ReportStatus
+  }
+
+  export type GraduateUpdateOneRequiredWithoutReportsMadeNestedInput = {
+    create?: XOR<GraduateCreateWithoutReportsMadeInput, GraduateUncheckedCreateWithoutReportsMadeInput>
+    connectOrCreate?: GraduateCreateOrConnectWithoutReportsMadeInput
+    upsert?: GraduateUpsertWithoutReportsMadeInput
+    connect?: GraduateWhereUniqueInput
+    update?: XOR<XOR<GraduateUpdateToOneWithWhereWithoutReportsMadeInput, GraduateUpdateWithoutReportsMadeInput>, GraduateUncheckedUpdateWithoutReportsMadeInput>
+  }
+
+  export type GraduateUpdateOneWithoutReportsAgainstNestedInput = {
+    create?: XOR<GraduateCreateWithoutReportsAgainstInput, GraduateUncheckedCreateWithoutReportsAgainstInput>
+    connectOrCreate?: GraduateCreateOrConnectWithoutReportsAgainstInput
+    upsert?: GraduateUpsertWithoutReportsAgainstInput
+    disconnect?: GraduateWhereInput | boolean
+    delete?: GraduateWhereInput | boolean
+    connect?: GraduateWhereUniqueInput
+    update?: XOR<XOR<GraduateUpdateToOneWithWhereWithoutReportsAgainstInput, GraduateUpdateWithoutReportsAgainstInput>, GraduateUncheckedUpdateWithoutReportsAgainstInput>
+  }
+
+  export type GraduateCreateNestedOneWithoutBlocksMadeInput = {
+    create?: XOR<GraduateCreateWithoutBlocksMadeInput, GraduateUncheckedCreateWithoutBlocksMadeInput>
+    connectOrCreate?: GraduateCreateOrConnectWithoutBlocksMadeInput
+    connect?: GraduateWhereUniqueInput
+  }
+
+  export type GraduateCreateNestedOneWithoutBlocksReceivedInput = {
+    create?: XOR<GraduateCreateWithoutBlocksReceivedInput, GraduateUncheckedCreateWithoutBlocksReceivedInput>
+    connectOrCreate?: GraduateCreateOrConnectWithoutBlocksReceivedInput
+    connect?: GraduateWhereUniqueInput
+  }
+
+  export type GraduateUpdateOneRequiredWithoutBlocksMadeNestedInput = {
+    create?: XOR<GraduateCreateWithoutBlocksMadeInput, GraduateUncheckedCreateWithoutBlocksMadeInput>
+    connectOrCreate?: GraduateCreateOrConnectWithoutBlocksMadeInput
+    upsert?: GraduateUpsertWithoutBlocksMadeInput
+    connect?: GraduateWhereUniqueInput
+    update?: XOR<XOR<GraduateUpdateToOneWithWhereWithoutBlocksMadeInput, GraduateUpdateWithoutBlocksMadeInput>, GraduateUncheckedUpdateWithoutBlocksMadeInput>
+  }
+
+  export type GraduateUpdateOneRequiredWithoutBlocksReceivedNestedInput = {
+    create?: XOR<GraduateCreateWithoutBlocksReceivedInput, GraduateUncheckedCreateWithoutBlocksReceivedInput>
+    connectOrCreate?: GraduateCreateOrConnectWithoutBlocksReceivedInput
+    upsert?: GraduateUpsertWithoutBlocksReceivedInput
+    connect?: GraduateWhereUniqueInput
+    update?: XOR<XOR<GraduateUpdateToOneWithWhereWithoutBlocksReceivedInput, GraduateUpdateWithoutBlocksReceivedInput>, GraduateUncheckedUpdateWithoutBlocksReceivedInput>
+  }
+
   export type NestedStringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -59712,6 +63072,57 @@ export namespace Prisma {
     _max?: NestedEnumImportJobStatusFilter<$PrismaModel>
   }
 
+  export type NestedEnumReportTargetFilter<$PrismaModel = never> = {
+    equals?: $Enums.ReportTarget | EnumReportTargetFieldRefInput<$PrismaModel>
+    in?: $Enums.ReportTarget[] | ListEnumReportTargetFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ReportTarget[] | ListEnumReportTargetFieldRefInput<$PrismaModel>
+    not?: NestedEnumReportTargetFilter<$PrismaModel> | $Enums.ReportTarget
+  }
+
+  export type NestedEnumReportReasonFilter<$PrismaModel = never> = {
+    equals?: $Enums.ReportReason | EnumReportReasonFieldRefInput<$PrismaModel>
+    in?: $Enums.ReportReason[] | ListEnumReportReasonFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ReportReason[] | ListEnumReportReasonFieldRefInput<$PrismaModel>
+    not?: NestedEnumReportReasonFilter<$PrismaModel> | $Enums.ReportReason
+  }
+
+  export type NestedEnumReportStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.ReportStatus | EnumReportStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ReportStatus[] | ListEnumReportStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ReportStatus[] | ListEnumReportStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumReportStatusFilter<$PrismaModel> | $Enums.ReportStatus
+  }
+
+  export type NestedEnumReportTargetWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ReportTarget | EnumReportTargetFieldRefInput<$PrismaModel>
+    in?: $Enums.ReportTarget[] | ListEnumReportTargetFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ReportTarget[] | ListEnumReportTargetFieldRefInput<$PrismaModel>
+    not?: NestedEnumReportTargetWithAggregatesFilter<$PrismaModel> | $Enums.ReportTarget
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumReportTargetFilter<$PrismaModel>
+    _max?: NestedEnumReportTargetFilter<$PrismaModel>
+  }
+
+  export type NestedEnumReportReasonWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ReportReason | EnumReportReasonFieldRefInput<$PrismaModel>
+    in?: $Enums.ReportReason[] | ListEnumReportReasonFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ReportReason[] | ListEnumReportReasonFieldRefInput<$PrismaModel>
+    not?: NestedEnumReportReasonWithAggregatesFilter<$PrismaModel> | $Enums.ReportReason
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumReportReasonFilter<$PrismaModel>
+    _max?: NestedEnumReportReasonFilter<$PrismaModel>
+  }
+
+  export type NestedEnumReportStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ReportStatus | EnumReportStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ReportStatus[] | ListEnumReportStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ReportStatus[] | ListEnumReportStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumReportStatusWithAggregatesFilter<$PrismaModel> | $Enums.ReportStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumReportStatusFilter<$PrismaModel>
+    _max?: NestedEnumReportStatusFilter<$PrismaModel>
+  }
+
   export type SessionCreateWithoutUserInput = {
     id?: string
     expiresAt: Date | string
@@ -59880,6 +63291,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewCreateNestedManyWithoutViewerInput
     idCards?: IdCardCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockCreateNestedManyWithoutBlockedInput
   }
 
   export type GraduateUncheckedCreateWithoutUserInput = {
@@ -59956,6 +63371,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUncheckedCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewUncheckedCreateNestedManyWithoutViewerInput
     idCards?: IdCardUncheckedCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportUncheckedCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockUncheckedCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockUncheckedCreateNestedManyWithoutBlockedInput
   }
 
   export type GraduateCreateOrConnectWithoutUserInput = {
@@ -60140,6 +63559,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUpdateManyWithoutViewerNestedInput
     idCards?: IdCardUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUpdateManyWithoutBlockedNestedInput
   }
 
   export type GraduateUncheckedUpdateWithoutUserInput = {
@@ -60216,6 +63639,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUncheckedUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUncheckedUpdateManyWithoutViewerNestedInput
     idCards?: IdCardUncheckedUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUncheckedUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUncheckedUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUncheckedUpdateManyWithoutBlockedNestedInput
   }
 
   export type UserCreateWithoutSessionsInput = {
@@ -61404,6 +64831,122 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type ContentReportCreateWithoutReporterInput = {
+    id?: string
+    targetType: $Enums.ReportTarget
+    targetId: string
+    reason: $Enums.ReportReason
+    details?: string | null
+    status?: $Enums.ReportStatus
+    createdAt?: Date | string
+    reviewedAt?: Date | string | null
+    reviewedBy?: string | null
+    resolution?: string | null
+    subject?: GraduateCreateNestedOneWithoutReportsAgainstInput
+  }
+
+  export type ContentReportUncheckedCreateWithoutReporterInput = {
+    id?: string
+    targetType: $Enums.ReportTarget
+    targetId: string
+    subjectId?: string | null
+    reason: $Enums.ReportReason
+    details?: string | null
+    status?: $Enums.ReportStatus
+    createdAt?: Date | string
+    reviewedAt?: Date | string | null
+    reviewedBy?: string | null
+    resolution?: string | null
+  }
+
+  export type ContentReportCreateOrConnectWithoutReporterInput = {
+    where: ContentReportWhereUniqueInput
+    create: XOR<ContentReportCreateWithoutReporterInput, ContentReportUncheckedCreateWithoutReporterInput>
+  }
+
+  export type ContentReportCreateManyReporterInputEnvelope = {
+    data: ContentReportCreateManyReporterInput | ContentReportCreateManyReporterInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ContentReportCreateWithoutSubjectInput = {
+    id?: string
+    targetType: $Enums.ReportTarget
+    targetId: string
+    reason: $Enums.ReportReason
+    details?: string | null
+    status?: $Enums.ReportStatus
+    createdAt?: Date | string
+    reviewedAt?: Date | string | null
+    reviewedBy?: string | null
+    resolution?: string | null
+    reporter: GraduateCreateNestedOneWithoutReportsMadeInput
+  }
+
+  export type ContentReportUncheckedCreateWithoutSubjectInput = {
+    id?: string
+    reporterId: string
+    targetType: $Enums.ReportTarget
+    targetId: string
+    reason: $Enums.ReportReason
+    details?: string | null
+    status?: $Enums.ReportStatus
+    createdAt?: Date | string
+    reviewedAt?: Date | string | null
+    reviewedBy?: string | null
+    resolution?: string | null
+  }
+
+  export type ContentReportCreateOrConnectWithoutSubjectInput = {
+    where: ContentReportWhereUniqueInput
+    create: XOR<ContentReportCreateWithoutSubjectInput, ContentReportUncheckedCreateWithoutSubjectInput>
+  }
+
+  export type ContentReportCreateManySubjectInputEnvelope = {
+    data: ContentReportCreateManySubjectInput | ContentReportCreateManySubjectInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type MemberBlockCreateWithoutBlockerInput = {
+    createdAt?: Date | string
+    blocked: GraduateCreateNestedOneWithoutBlocksReceivedInput
+  }
+
+  export type MemberBlockUncheckedCreateWithoutBlockerInput = {
+    blockedId: string
+    createdAt?: Date | string
+  }
+
+  export type MemberBlockCreateOrConnectWithoutBlockerInput = {
+    where: MemberBlockWhereUniqueInput
+    create: XOR<MemberBlockCreateWithoutBlockerInput, MemberBlockUncheckedCreateWithoutBlockerInput>
+  }
+
+  export type MemberBlockCreateManyBlockerInputEnvelope = {
+    data: MemberBlockCreateManyBlockerInput | MemberBlockCreateManyBlockerInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type MemberBlockCreateWithoutBlockedInput = {
+    createdAt?: Date | string
+    blocker: GraduateCreateNestedOneWithoutBlocksMadeInput
+  }
+
+  export type MemberBlockUncheckedCreateWithoutBlockedInput = {
+    blockerId: string
+    createdAt?: Date | string
+  }
+
+  export type MemberBlockCreateOrConnectWithoutBlockedInput = {
+    where: MemberBlockWhereUniqueInput
+    create: XOR<MemberBlockCreateWithoutBlockedInput, MemberBlockUncheckedCreateWithoutBlockedInput>
+  }
+
+  export type MemberBlockCreateManyBlockedInputEnvelope = {
+    data: MemberBlockCreateManyBlockedInput | MemberBlockCreateManyBlockedInput[]
+    skipDuplicates?: boolean
+  }
+
   export type UserUpsertWithoutGraduateInput = {
     update: XOR<UserUpdateWithoutGraduateInput, UserUncheckedUpdateWithoutGraduateInput>
     create: XOR<UserCreateWithoutGraduateInput, UserUncheckedCreateWithoutGraduateInput>
@@ -62219,6 +65762,97 @@ export namespace Prisma {
     revokedReason?: StringNullableFilter<"IdCard"> | string | null
   }
 
+  export type ContentReportUpsertWithWhereUniqueWithoutReporterInput = {
+    where: ContentReportWhereUniqueInput
+    update: XOR<ContentReportUpdateWithoutReporterInput, ContentReportUncheckedUpdateWithoutReporterInput>
+    create: XOR<ContentReportCreateWithoutReporterInput, ContentReportUncheckedCreateWithoutReporterInput>
+  }
+
+  export type ContentReportUpdateWithWhereUniqueWithoutReporterInput = {
+    where: ContentReportWhereUniqueInput
+    data: XOR<ContentReportUpdateWithoutReporterInput, ContentReportUncheckedUpdateWithoutReporterInput>
+  }
+
+  export type ContentReportUpdateManyWithWhereWithoutReporterInput = {
+    where: ContentReportScalarWhereInput
+    data: XOR<ContentReportUpdateManyMutationInput, ContentReportUncheckedUpdateManyWithoutReporterInput>
+  }
+
+  export type ContentReportScalarWhereInput = {
+    AND?: ContentReportScalarWhereInput | ContentReportScalarWhereInput[]
+    OR?: ContentReportScalarWhereInput[]
+    NOT?: ContentReportScalarWhereInput | ContentReportScalarWhereInput[]
+    id?: StringFilter<"ContentReport"> | string
+    reporterId?: StringFilter<"ContentReport"> | string
+    targetType?: EnumReportTargetFilter<"ContentReport"> | $Enums.ReportTarget
+    targetId?: StringFilter<"ContentReport"> | string
+    subjectId?: StringNullableFilter<"ContentReport"> | string | null
+    reason?: EnumReportReasonFilter<"ContentReport"> | $Enums.ReportReason
+    details?: StringNullableFilter<"ContentReport"> | string | null
+    status?: EnumReportStatusFilter<"ContentReport"> | $Enums.ReportStatus
+    createdAt?: DateTimeFilter<"ContentReport"> | Date | string
+    reviewedAt?: DateTimeNullableFilter<"ContentReport"> | Date | string | null
+    reviewedBy?: StringNullableFilter<"ContentReport"> | string | null
+    resolution?: StringNullableFilter<"ContentReport"> | string | null
+  }
+
+  export type ContentReportUpsertWithWhereUniqueWithoutSubjectInput = {
+    where: ContentReportWhereUniqueInput
+    update: XOR<ContentReportUpdateWithoutSubjectInput, ContentReportUncheckedUpdateWithoutSubjectInput>
+    create: XOR<ContentReportCreateWithoutSubjectInput, ContentReportUncheckedCreateWithoutSubjectInput>
+  }
+
+  export type ContentReportUpdateWithWhereUniqueWithoutSubjectInput = {
+    where: ContentReportWhereUniqueInput
+    data: XOR<ContentReportUpdateWithoutSubjectInput, ContentReportUncheckedUpdateWithoutSubjectInput>
+  }
+
+  export type ContentReportUpdateManyWithWhereWithoutSubjectInput = {
+    where: ContentReportScalarWhereInput
+    data: XOR<ContentReportUpdateManyMutationInput, ContentReportUncheckedUpdateManyWithoutSubjectInput>
+  }
+
+  export type MemberBlockUpsertWithWhereUniqueWithoutBlockerInput = {
+    where: MemberBlockWhereUniqueInput
+    update: XOR<MemberBlockUpdateWithoutBlockerInput, MemberBlockUncheckedUpdateWithoutBlockerInput>
+    create: XOR<MemberBlockCreateWithoutBlockerInput, MemberBlockUncheckedCreateWithoutBlockerInput>
+  }
+
+  export type MemberBlockUpdateWithWhereUniqueWithoutBlockerInput = {
+    where: MemberBlockWhereUniqueInput
+    data: XOR<MemberBlockUpdateWithoutBlockerInput, MemberBlockUncheckedUpdateWithoutBlockerInput>
+  }
+
+  export type MemberBlockUpdateManyWithWhereWithoutBlockerInput = {
+    where: MemberBlockScalarWhereInput
+    data: XOR<MemberBlockUpdateManyMutationInput, MemberBlockUncheckedUpdateManyWithoutBlockerInput>
+  }
+
+  export type MemberBlockScalarWhereInput = {
+    AND?: MemberBlockScalarWhereInput | MemberBlockScalarWhereInput[]
+    OR?: MemberBlockScalarWhereInput[]
+    NOT?: MemberBlockScalarWhereInput | MemberBlockScalarWhereInput[]
+    blockerId?: StringFilter<"MemberBlock"> | string
+    blockedId?: StringFilter<"MemberBlock"> | string
+    createdAt?: DateTimeFilter<"MemberBlock"> | Date | string
+  }
+
+  export type MemberBlockUpsertWithWhereUniqueWithoutBlockedInput = {
+    where: MemberBlockWhereUniqueInput
+    update: XOR<MemberBlockUpdateWithoutBlockedInput, MemberBlockUncheckedUpdateWithoutBlockedInput>
+    create: XOR<MemberBlockCreateWithoutBlockedInput, MemberBlockUncheckedCreateWithoutBlockedInput>
+  }
+
+  export type MemberBlockUpdateWithWhereUniqueWithoutBlockedInput = {
+    where: MemberBlockWhereUniqueInput
+    data: XOR<MemberBlockUpdateWithoutBlockedInput, MemberBlockUncheckedUpdateWithoutBlockedInput>
+  }
+
+  export type MemberBlockUpdateManyWithWhereWithoutBlockedInput = {
+    where: MemberBlockScalarWhereInput
+    data: XOR<MemberBlockUpdateManyMutationInput, MemberBlockUncheckedUpdateManyWithoutBlockedInput>
+  }
+
   export type GraduateCreateWithoutEmploymentInput = {
     id?: string
     registrationNo: string
@@ -62293,6 +65927,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewCreateNestedManyWithoutViewerInput
     idCards?: IdCardCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockCreateNestedManyWithoutBlockedInput
   }
 
   export type GraduateUncheckedCreateWithoutEmploymentInput = {
@@ -62369,6 +66007,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUncheckedCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewUncheckedCreateNestedManyWithoutViewerInput
     idCards?: IdCardUncheckedCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportUncheckedCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockUncheckedCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockUncheckedCreateNestedManyWithoutBlockedInput
   }
 
   export type GraduateCreateOrConnectWithoutEmploymentInput = {
@@ -62461,6 +66103,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUpdateManyWithoutViewerNestedInput
     idCards?: IdCardUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUpdateManyWithoutBlockedNestedInput
   }
 
   export type GraduateUncheckedUpdateWithoutEmploymentInput = {
@@ -62537,6 +66183,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUncheckedUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUncheckedUpdateManyWithoutViewerNestedInput
     idCards?: IdCardUncheckedUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUncheckedUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUncheckedUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUncheckedUpdateManyWithoutBlockedNestedInput
   }
 
   export type GraduateCreateWithoutEducationInput = {
@@ -62613,6 +66263,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewCreateNestedManyWithoutViewerInput
     idCards?: IdCardCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockCreateNestedManyWithoutBlockedInput
   }
 
   export type GraduateUncheckedCreateWithoutEducationInput = {
@@ -62689,6 +66343,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUncheckedCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewUncheckedCreateNestedManyWithoutViewerInput
     idCards?: IdCardUncheckedCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportUncheckedCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockUncheckedCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockUncheckedCreateNestedManyWithoutBlockedInput
   }
 
   export type GraduateCreateOrConnectWithoutEducationInput = {
@@ -62781,6 +66439,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUpdateManyWithoutViewerNestedInput
     idCards?: IdCardUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUpdateManyWithoutBlockedNestedInput
   }
 
   export type GraduateUncheckedUpdateWithoutEducationInput = {
@@ -62857,6 +66519,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUncheckedUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUncheckedUpdateManyWithoutViewerNestedInput
     idCards?: IdCardUncheckedUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUncheckedUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUncheckedUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUncheckedUpdateManyWithoutBlockedNestedInput
   }
 
   export type GraduateCreateWithoutSkillsInput = {
@@ -62933,6 +66599,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewCreateNestedManyWithoutViewerInput
     idCards?: IdCardCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockCreateNestedManyWithoutBlockedInput
   }
 
   export type GraduateUncheckedCreateWithoutSkillsInput = {
@@ -63009,6 +66679,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUncheckedCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewUncheckedCreateNestedManyWithoutViewerInput
     idCards?: IdCardUncheckedCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportUncheckedCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockUncheckedCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockUncheckedCreateNestedManyWithoutBlockedInput
   }
 
   export type GraduateCreateOrConnectWithoutSkillsInput = {
@@ -63125,6 +66799,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUpdateManyWithoutViewerNestedInput
     idCards?: IdCardUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUpdateManyWithoutBlockedNestedInput
   }
 
   export type GraduateUncheckedUpdateWithoutSkillsInput = {
@@ -63201,6 +66879,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUncheckedUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUncheckedUpdateManyWithoutViewerNestedInput
     idCards?: IdCardUncheckedUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUncheckedUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUncheckedUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUncheckedUpdateManyWithoutBlockedNestedInput
   }
 
   export type EndorsementUpsertWithWhereUniqueWithoutSkillInput = {
@@ -63293,6 +66975,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewCreateNestedManyWithoutViewerInput
     idCards?: IdCardCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockCreateNestedManyWithoutBlockedInput
   }
 
   export type GraduateUncheckedCreateWithoutEndorsementsGivenInput = {
@@ -63369,6 +67055,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUncheckedCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewUncheckedCreateNestedManyWithoutViewerInput
     idCards?: IdCardUncheckedCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportUncheckedCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockUncheckedCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockUncheckedCreateNestedManyWithoutBlockedInput
   }
 
   export type GraduateCreateOrConnectWithoutEndorsementsGivenInput = {
@@ -63450,6 +67140,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewCreateNestedManyWithoutViewerInput
     idCards?: IdCardCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockCreateNestedManyWithoutBlockedInput
   }
 
   export type GraduateUncheckedCreateWithoutEndorsementsReceivedInput = {
@@ -63526,6 +67220,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUncheckedCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewUncheckedCreateNestedManyWithoutViewerInput
     idCards?: IdCardUncheckedCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportUncheckedCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockUncheckedCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockUncheckedCreateNestedManyWithoutBlockedInput
   }
 
   export type GraduateCreateOrConnectWithoutEndorsementsReceivedInput = {
@@ -63639,6 +67337,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUpdateManyWithoutViewerNestedInput
     idCards?: IdCardUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUpdateManyWithoutBlockedNestedInput
   }
 
   export type GraduateUncheckedUpdateWithoutEndorsementsGivenInput = {
@@ -63715,6 +67417,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUncheckedUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUncheckedUpdateManyWithoutViewerNestedInput
     idCards?: IdCardUncheckedUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUncheckedUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUncheckedUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUncheckedUpdateManyWithoutBlockedNestedInput
   }
 
   export type GraduateUpsertWithoutEndorsementsReceivedInput = {
@@ -63802,6 +67508,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUpdateManyWithoutViewerNestedInput
     idCards?: IdCardUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUpdateManyWithoutBlockedNestedInput
   }
 
   export type GraduateUncheckedUpdateWithoutEndorsementsReceivedInput = {
@@ -63878,6 +67588,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUncheckedUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUncheckedUpdateManyWithoutViewerNestedInput
     idCards?: IdCardUncheckedUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUncheckedUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUncheckedUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUncheckedUpdateManyWithoutBlockedNestedInput
   }
 
   export type SkillUpsertWithoutEndorsementsInput = {
@@ -63981,6 +67695,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewCreateNestedManyWithoutViewerInput
     idCards?: IdCardCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockCreateNestedManyWithoutBlockedInput
   }
 
   export type GraduateUncheckedCreateWithoutLocationInput = {
@@ -64057,6 +67775,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUncheckedCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewUncheckedCreateNestedManyWithoutViewerInput
     idCards?: IdCardUncheckedCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportUncheckedCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockUncheckedCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockUncheckedCreateNestedManyWithoutBlockedInput
   }
 
   export type GraduateCreateOrConnectWithoutLocationInput = {
@@ -64149,6 +67871,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUpdateManyWithoutViewerNestedInput
     idCards?: IdCardUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUpdateManyWithoutBlockedNestedInput
   }
 
   export type GraduateUncheckedUpdateWithoutLocationInput = {
@@ -64225,6 +67951,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUncheckedUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUncheckedUpdateManyWithoutViewerNestedInput
     idCards?: IdCardUncheckedUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUncheckedUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUncheckedUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUncheckedUpdateManyWithoutBlockedNestedInput
   }
 
   export type GraduateCreateWithoutAchievementsInput = {
@@ -64301,6 +68031,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewCreateNestedManyWithoutViewerInput
     idCards?: IdCardCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockCreateNestedManyWithoutBlockedInput
   }
 
   export type GraduateUncheckedCreateWithoutAchievementsInput = {
@@ -64377,6 +68111,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUncheckedCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewUncheckedCreateNestedManyWithoutViewerInput
     idCards?: IdCardUncheckedCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportUncheckedCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockUncheckedCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockUncheckedCreateNestedManyWithoutBlockedInput
   }
 
   export type GraduateCreateOrConnectWithoutAchievementsInput = {
@@ -64469,6 +68207,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUpdateManyWithoutViewerNestedInput
     idCards?: IdCardUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUpdateManyWithoutBlockedNestedInput
   }
 
   export type GraduateUncheckedUpdateWithoutAchievementsInput = {
@@ -64545,6 +68287,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUncheckedUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUncheckedUpdateManyWithoutViewerNestedInput
     idCards?: IdCardUncheckedUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUncheckedUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUncheckedUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUncheckedUpdateManyWithoutBlockedNestedInput
   }
 
   export type GraduateCreateWithoutBadgesInput = {
@@ -64621,6 +68367,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewCreateNestedManyWithoutViewerInput
     idCards?: IdCardCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockCreateNestedManyWithoutBlockedInput
   }
 
   export type GraduateUncheckedCreateWithoutBadgesInput = {
@@ -64697,6 +68447,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUncheckedCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewUncheckedCreateNestedManyWithoutViewerInput
     idCards?: IdCardUncheckedCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportUncheckedCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockUncheckedCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockUncheckedCreateNestedManyWithoutBlockedInput
   }
 
   export type GraduateCreateOrConnectWithoutBadgesInput = {
@@ -64789,6 +68543,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUpdateManyWithoutViewerNestedInput
     idCards?: IdCardUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUpdateManyWithoutBlockedNestedInput
   }
 
   export type GraduateUncheckedUpdateWithoutBadgesInput = {
@@ -64865,6 +68623,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUncheckedUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUncheckedUpdateManyWithoutViewerNestedInput
     idCards?: IdCardUncheckedUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUncheckedUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUncheckedUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUncheckedUpdateManyWithoutBlockedNestedInput
   }
 
   export type GroupMemberCreateWithoutGroupInput = {
@@ -65076,6 +68838,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewCreateNestedManyWithoutViewerInput
     idCards?: IdCardCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockCreateNestedManyWithoutBlockedInput
   }
 
   export type GraduateUncheckedCreateWithoutGroupMembershipsInput = {
@@ -65152,6 +68918,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUncheckedCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewUncheckedCreateNestedManyWithoutViewerInput
     idCards?: IdCardUncheckedCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportUncheckedCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockUncheckedCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockUncheckedCreateNestedManyWithoutBlockedInput
   }
 
   export type GraduateCreateOrConnectWithoutGroupMembershipsInput = {
@@ -65291,6 +69061,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUpdateManyWithoutViewerNestedInput
     idCards?: IdCardUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUpdateManyWithoutBlockedNestedInput
   }
 
   export type GraduateUncheckedUpdateWithoutGroupMembershipsInput = {
@@ -65367,6 +69141,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUncheckedUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUncheckedUpdateManyWithoutViewerNestedInput
     idCards?: IdCardUncheckedUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUncheckedUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUncheckedUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUncheckedUpdateManyWithoutBlockedNestedInput
   }
 
   export type AlumniGroupCreateWithoutPostsInput = {
@@ -65484,6 +69262,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewCreateNestedManyWithoutViewerInput
     idCards?: IdCardCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockCreateNestedManyWithoutBlockedInput
   }
 
   export type GraduateUncheckedCreateWithoutGroupPostsInput = {
@@ -65560,6 +69342,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUncheckedCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewUncheckedCreateNestedManyWithoutViewerInput
     idCards?: IdCardUncheckedCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportUncheckedCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockUncheckedCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockUncheckedCreateNestedManyWithoutBlockedInput
   }
 
   export type GraduateCreateOrConnectWithoutGroupPostsInput = {
@@ -65751,6 +69537,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUpdateManyWithoutViewerNestedInput
     idCards?: IdCardUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUpdateManyWithoutBlockedNestedInput
   }
 
   export type GraduateUncheckedUpdateWithoutGroupPostsInput = {
@@ -65827,6 +69617,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUncheckedUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUncheckedUpdateManyWithoutViewerNestedInput
     idCards?: IdCardUncheckedUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUncheckedUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUncheckedUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUncheckedUpdateManyWithoutBlockedNestedInput
   }
 
   export type PostCommentUpsertWithWhereUniqueWithoutPostInput = {
@@ -65966,6 +69760,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewCreateNestedManyWithoutViewerInput
     idCards?: IdCardCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockCreateNestedManyWithoutBlockedInput
   }
 
   export type GraduateUncheckedCreateWithoutPostCommentsInput = {
@@ -66042,6 +69840,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUncheckedCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewUncheckedCreateNestedManyWithoutViewerInput
     idCards?: IdCardUncheckedCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportUncheckedCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockUncheckedCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockUncheckedCreateNestedManyWithoutBlockedInput
   }
 
   export type GraduateCreateOrConnectWithoutPostCommentsInput = {
@@ -66226,6 +70028,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUpdateManyWithoutViewerNestedInput
     idCards?: IdCardUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUpdateManyWithoutBlockedNestedInput
   }
 
   export type GraduateUncheckedUpdateWithoutPostCommentsInput = {
@@ -66302,6 +70108,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUncheckedUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUncheckedUpdateManyWithoutViewerNestedInput
     idCards?: IdCardUncheckedUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUncheckedUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUncheckedUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUncheckedUpdateManyWithoutBlockedNestedInput
   }
 
   export type PostCommentUpsertWithoutRepliesInput = {
@@ -66456,6 +70266,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewCreateNestedManyWithoutViewerInput
     idCards?: IdCardCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockCreateNestedManyWithoutBlockedInput
   }
 
   export type GraduateUncheckedCreateWithoutPostReactionsInput = {
@@ -66532,6 +70346,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUncheckedCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewUncheckedCreateNestedManyWithoutViewerInput
     idCards?: IdCardUncheckedCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportUncheckedCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockUncheckedCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockUncheckedCreateNestedManyWithoutBlockedInput
   }
 
   export type GraduateCreateOrConnectWithoutPostReactionsInput = {
@@ -66661,6 +70479,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUpdateManyWithoutViewerNestedInput
     idCards?: IdCardUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUpdateManyWithoutBlockedNestedInput
   }
 
   export type GraduateUncheckedUpdateWithoutPostReactionsInput = {
@@ -66737,6 +70559,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUncheckedUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUncheckedUpdateManyWithoutViewerNestedInput
     idCards?: IdCardUncheckedUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUncheckedUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUncheckedUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUncheckedUpdateManyWithoutBlockedNestedInput
   }
 
   export type ConversationParticipantCreateWithoutConversationInput = {
@@ -66928,6 +70754,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewCreateNestedManyWithoutViewerInput
     idCards?: IdCardCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockCreateNestedManyWithoutBlockedInput
   }
 
   export type GraduateUncheckedCreateWithoutConversationsInput = {
@@ -67004,6 +70834,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUncheckedCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewUncheckedCreateNestedManyWithoutViewerInput
     idCards?: IdCardUncheckedCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportUncheckedCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockUncheckedCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockUncheckedCreateNestedManyWithoutBlockedInput
   }
 
   export type GraduateCreateOrConnectWithoutConversationsInput = {
@@ -67127,6 +70961,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUpdateManyWithoutViewerNestedInput
     idCards?: IdCardUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUpdateManyWithoutBlockedNestedInput
   }
 
   export type GraduateUncheckedUpdateWithoutConversationsInput = {
@@ -67203,6 +71041,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUncheckedUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUncheckedUpdateManyWithoutViewerNestedInput
     idCards?: IdCardUncheckedUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUncheckedUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUncheckedUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUncheckedUpdateManyWithoutBlockedNestedInput
   }
 
   export type ConversationCreateWithoutMessagesInput = {
@@ -67304,6 +71146,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewCreateNestedManyWithoutViewerInput
     idCards?: IdCardCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockCreateNestedManyWithoutBlockedInput
   }
 
   export type GraduateUncheckedCreateWithoutSentMessagesInput = {
@@ -67380,6 +71226,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUncheckedCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewUncheckedCreateNestedManyWithoutViewerInput
     idCards?: IdCardUncheckedCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportUncheckedCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockUncheckedCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockUncheckedCreateNestedManyWithoutBlockedInput
   }
 
   export type GraduateCreateOrConnectWithoutSentMessagesInput = {
@@ -67503,6 +71353,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUpdateManyWithoutViewerNestedInput
     idCards?: IdCardUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUpdateManyWithoutBlockedNestedInput
   }
 
   export type GraduateUncheckedUpdateWithoutSentMessagesInput = {
@@ -67579,6 +71433,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUncheckedUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUncheckedUpdateManyWithoutViewerNestedInput
     idCards?: IdCardUncheckedUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUncheckedUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUncheckedUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUncheckedUpdateManyWithoutBlockedNestedInput
   }
 
   export type GraduateCreateWithoutConnectionsInitiatedInput = {
@@ -67655,6 +71513,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewCreateNestedManyWithoutViewerInput
     idCards?: IdCardCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockCreateNestedManyWithoutBlockedInput
   }
 
   export type GraduateUncheckedCreateWithoutConnectionsInitiatedInput = {
@@ -67731,6 +71593,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUncheckedCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewUncheckedCreateNestedManyWithoutViewerInput
     idCards?: IdCardUncheckedCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportUncheckedCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockUncheckedCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockUncheckedCreateNestedManyWithoutBlockedInput
   }
 
   export type GraduateCreateOrConnectWithoutConnectionsInitiatedInput = {
@@ -67812,6 +71678,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewCreateNestedManyWithoutViewerInput
     idCards?: IdCardCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockCreateNestedManyWithoutBlockedInput
   }
 
   export type GraduateUncheckedCreateWithoutConnectionsReceivedInput = {
@@ -67888,6 +71758,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUncheckedCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewUncheckedCreateNestedManyWithoutViewerInput
     idCards?: IdCardUncheckedCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportUncheckedCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockUncheckedCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockUncheckedCreateNestedManyWithoutBlockedInput
   }
 
   export type GraduateCreateOrConnectWithoutConnectionsReceivedInput = {
@@ -67980,6 +71854,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUpdateManyWithoutViewerNestedInput
     idCards?: IdCardUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUpdateManyWithoutBlockedNestedInput
   }
 
   export type GraduateUncheckedUpdateWithoutConnectionsInitiatedInput = {
@@ -68056,6 +71934,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUncheckedUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUncheckedUpdateManyWithoutViewerNestedInput
     idCards?: IdCardUncheckedUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUncheckedUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUncheckedUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUncheckedUpdateManyWithoutBlockedNestedInput
   }
 
   export type GraduateUpsertWithoutConnectionsReceivedInput = {
@@ -68143,6 +72025,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUpdateManyWithoutViewerNestedInput
     idCards?: IdCardUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUpdateManyWithoutBlockedNestedInput
   }
 
   export type GraduateUncheckedUpdateWithoutConnectionsReceivedInput = {
@@ -68219,6 +72105,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUncheckedUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUncheckedUpdateManyWithoutViewerNestedInput
     idCards?: IdCardUncheckedUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUncheckedUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUncheckedUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUncheckedUpdateManyWithoutBlockedNestedInput
   }
 
   export type GraduateCreateWithoutProfileViewsLogInput = {
@@ -68295,6 +72185,10 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemCreateNestedManyWithoutGraduateInput
     profileViewsGiven?: ProfileViewCreateNestedManyWithoutViewerInput
     idCards?: IdCardCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockCreateNestedManyWithoutBlockedInput
   }
 
   export type GraduateUncheckedCreateWithoutProfileViewsLogInput = {
@@ -68371,6 +72265,10 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUncheckedCreateNestedManyWithoutGraduateInput
     profileViewsGiven?: ProfileViewUncheckedCreateNestedManyWithoutViewerInput
     idCards?: IdCardUncheckedCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportUncheckedCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockUncheckedCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockUncheckedCreateNestedManyWithoutBlockedInput
   }
 
   export type GraduateCreateOrConnectWithoutProfileViewsLogInput = {
@@ -68452,6 +72350,10 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemCreateNestedManyWithoutGraduateInput
     profileViewsLog?: ProfileViewCreateNestedManyWithoutViewedInput
     idCards?: IdCardCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockCreateNestedManyWithoutBlockedInput
   }
 
   export type GraduateUncheckedCreateWithoutProfileViewsGivenInput = {
@@ -68528,6 +72430,10 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUncheckedCreateNestedManyWithoutGraduateInput
     profileViewsLog?: ProfileViewUncheckedCreateNestedManyWithoutViewedInput
     idCards?: IdCardUncheckedCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportUncheckedCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockUncheckedCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockUncheckedCreateNestedManyWithoutBlockedInput
   }
 
   export type GraduateCreateOrConnectWithoutProfileViewsGivenInput = {
@@ -68620,6 +72526,10 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUpdateManyWithoutGraduateNestedInput
     profileViewsGiven?: ProfileViewUpdateManyWithoutViewerNestedInput
     idCards?: IdCardUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUpdateManyWithoutBlockedNestedInput
   }
 
   export type GraduateUncheckedUpdateWithoutProfileViewsLogInput = {
@@ -68696,6 +72606,10 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUncheckedUpdateManyWithoutGraduateNestedInput
     profileViewsGiven?: ProfileViewUncheckedUpdateManyWithoutViewerNestedInput
     idCards?: IdCardUncheckedUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUncheckedUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUncheckedUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUncheckedUpdateManyWithoutBlockedNestedInput
   }
 
   export type GraduateUpsertWithoutProfileViewsGivenInput = {
@@ -68783,6 +72697,10 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUpdateManyWithoutGraduateNestedInput
     profileViewsLog?: ProfileViewUpdateManyWithoutViewedNestedInput
     idCards?: IdCardUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUpdateManyWithoutBlockedNestedInput
   }
 
   export type GraduateUncheckedUpdateWithoutProfileViewsGivenInput = {
@@ -68859,6 +72777,10 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUncheckedUpdateManyWithoutGraduateNestedInput
     profileViewsLog?: ProfileViewUncheckedUpdateManyWithoutViewedNestedInput
     idCards?: IdCardUncheckedUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUncheckedUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUncheckedUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUncheckedUpdateManyWithoutBlockedNestedInput
   }
 
   export type GraduateCreateWithoutJobPostingsInput = {
@@ -68935,6 +72857,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewCreateNestedManyWithoutViewerInput
     idCards?: IdCardCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockCreateNestedManyWithoutBlockedInput
   }
 
   export type GraduateUncheckedCreateWithoutJobPostingsInput = {
@@ -69011,6 +72937,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUncheckedCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewUncheckedCreateNestedManyWithoutViewerInput
     idCards?: IdCardUncheckedCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportUncheckedCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockUncheckedCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockUncheckedCreateNestedManyWithoutBlockedInput
   }
 
   export type GraduateCreateOrConnectWithoutJobPostingsInput = {
@@ -69131,6 +73061,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUpdateManyWithoutViewerNestedInput
     idCards?: IdCardUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUpdateManyWithoutBlockedNestedInput
   }
 
   export type GraduateUncheckedUpdateWithoutJobPostingsInput = {
@@ -69207,6 +73141,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUncheckedUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUncheckedUpdateManyWithoutViewerNestedInput
     idCards?: IdCardUncheckedUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUncheckedUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUncheckedUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUncheckedUpdateManyWithoutBlockedNestedInput
   }
 
   export type JobApplicationUpsertWithWhereUniqueWithoutJobInput = {
@@ -69354,6 +73292,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewCreateNestedManyWithoutViewerInput
     idCards?: IdCardCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockCreateNestedManyWithoutBlockedInput
   }
 
   export type GraduateUncheckedCreateWithoutJobApplicationsInput = {
@@ -69430,6 +73372,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUncheckedCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewUncheckedCreateNestedManyWithoutViewerInput
     idCards?: IdCardUncheckedCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportUncheckedCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockUncheckedCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockUncheckedCreateNestedManyWithoutBlockedInput
   }
 
   export type GraduateCreateOrConnectWithoutJobApplicationsInput = {
@@ -69583,6 +73529,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUpdateManyWithoutViewerNestedInput
     idCards?: IdCardUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUpdateManyWithoutBlockedNestedInput
   }
 
   export type GraduateUncheckedUpdateWithoutJobApplicationsInput = {
@@ -69659,6 +73609,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUncheckedUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUncheckedUpdateManyWithoutViewerNestedInput
     idCards?: IdCardUncheckedUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUncheckedUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUncheckedUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUncheckedUpdateManyWithoutBlockedNestedInput
   }
 
   export type GraduateCreateWithoutEventsCreatedInput = {
@@ -69735,6 +73689,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewCreateNestedManyWithoutViewerInput
     idCards?: IdCardCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockCreateNestedManyWithoutBlockedInput
   }
 
   export type GraduateUncheckedCreateWithoutEventsCreatedInput = {
@@ -69811,6 +73769,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUncheckedCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewUncheckedCreateNestedManyWithoutViewerInput
     idCards?: IdCardUncheckedCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportUncheckedCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockUncheckedCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockUncheckedCreateNestedManyWithoutBlockedInput
   }
 
   export type GraduateCreateOrConnectWithoutEventsCreatedInput = {
@@ -69925,6 +73887,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUpdateManyWithoutViewerNestedInput
     idCards?: IdCardUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUpdateManyWithoutBlockedNestedInput
   }
 
   export type GraduateUncheckedUpdateWithoutEventsCreatedInput = {
@@ -70001,6 +73967,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUncheckedUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUncheckedUpdateManyWithoutViewerNestedInput
     idCards?: IdCardUncheckedUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUncheckedUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUncheckedUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUncheckedUpdateManyWithoutBlockedNestedInput
   }
 
   export type EventAttendeeUpsertWithWhereUniqueWithoutEventInput = {
@@ -70130,6 +74100,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewCreateNestedManyWithoutViewerInput
     idCards?: IdCardCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockCreateNestedManyWithoutBlockedInput
   }
 
   export type GraduateUncheckedCreateWithoutEventAttendancesInput = {
@@ -70206,6 +74180,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUncheckedCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewUncheckedCreateNestedManyWithoutViewerInput
     idCards?: IdCardUncheckedCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportUncheckedCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockUncheckedCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockUncheckedCreateNestedManyWithoutBlockedInput
   }
 
   export type GraduateCreateOrConnectWithoutEventAttendancesInput = {
@@ -70341,6 +74319,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUpdateManyWithoutViewerNestedInput
     idCards?: IdCardUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUpdateManyWithoutBlockedNestedInput
   }
 
   export type GraduateUncheckedUpdateWithoutEventAttendancesInput = {
@@ -70417,6 +74399,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUncheckedUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUncheckedUpdateManyWithoutViewerNestedInput
     idCards?: IdCardUncheckedUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUncheckedUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUncheckedUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUncheckedUpdateManyWithoutBlockedNestedInput
   }
 
   export type GraduateCreateWithoutMentorshipAsMenteeInput = {
@@ -70493,6 +74479,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewCreateNestedManyWithoutViewerInput
     idCards?: IdCardCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockCreateNestedManyWithoutBlockedInput
   }
 
   export type GraduateUncheckedCreateWithoutMentorshipAsMenteeInput = {
@@ -70569,6 +74559,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUncheckedCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewUncheckedCreateNestedManyWithoutViewerInput
     idCards?: IdCardUncheckedCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportUncheckedCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockUncheckedCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockUncheckedCreateNestedManyWithoutBlockedInput
   }
 
   export type GraduateCreateOrConnectWithoutMentorshipAsMenteeInput = {
@@ -70650,6 +74644,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewCreateNestedManyWithoutViewerInput
     idCards?: IdCardCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockCreateNestedManyWithoutBlockedInput
   }
 
   export type GraduateUncheckedCreateWithoutMentorshipAsMentorInput = {
@@ -70726,6 +74724,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUncheckedCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewUncheckedCreateNestedManyWithoutViewerInput
     idCards?: IdCardUncheckedCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportUncheckedCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockUncheckedCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockUncheckedCreateNestedManyWithoutBlockedInput
   }
 
   export type GraduateCreateOrConnectWithoutMentorshipAsMentorInput = {
@@ -70818,6 +74820,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUpdateManyWithoutViewerNestedInput
     idCards?: IdCardUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUpdateManyWithoutBlockedNestedInput
   }
 
   export type GraduateUncheckedUpdateWithoutMentorshipAsMenteeInput = {
@@ -70894,6 +74900,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUncheckedUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUncheckedUpdateManyWithoutViewerNestedInput
     idCards?: IdCardUncheckedUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUncheckedUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUncheckedUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUncheckedUpdateManyWithoutBlockedNestedInput
   }
 
   export type GraduateUpsertWithoutMentorshipAsMentorInput = {
@@ -70981,6 +74991,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUpdateManyWithoutViewerNestedInput
     idCards?: IdCardUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUpdateManyWithoutBlockedNestedInput
   }
 
   export type GraduateUncheckedUpdateWithoutMentorshipAsMentorInput = {
@@ -71057,6 +75071,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUncheckedUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUncheckedUpdateManyWithoutViewerNestedInput
     idCards?: IdCardUncheckedUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUncheckedUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUncheckedUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUncheckedUpdateManyWithoutBlockedNestedInput
   }
 
   export type GraduateCreateWithoutNotificationsInput = {
@@ -71133,6 +75151,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewCreateNestedManyWithoutViewerInput
     idCards?: IdCardCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockCreateNestedManyWithoutBlockedInput
   }
 
   export type GraduateUncheckedCreateWithoutNotificationsInput = {
@@ -71209,6 +75231,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUncheckedCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewUncheckedCreateNestedManyWithoutViewerInput
     idCards?: IdCardUncheckedCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportUncheckedCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockUncheckedCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockUncheckedCreateNestedManyWithoutBlockedInput
   }
 
   export type GraduateCreateOrConnectWithoutNotificationsInput = {
@@ -71301,6 +75327,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUpdateManyWithoutViewerNestedInput
     idCards?: IdCardUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUpdateManyWithoutBlockedNestedInput
   }
 
   export type GraduateUncheckedUpdateWithoutNotificationsInput = {
@@ -71377,6 +75407,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUncheckedUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUncheckedUpdateManyWithoutViewerNestedInput
     idCards?: IdCardUncheckedUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUncheckedUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUncheckedUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUncheckedUpdateManyWithoutBlockedNestedInput
   }
 
   export type GraduateCreateWithoutActivityFeedInput = {
@@ -71453,6 +75487,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewCreateNestedManyWithoutViewerInput
     idCards?: IdCardCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockCreateNestedManyWithoutBlockedInput
   }
 
   export type GraduateUncheckedCreateWithoutActivityFeedInput = {
@@ -71529,6 +75567,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUncheckedCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewUncheckedCreateNestedManyWithoutViewerInput
     idCards?: IdCardUncheckedCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportUncheckedCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockUncheckedCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockUncheckedCreateNestedManyWithoutBlockedInput
   }
 
   export type GraduateCreateOrConnectWithoutActivityFeedInput = {
@@ -71621,6 +75663,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUpdateManyWithoutViewerNestedInput
     idCards?: IdCardUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUpdateManyWithoutBlockedNestedInput
   }
 
   export type GraduateUncheckedUpdateWithoutActivityFeedInput = {
@@ -71697,6 +75743,10 @@ export namespace Prisma {
     profileViewsLog?: ProfileViewUncheckedUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUncheckedUpdateManyWithoutViewerNestedInput
     idCards?: IdCardUncheckedUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUncheckedUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUncheckedUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUncheckedUpdateManyWithoutBlockedNestedInput
   }
 
   export type GraduateCreateWithoutIdCardsInput = {
@@ -71773,6 +75823,10 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemCreateNestedManyWithoutGraduateInput
     profileViewsLog?: ProfileViewCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewCreateNestedManyWithoutViewerInput
+    reportsMade?: ContentReportCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockCreateNestedManyWithoutBlockedInput
   }
 
   export type GraduateUncheckedCreateWithoutIdCardsInput = {
@@ -71849,6 +75903,10 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUncheckedCreateNestedManyWithoutGraduateInput
     profileViewsLog?: ProfileViewUncheckedCreateNestedManyWithoutViewedInput
     profileViewsGiven?: ProfileViewUncheckedCreateNestedManyWithoutViewerInput
+    reportsMade?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportUncheckedCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockUncheckedCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockUncheckedCreateNestedManyWithoutBlockedInput
   }
 
   export type GraduateCreateOrConnectWithoutIdCardsInput = {
@@ -71941,6 +75999,10 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUpdateManyWithoutGraduateNestedInput
     profileViewsLog?: ProfileViewUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUpdateManyWithoutViewerNestedInput
+    reportsMade?: ContentReportUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUpdateManyWithoutBlockedNestedInput
   }
 
   export type GraduateUncheckedUpdateWithoutIdCardsInput = {
@@ -72017,6 +76079,10 @@ export namespace Prisma {
     activityFeed?: ActivityFeedItemUncheckedUpdateManyWithoutGraduateNestedInput
     profileViewsLog?: ProfileViewUncheckedUpdateManyWithoutViewedNestedInput
     profileViewsGiven?: ProfileViewUncheckedUpdateManyWithoutViewerNestedInput
+    reportsMade?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUncheckedUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUncheckedUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUncheckedUpdateManyWithoutBlockedNestedInput
   }
 
   export type ImportJobErrorCreateWithoutJobInput = {
@@ -72170,6 +76236,1350 @@ export namespace Prisma {
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GraduateCreateWithoutReportsMadeInput = {
+    id?: string
+    registrationNo: string
+    fullName: string
+    surname?: string | null
+    otherNames?: string | null
+    sex?: $Enums.Sex | null
+    stateOfOrigin?: string | null
+    lga?: string | null
+    facultyCode?: string | null
+    facultyName?: string | null
+    courseCode?: string | null
+    departmentName?: string | null
+    cgpa?: Decimal | DecimalJsLike | number | string | null
+    degreeClass?: $Enums.DegreeClass | null
+    graduationYear?: string | null
+    entryYear?: number | null
+    jambNumber?: string | null
+    sourceSheet?: string | null
+    dateOfBirth?: Date | string | null
+    bio?: string | null
+    linkedinUrl?: string | null
+    twitterUrl?: string | null
+    githubUrl?: string | null
+    personalWebsite?: string | null
+    signatureUrl?: string | null
+    nyscState?: string | null
+    nyscYear?: number | null
+    showCgpa?: boolean
+    showEmail?: boolean
+    showPhone?: boolean
+    showDob?: boolean
+    showInDirectory?: boolean
+    allowMessages?: boolean
+    showActivityFeed?: boolean
+    openToOpportunities?: boolean
+    availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
+    profileCompleted?: boolean
+    onboardingStep?: number
+    profileViews?: number
+    salaryMin?: Decimal | DecimalJsLike | number | string | null
+    salaryMax?: Decimal | DecimalJsLike | number | string | null
+    salaryCurrency?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutGraduateInput
+    employment?: EmploymentCreateNestedManyWithoutGraduateInput
+    education?: EducationCreateNestedManyWithoutGraduateInput
+    skills?: SkillCreateNestedManyWithoutGraduateInput
+    endorsementsGiven?: EndorsementCreateNestedManyWithoutEndorserInput
+    endorsementsReceived?: EndorsementCreateNestedManyWithoutEndorsedInput
+    location?: GraduateLocationCreateNestedOneWithoutGraduateInput
+    achievements?: AchievementCreateNestedManyWithoutGraduateInput
+    badges?: ProfileBadgeCreateNestedManyWithoutGraduateInput
+    groupMemberships?: GroupMemberCreateNestedManyWithoutGraduateInput
+    groupPosts?: GroupPostCreateNestedManyWithoutAuthorInput
+    postComments?: PostCommentCreateNestedManyWithoutAuthorInput
+    postReactions?: PostReactionCreateNestedManyWithoutGraduateInput
+    sentMessages?: MessageCreateNestedManyWithoutSenderInput
+    conversations?: ConversationParticipantCreateNestedManyWithoutGraduateInput
+    connectionsInitiated?: ConnectionCreateNestedManyWithoutRequesterInput
+    connectionsReceived?: ConnectionCreateNestedManyWithoutReceiverInput
+    jobPostings?: JobPostingCreateNestedManyWithoutPostedByInput
+    jobApplications?: JobApplicationCreateNestedManyWithoutApplicantInput
+    eventsCreated?: EventCreateNestedManyWithoutCreatorInput
+    eventAttendances?: EventAttendeeCreateNestedManyWithoutGraduateInput
+    mentorshipAsMentee?: MentorshipCreateNestedManyWithoutMenteeInput
+    mentorshipAsMentor?: MentorshipCreateNestedManyWithoutMentorInput
+    notifications?: NotificationCreateNestedManyWithoutGraduateInput
+    activityFeed?: ActivityFeedItemCreateNestedManyWithoutGraduateInput
+    profileViewsLog?: ProfileViewCreateNestedManyWithoutViewedInput
+    profileViewsGiven?: ProfileViewCreateNestedManyWithoutViewerInput
+    idCards?: IdCardCreateNestedManyWithoutGraduateInput
+    reportsAgainst?: ContentReportCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockCreateNestedManyWithoutBlockedInput
+  }
+
+  export type GraduateUncheckedCreateWithoutReportsMadeInput = {
+    id?: string
+    userId: string
+    registrationNo: string
+    fullName: string
+    surname?: string | null
+    otherNames?: string | null
+    sex?: $Enums.Sex | null
+    stateOfOrigin?: string | null
+    lga?: string | null
+    facultyCode?: string | null
+    facultyName?: string | null
+    courseCode?: string | null
+    departmentName?: string | null
+    cgpa?: Decimal | DecimalJsLike | number | string | null
+    degreeClass?: $Enums.DegreeClass | null
+    graduationYear?: string | null
+    entryYear?: number | null
+    jambNumber?: string | null
+    sourceSheet?: string | null
+    dateOfBirth?: Date | string | null
+    bio?: string | null
+    linkedinUrl?: string | null
+    twitterUrl?: string | null
+    githubUrl?: string | null
+    personalWebsite?: string | null
+    signatureUrl?: string | null
+    nyscState?: string | null
+    nyscYear?: number | null
+    showCgpa?: boolean
+    showEmail?: boolean
+    showPhone?: boolean
+    showDob?: boolean
+    showInDirectory?: boolean
+    allowMessages?: boolean
+    showActivityFeed?: boolean
+    openToOpportunities?: boolean
+    availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
+    profileCompleted?: boolean
+    onboardingStep?: number
+    profileViews?: number
+    salaryMin?: Decimal | DecimalJsLike | number | string | null
+    salaryMax?: Decimal | DecimalJsLike | number | string | null
+    salaryCurrency?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    employment?: EmploymentUncheckedCreateNestedManyWithoutGraduateInput
+    education?: EducationUncheckedCreateNestedManyWithoutGraduateInput
+    skills?: SkillUncheckedCreateNestedManyWithoutGraduateInput
+    endorsementsGiven?: EndorsementUncheckedCreateNestedManyWithoutEndorserInput
+    endorsementsReceived?: EndorsementUncheckedCreateNestedManyWithoutEndorsedInput
+    location?: GraduateLocationUncheckedCreateNestedOneWithoutGraduateInput
+    achievements?: AchievementUncheckedCreateNestedManyWithoutGraduateInput
+    badges?: ProfileBadgeUncheckedCreateNestedManyWithoutGraduateInput
+    groupMemberships?: GroupMemberUncheckedCreateNestedManyWithoutGraduateInput
+    groupPosts?: GroupPostUncheckedCreateNestedManyWithoutAuthorInput
+    postComments?: PostCommentUncheckedCreateNestedManyWithoutAuthorInput
+    postReactions?: PostReactionUncheckedCreateNestedManyWithoutGraduateInput
+    sentMessages?: MessageUncheckedCreateNestedManyWithoutSenderInput
+    conversations?: ConversationParticipantUncheckedCreateNestedManyWithoutGraduateInput
+    connectionsInitiated?: ConnectionUncheckedCreateNestedManyWithoutRequesterInput
+    connectionsReceived?: ConnectionUncheckedCreateNestedManyWithoutReceiverInput
+    jobPostings?: JobPostingUncheckedCreateNestedManyWithoutPostedByInput
+    jobApplications?: JobApplicationUncheckedCreateNestedManyWithoutApplicantInput
+    eventsCreated?: EventUncheckedCreateNestedManyWithoutCreatorInput
+    eventAttendances?: EventAttendeeUncheckedCreateNestedManyWithoutGraduateInput
+    mentorshipAsMentee?: MentorshipUncheckedCreateNestedManyWithoutMenteeInput
+    mentorshipAsMentor?: MentorshipUncheckedCreateNestedManyWithoutMentorInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutGraduateInput
+    activityFeed?: ActivityFeedItemUncheckedCreateNestedManyWithoutGraduateInput
+    profileViewsLog?: ProfileViewUncheckedCreateNestedManyWithoutViewedInput
+    profileViewsGiven?: ProfileViewUncheckedCreateNestedManyWithoutViewerInput
+    idCards?: IdCardUncheckedCreateNestedManyWithoutGraduateInput
+    reportsAgainst?: ContentReportUncheckedCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockUncheckedCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockUncheckedCreateNestedManyWithoutBlockedInput
+  }
+
+  export type GraduateCreateOrConnectWithoutReportsMadeInput = {
+    where: GraduateWhereUniqueInput
+    create: XOR<GraduateCreateWithoutReportsMadeInput, GraduateUncheckedCreateWithoutReportsMadeInput>
+  }
+
+  export type GraduateCreateWithoutReportsAgainstInput = {
+    id?: string
+    registrationNo: string
+    fullName: string
+    surname?: string | null
+    otherNames?: string | null
+    sex?: $Enums.Sex | null
+    stateOfOrigin?: string | null
+    lga?: string | null
+    facultyCode?: string | null
+    facultyName?: string | null
+    courseCode?: string | null
+    departmentName?: string | null
+    cgpa?: Decimal | DecimalJsLike | number | string | null
+    degreeClass?: $Enums.DegreeClass | null
+    graduationYear?: string | null
+    entryYear?: number | null
+    jambNumber?: string | null
+    sourceSheet?: string | null
+    dateOfBirth?: Date | string | null
+    bio?: string | null
+    linkedinUrl?: string | null
+    twitterUrl?: string | null
+    githubUrl?: string | null
+    personalWebsite?: string | null
+    signatureUrl?: string | null
+    nyscState?: string | null
+    nyscYear?: number | null
+    showCgpa?: boolean
+    showEmail?: boolean
+    showPhone?: boolean
+    showDob?: boolean
+    showInDirectory?: boolean
+    allowMessages?: boolean
+    showActivityFeed?: boolean
+    openToOpportunities?: boolean
+    availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
+    profileCompleted?: boolean
+    onboardingStep?: number
+    profileViews?: number
+    salaryMin?: Decimal | DecimalJsLike | number | string | null
+    salaryMax?: Decimal | DecimalJsLike | number | string | null
+    salaryCurrency?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutGraduateInput
+    employment?: EmploymentCreateNestedManyWithoutGraduateInput
+    education?: EducationCreateNestedManyWithoutGraduateInput
+    skills?: SkillCreateNestedManyWithoutGraduateInput
+    endorsementsGiven?: EndorsementCreateNestedManyWithoutEndorserInput
+    endorsementsReceived?: EndorsementCreateNestedManyWithoutEndorsedInput
+    location?: GraduateLocationCreateNestedOneWithoutGraduateInput
+    achievements?: AchievementCreateNestedManyWithoutGraduateInput
+    badges?: ProfileBadgeCreateNestedManyWithoutGraduateInput
+    groupMemberships?: GroupMemberCreateNestedManyWithoutGraduateInput
+    groupPosts?: GroupPostCreateNestedManyWithoutAuthorInput
+    postComments?: PostCommentCreateNestedManyWithoutAuthorInput
+    postReactions?: PostReactionCreateNestedManyWithoutGraduateInput
+    sentMessages?: MessageCreateNestedManyWithoutSenderInput
+    conversations?: ConversationParticipantCreateNestedManyWithoutGraduateInput
+    connectionsInitiated?: ConnectionCreateNestedManyWithoutRequesterInput
+    connectionsReceived?: ConnectionCreateNestedManyWithoutReceiverInput
+    jobPostings?: JobPostingCreateNestedManyWithoutPostedByInput
+    jobApplications?: JobApplicationCreateNestedManyWithoutApplicantInput
+    eventsCreated?: EventCreateNestedManyWithoutCreatorInput
+    eventAttendances?: EventAttendeeCreateNestedManyWithoutGraduateInput
+    mentorshipAsMentee?: MentorshipCreateNestedManyWithoutMenteeInput
+    mentorshipAsMentor?: MentorshipCreateNestedManyWithoutMentorInput
+    notifications?: NotificationCreateNestedManyWithoutGraduateInput
+    activityFeed?: ActivityFeedItemCreateNestedManyWithoutGraduateInput
+    profileViewsLog?: ProfileViewCreateNestedManyWithoutViewedInput
+    profileViewsGiven?: ProfileViewCreateNestedManyWithoutViewerInput
+    idCards?: IdCardCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportCreateNestedManyWithoutReporterInput
+    blocksMade?: MemberBlockCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockCreateNestedManyWithoutBlockedInput
+  }
+
+  export type GraduateUncheckedCreateWithoutReportsAgainstInput = {
+    id?: string
+    userId: string
+    registrationNo: string
+    fullName: string
+    surname?: string | null
+    otherNames?: string | null
+    sex?: $Enums.Sex | null
+    stateOfOrigin?: string | null
+    lga?: string | null
+    facultyCode?: string | null
+    facultyName?: string | null
+    courseCode?: string | null
+    departmentName?: string | null
+    cgpa?: Decimal | DecimalJsLike | number | string | null
+    degreeClass?: $Enums.DegreeClass | null
+    graduationYear?: string | null
+    entryYear?: number | null
+    jambNumber?: string | null
+    sourceSheet?: string | null
+    dateOfBirth?: Date | string | null
+    bio?: string | null
+    linkedinUrl?: string | null
+    twitterUrl?: string | null
+    githubUrl?: string | null
+    personalWebsite?: string | null
+    signatureUrl?: string | null
+    nyscState?: string | null
+    nyscYear?: number | null
+    showCgpa?: boolean
+    showEmail?: boolean
+    showPhone?: boolean
+    showDob?: boolean
+    showInDirectory?: boolean
+    allowMessages?: boolean
+    showActivityFeed?: boolean
+    openToOpportunities?: boolean
+    availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
+    profileCompleted?: boolean
+    onboardingStep?: number
+    profileViews?: number
+    salaryMin?: Decimal | DecimalJsLike | number | string | null
+    salaryMax?: Decimal | DecimalJsLike | number | string | null
+    salaryCurrency?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    employment?: EmploymentUncheckedCreateNestedManyWithoutGraduateInput
+    education?: EducationUncheckedCreateNestedManyWithoutGraduateInput
+    skills?: SkillUncheckedCreateNestedManyWithoutGraduateInput
+    endorsementsGiven?: EndorsementUncheckedCreateNestedManyWithoutEndorserInput
+    endorsementsReceived?: EndorsementUncheckedCreateNestedManyWithoutEndorsedInput
+    location?: GraduateLocationUncheckedCreateNestedOneWithoutGraduateInput
+    achievements?: AchievementUncheckedCreateNestedManyWithoutGraduateInput
+    badges?: ProfileBadgeUncheckedCreateNestedManyWithoutGraduateInput
+    groupMemberships?: GroupMemberUncheckedCreateNestedManyWithoutGraduateInput
+    groupPosts?: GroupPostUncheckedCreateNestedManyWithoutAuthorInput
+    postComments?: PostCommentUncheckedCreateNestedManyWithoutAuthorInput
+    postReactions?: PostReactionUncheckedCreateNestedManyWithoutGraduateInput
+    sentMessages?: MessageUncheckedCreateNestedManyWithoutSenderInput
+    conversations?: ConversationParticipantUncheckedCreateNestedManyWithoutGraduateInput
+    connectionsInitiated?: ConnectionUncheckedCreateNestedManyWithoutRequesterInput
+    connectionsReceived?: ConnectionUncheckedCreateNestedManyWithoutReceiverInput
+    jobPostings?: JobPostingUncheckedCreateNestedManyWithoutPostedByInput
+    jobApplications?: JobApplicationUncheckedCreateNestedManyWithoutApplicantInput
+    eventsCreated?: EventUncheckedCreateNestedManyWithoutCreatorInput
+    eventAttendances?: EventAttendeeUncheckedCreateNestedManyWithoutGraduateInput
+    mentorshipAsMentee?: MentorshipUncheckedCreateNestedManyWithoutMenteeInput
+    mentorshipAsMentor?: MentorshipUncheckedCreateNestedManyWithoutMentorInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutGraduateInput
+    activityFeed?: ActivityFeedItemUncheckedCreateNestedManyWithoutGraduateInput
+    profileViewsLog?: ProfileViewUncheckedCreateNestedManyWithoutViewedInput
+    profileViewsGiven?: ProfileViewUncheckedCreateNestedManyWithoutViewerInput
+    idCards?: IdCardUncheckedCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
+    blocksMade?: MemberBlockUncheckedCreateNestedManyWithoutBlockerInput
+    blocksReceived?: MemberBlockUncheckedCreateNestedManyWithoutBlockedInput
+  }
+
+  export type GraduateCreateOrConnectWithoutReportsAgainstInput = {
+    where: GraduateWhereUniqueInput
+    create: XOR<GraduateCreateWithoutReportsAgainstInput, GraduateUncheckedCreateWithoutReportsAgainstInput>
+  }
+
+  export type GraduateUpsertWithoutReportsMadeInput = {
+    update: XOR<GraduateUpdateWithoutReportsMadeInput, GraduateUncheckedUpdateWithoutReportsMadeInput>
+    create: XOR<GraduateCreateWithoutReportsMadeInput, GraduateUncheckedCreateWithoutReportsMadeInput>
+    where?: GraduateWhereInput
+  }
+
+  export type GraduateUpdateToOneWithWhereWithoutReportsMadeInput = {
+    where?: GraduateWhereInput
+    data: XOR<GraduateUpdateWithoutReportsMadeInput, GraduateUncheckedUpdateWithoutReportsMadeInput>
+  }
+
+  export type GraduateUpdateWithoutReportsMadeInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    registrationNo?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    surname?: NullableStringFieldUpdateOperationsInput | string | null
+    otherNames?: NullableStringFieldUpdateOperationsInput | string | null
+    sex?: NullableEnumSexFieldUpdateOperationsInput | $Enums.Sex | null
+    stateOfOrigin?: NullableStringFieldUpdateOperationsInput | string | null
+    lga?: NullableStringFieldUpdateOperationsInput | string | null
+    facultyCode?: NullableStringFieldUpdateOperationsInput | string | null
+    facultyName?: NullableStringFieldUpdateOperationsInput | string | null
+    courseCode?: NullableStringFieldUpdateOperationsInput | string | null
+    departmentName?: NullableStringFieldUpdateOperationsInput | string | null
+    cgpa?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    degreeClass?: NullableEnumDegreeClassFieldUpdateOperationsInput | $Enums.DegreeClass | null
+    graduationYear?: NullableStringFieldUpdateOperationsInput | string | null
+    entryYear?: NullableIntFieldUpdateOperationsInput | number | null
+    jambNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceSheet?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    linkedinUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    nyscState?: NullableStringFieldUpdateOperationsInput | string | null
+    nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
+    showCgpa?: BoolFieldUpdateOperationsInput | boolean
+    showEmail?: BoolFieldUpdateOperationsInput | boolean
+    showPhone?: BoolFieldUpdateOperationsInput | boolean
+    showDob?: BoolFieldUpdateOperationsInput | boolean
+    showInDirectory?: BoolFieldUpdateOperationsInput | boolean
+    allowMessages?: BoolFieldUpdateOperationsInput | boolean
+    showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
+    openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
+    availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    profileCompleted?: BoolFieldUpdateOperationsInput | boolean
+    onboardingStep?: IntFieldUpdateOperationsInput | number
+    profileViews?: IntFieldUpdateOperationsInput | number
+    salaryMin?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    salaryMax?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    salaryCurrency?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutGraduateNestedInput
+    employment?: EmploymentUpdateManyWithoutGraduateNestedInput
+    education?: EducationUpdateManyWithoutGraduateNestedInput
+    skills?: SkillUpdateManyWithoutGraduateNestedInput
+    endorsementsGiven?: EndorsementUpdateManyWithoutEndorserNestedInput
+    endorsementsReceived?: EndorsementUpdateManyWithoutEndorsedNestedInput
+    location?: GraduateLocationUpdateOneWithoutGraduateNestedInput
+    achievements?: AchievementUpdateManyWithoutGraduateNestedInput
+    badges?: ProfileBadgeUpdateManyWithoutGraduateNestedInput
+    groupMemberships?: GroupMemberUpdateManyWithoutGraduateNestedInput
+    groupPosts?: GroupPostUpdateManyWithoutAuthorNestedInput
+    postComments?: PostCommentUpdateManyWithoutAuthorNestedInput
+    postReactions?: PostReactionUpdateManyWithoutGraduateNestedInput
+    sentMessages?: MessageUpdateManyWithoutSenderNestedInput
+    conversations?: ConversationParticipantUpdateManyWithoutGraduateNestedInput
+    connectionsInitiated?: ConnectionUpdateManyWithoutRequesterNestedInput
+    connectionsReceived?: ConnectionUpdateManyWithoutReceiverNestedInput
+    jobPostings?: JobPostingUpdateManyWithoutPostedByNestedInput
+    jobApplications?: JobApplicationUpdateManyWithoutApplicantNestedInput
+    eventsCreated?: EventUpdateManyWithoutCreatorNestedInput
+    eventAttendances?: EventAttendeeUpdateManyWithoutGraduateNestedInput
+    mentorshipAsMentee?: MentorshipUpdateManyWithoutMenteeNestedInput
+    mentorshipAsMentor?: MentorshipUpdateManyWithoutMentorNestedInput
+    notifications?: NotificationUpdateManyWithoutGraduateNestedInput
+    activityFeed?: ActivityFeedItemUpdateManyWithoutGraduateNestedInput
+    profileViewsLog?: ProfileViewUpdateManyWithoutViewedNestedInput
+    profileViewsGiven?: ProfileViewUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUpdateManyWithoutGraduateNestedInput
+    reportsAgainst?: ContentReportUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUpdateManyWithoutBlockedNestedInput
+  }
+
+  export type GraduateUncheckedUpdateWithoutReportsMadeInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    registrationNo?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    surname?: NullableStringFieldUpdateOperationsInput | string | null
+    otherNames?: NullableStringFieldUpdateOperationsInput | string | null
+    sex?: NullableEnumSexFieldUpdateOperationsInput | $Enums.Sex | null
+    stateOfOrigin?: NullableStringFieldUpdateOperationsInput | string | null
+    lga?: NullableStringFieldUpdateOperationsInput | string | null
+    facultyCode?: NullableStringFieldUpdateOperationsInput | string | null
+    facultyName?: NullableStringFieldUpdateOperationsInput | string | null
+    courseCode?: NullableStringFieldUpdateOperationsInput | string | null
+    departmentName?: NullableStringFieldUpdateOperationsInput | string | null
+    cgpa?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    degreeClass?: NullableEnumDegreeClassFieldUpdateOperationsInput | $Enums.DegreeClass | null
+    graduationYear?: NullableStringFieldUpdateOperationsInput | string | null
+    entryYear?: NullableIntFieldUpdateOperationsInput | number | null
+    jambNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceSheet?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    linkedinUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    nyscState?: NullableStringFieldUpdateOperationsInput | string | null
+    nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
+    showCgpa?: BoolFieldUpdateOperationsInput | boolean
+    showEmail?: BoolFieldUpdateOperationsInput | boolean
+    showPhone?: BoolFieldUpdateOperationsInput | boolean
+    showDob?: BoolFieldUpdateOperationsInput | boolean
+    showInDirectory?: BoolFieldUpdateOperationsInput | boolean
+    allowMessages?: BoolFieldUpdateOperationsInput | boolean
+    showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
+    openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
+    availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    profileCompleted?: BoolFieldUpdateOperationsInput | boolean
+    onboardingStep?: IntFieldUpdateOperationsInput | number
+    profileViews?: IntFieldUpdateOperationsInput | number
+    salaryMin?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    salaryMax?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    salaryCurrency?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    employment?: EmploymentUncheckedUpdateManyWithoutGraduateNestedInput
+    education?: EducationUncheckedUpdateManyWithoutGraduateNestedInput
+    skills?: SkillUncheckedUpdateManyWithoutGraduateNestedInput
+    endorsementsGiven?: EndorsementUncheckedUpdateManyWithoutEndorserNestedInput
+    endorsementsReceived?: EndorsementUncheckedUpdateManyWithoutEndorsedNestedInput
+    location?: GraduateLocationUncheckedUpdateOneWithoutGraduateNestedInput
+    achievements?: AchievementUncheckedUpdateManyWithoutGraduateNestedInput
+    badges?: ProfileBadgeUncheckedUpdateManyWithoutGraduateNestedInput
+    groupMemberships?: GroupMemberUncheckedUpdateManyWithoutGraduateNestedInput
+    groupPosts?: GroupPostUncheckedUpdateManyWithoutAuthorNestedInput
+    postComments?: PostCommentUncheckedUpdateManyWithoutAuthorNestedInput
+    postReactions?: PostReactionUncheckedUpdateManyWithoutGraduateNestedInput
+    sentMessages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
+    conversations?: ConversationParticipantUncheckedUpdateManyWithoutGraduateNestedInput
+    connectionsInitiated?: ConnectionUncheckedUpdateManyWithoutRequesterNestedInput
+    connectionsReceived?: ConnectionUncheckedUpdateManyWithoutReceiverNestedInput
+    jobPostings?: JobPostingUncheckedUpdateManyWithoutPostedByNestedInput
+    jobApplications?: JobApplicationUncheckedUpdateManyWithoutApplicantNestedInput
+    eventsCreated?: EventUncheckedUpdateManyWithoutCreatorNestedInput
+    eventAttendances?: EventAttendeeUncheckedUpdateManyWithoutGraduateNestedInput
+    mentorshipAsMentee?: MentorshipUncheckedUpdateManyWithoutMenteeNestedInput
+    mentorshipAsMentor?: MentorshipUncheckedUpdateManyWithoutMentorNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutGraduateNestedInput
+    activityFeed?: ActivityFeedItemUncheckedUpdateManyWithoutGraduateNestedInput
+    profileViewsLog?: ProfileViewUncheckedUpdateManyWithoutViewedNestedInput
+    profileViewsGiven?: ProfileViewUncheckedUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUncheckedUpdateManyWithoutGraduateNestedInput
+    reportsAgainst?: ContentReportUncheckedUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUncheckedUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUncheckedUpdateManyWithoutBlockedNestedInput
+  }
+
+  export type GraduateUpsertWithoutReportsAgainstInput = {
+    update: XOR<GraduateUpdateWithoutReportsAgainstInput, GraduateUncheckedUpdateWithoutReportsAgainstInput>
+    create: XOR<GraduateCreateWithoutReportsAgainstInput, GraduateUncheckedCreateWithoutReportsAgainstInput>
+    where?: GraduateWhereInput
+  }
+
+  export type GraduateUpdateToOneWithWhereWithoutReportsAgainstInput = {
+    where?: GraduateWhereInput
+    data: XOR<GraduateUpdateWithoutReportsAgainstInput, GraduateUncheckedUpdateWithoutReportsAgainstInput>
+  }
+
+  export type GraduateUpdateWithoutReportsAgainstInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    registrationNo?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    surname?: NullableStringFieldUpdateOperationsInput | string | null
+    otherNames?: NullableStringFieldUpdateOperationsInput | string | null
+    sex?: NullableEnumSexFieldUpdateOperationsInput | $Enums.Sex | null
+    stateOfOrigin?: NullableStringFieldUpdateOperationsInput | string | null
+    lga?: NullableStringFieldUpdateOperationsInput | string | null
+    facultyCode?: NullableStringFieldUpdateOperationsInput | string | null
+    facultyName?: NullableStringFieldUpdateOperationsInput | string | null
+    courseCode?: NullableStringFieldUpdateOperationsInput | string | null
+    departmentName?: NullableStringFieldUpdateOperationsInput | string | null
+    cgpa?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    degreeClass?: NullableEnumDegreeClassFieldUpdateOperationsInput | $Enums.DegreeClass | null
+    graduationYear?: NullableStringFieldUpdateOperationsInput | string | null
+    entryYear?: NullableIntFieldUpdateOperationsInput | number | null
+    jambNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceSheet?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    linkedinUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    nyscState?: NullableStringFieldUpdateOperationsInput | string | null
+    nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
+    showCgpa?: BoolFieldUpdateOperationsInput | boolean
+    showEmail?: BoolFieldUpdateOperationsInput | boolean
+    showPhone?: BoolFieldUpdateOperationsInput | boolean
+    showDob?: BoolFieldUpdateOperationsInput | boolean
+    showInDirectory?: BoolFieldUpdateOperationsInput | boolean
+    allowMessages?: BoolFieldUpdateOperationsInput | boolean
+    showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
+    openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
+    availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    profileCompleted?: BoolFieldUpdateOperationsInput | boolean
+    onboardingStep?: IntFieldUpdateOperationsInput | number
+    profileViews?: IntFieldUpdateOperationsInput | number
+    salaryMin?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    salaryMax?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    salaryCurrency?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutGraduateNestedInput
+    employment?: EmploymentUpdateManyWithoutGraduateNestedInput
+    education?: EducationUpdateManyWithoutGraduateNestedInput
+    skills?: SkillUpdateManyWithoutGraduateNestedInput
+    endorsementsGiven?: EndorsementUpdateManyWithoutEndorserNestedInput
+    endorsementsReceived?: EndorsementUpdateManyWithoutEndorsedNestedInput
+    location?: GraduateLocationUpdateOneWithoutGraduateNestedInput
+    achievements?: AchievementUpdateManyWithoutGraduateNestedInput
+    badges?: ProfileBadgeUpdateManyWithoutGraduateNestedInput
+    groupMemberships?: GroupMemberUpdateManyWithoutGraduateNestedInput
+    groupPosts?: GroupPostUpdateManyWithoutAuthorNestedInput
+    postComments?: PostCommentUpdateManyWithoutAuthorNestedInput
+    postReactions?: PostReactionUpdateManyWithoutGraduateNestedInput
+    sentMessages?: MessageUpdateManyWithoutSenderNestedInput
+    conversations?: ConversationParticipantUpdateManyWithoutGraduateNestedInput
+    connectionsInitiated?: ConnectionUpdateManyWithoutRequesterNestedInput
+    connectionsReceived?: ConnectionUpdateManyWithoutReceiverNestedInput
+    jobPostings?: JobPostingUpdateManyWithoutPostedByNestedInput
+    jobApplications?: JobApplicationUpdateManyWithoutApplicantNestedInput
+    eventsCreated?: EventUpdateManyWithoutCreatorNestedInput
+    eventAttendances?: EventAttendeeUpdateManyWithoutGraduateNestedInput
+    mentorshipAsMentee?: MentorshipUpdateManyWithoutMenteeNestedInput
+    mentorshipAsMentor?: MentorshipUpdateManyWithoutMentorNestedInput
+    notifications?: NotificationUpdateManyWithoutGraduateNestedInput
+    activityFeed?: ActivityFeedItemUpdateManyWithoutGraduateNestedInput
+    profileViewsLog?: ProfileViewUpdateManyWithoutViewedNestedInput
+    profileViewsGiven?: ProfileViewUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUpdateManyWithoutReporterNestedInput
+    blocksMade?: MemberBlockUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUpdateManyWithoutBlockedNestedInput
+  }
+
+  export type GraduateUncheckedUpdateWithoutReportsAgainstInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    registrationNo?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    surname?: NullableStringFieldUpdateOperationsInput | string | null
+    otherNames?: NullableStringFieldUpdateOperationsInput | string | null
+    sex?: NullableEnumSexFieldUpdateOperationsInput | $Enums.Sex | null
+    stateOfOrigin?: NullableStringFieldUpdateOperationsInput | string | null
+    lga?: NullableStringFieldUpdateOperationsInput | string | null
+    facultyCode?: NullableStringFieldUpdateOperationsInput | string | null
+    facultyName?: NullableStringFieldUpdateOperationsInput | string | null
+    courseCode?: NullableStringFieldUpdateOperationsInput | string | null
+    departmentName?: NullableStringFieldUpdateOperationsInput | string | null
+    cgpa?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    degreeClass?: NullableEnumDegreeClassFieldUpdateOperationsInput | $Enums.DegreeClass | null
+    graduationYear?: NullableStringFieldUpdateOperationsInput | string | null
+    entryYear?: NullableIntFieldUpdateOperationsInput | number | null
+    jambNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceSheet?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    linkedinUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    nyscState?: NullableStringFieldUpdateOperationsInput | string | null
+    nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
+    showCgpa?: BoolFieldUpdateOperationsInput | boolean
+    showEmail?: BoolFieldUpdateOperationsInput | boolean
+    showPhone?: BoolFieldUpdateOperationsInput | boolean
+    showDob?: BoolFieldUpdateOperationsInput | boolean
+    showInDirectory?: BoolFieldUpdateOperationsInput | boolean
+    allowMessages?: BoolFieldUpdateOperationsInput | boolean
+    showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
+    openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
+    availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    profileCompleted?: BoolFieldUpdateOperationsInput | boolean
+    onboardingStep?: IntFieldUpdateOperationsInput | number
+    profileViews?: IntFieldUpdateOperationsInput | number
+    salaryMin?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    salaryMax?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    salaryCurrency?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    employment?: EmploymentUncheckedUpdateManyWithoutGraduateNestedInput
+    education?: EducationUncheckedUpdateManyWithoutGraduateNestedInput
+    skills?: SkillUncheckedUpdateManyWithoutGraduateNestedInput
+    endorsementsGiven?: EndorsementUncheckedUpdateManyWithoutEndorserNestedInput
+    endorsementsReceived?: EndorsementUncheckedUpdateManyWithoutEndorsedNestedInput
+    location?: GraduateLocationUncheckedUpdateOneWithoutGraduateNestedInput
+    achievements?: AchievementUncheckedUpdateManyWithoutGraduateNestedInput
+    badges?: ProfileBadgeUncheckedUpdateManyWithoutGraduateNestedInput
+    groupMemberships?: GroupMemberUncheckedUpdateManyWithoutGraduateNestedInput
+    groupPosts?: GroupPostUncheckedUpdateManyWithoutAuthorNestedInput
+    postComments?: PostCommentUncheckedUpdateManyWithoutAuthorNestedInput
+    postReactions?: PostReactionUncheckedUpdateManyWithoutGraduateNestedInput
+    sentMessages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
+    conversations?: ConversationParticipantUncheckedUpdateManyWithoutGraduateNestedInput
+    connectionsInitiated?: ConnectionUncheckedUpdateManyWithoutRequesterNestedInput
+    connectionsReceived?: ConnectionUncheckedUpdateManyWithoutReceiverNestedInput
+    jobPostings?: JobPostingUncheckedUpdateManyWithoutPostedByNestedInput
+    jobApplications?: JobApplicationUncheckedUpdateManyWithoutApplicantNestedInput
+    eventsCreated?: EventUncheckedUpdateManyWithoutCreatorNestedInput
+    eventAttendances?: EventAttendeeUncheckedUpdateManyWithoutGraduateNestedInput
+    mentorshipAsMentee?: MentorshipUncheckedUpdateManyWithoutMenteeNestedInput
+    mentorshipAsMentor?: MentorshipUncheckedUpdateManyWithoutMentorNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutGraduateNestedInput
+    activityFeed?: ActivityFeedItemUncheckedUpdateManyWithoutGraduateNestedInput
+    profileViewsLog?: ProfileViewUncheckedUpdateManyWithoutViewedNestedInput
+    profileViewsGiven?: ProfileViewUncheckedUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUncheckedUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
+    blocksMade?: MemberBlockUncheckedUpdateManyWithoutBlockerNestedInput
+    blocksReceived?: MemberBlockUncheckedUpdateManyWithoutBlockedNestedInput
+  }
+
+  export type GraduateCreateWithoutBlocksMadeInput = {
+    id?: string
+    registrationNo: string
+    fullName: string
+    surname?: string | null
+    otherNames?: string | null
+    sex?: $Enums.Sex | null
+    stateOfOrigin?: string | null
+    lga?: string | null
+    facultyCode?: string | null
+    facultyName?: string | null
+    courseCode?: string | null
+    departmentName?: string | null
+    cgpa?: Decimal | DecimalJsLike | number | string | null
+    degreeClass?: $Enums.DegreeClass | null
+    graduationYear?: string | null
+    entryYear?: number | null
+    jambNumber?: string | null
+    sourceSheet?: string | null
+    dateOfBirth?: Date | string | null
+    bio?: string | null
+    linkedinUrl?: string | null
+    twitterUrl?: string | null
+    githubUrl?: string | null
+    personalWebsite?: string | null
+    signatureUrl?: string | null
+    nyscState?: string | null
+    nyscYear?: number | null
+    showCgpa?: boolean
+    showEmail?: boolean
+    showPhone?: boolean
+    showDob?: boolean
+    showInDirectory?: boolean
+    allowMessages?: boolean
+    showActivityFeed?: boolean
+    openToOpportunities?: boolean
+    availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
+    profileCompleted?: boolean
+    onboardingStep?: number
+    profileViews?: number
+    salaryMin?: Decimal | DecimalJsLike | number | string | null
+    salaryMax?: Decimal | DecimalJsLike | number | string | null
+    salaryCurrency?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutGraduateInput
+    employment?: EmploymentCreateNestedManyWithoutGraduateInput
+    education?: EducationCreateNestedManyWithoutGraduateInput
+    skills?: SkillCreateNestedManyWithoutGraduateInput
+    endorsementsGiven?: EndorsementCreateNestedManyWithoutEndorserInput
+    endorsementsReceived?: EndorsementCreateNestedManyWithoutEndorsedInput
+    location?: GraduateLocationCreateNestedOneWithoutGraduateInput
+    achievements?: AchievementCreateNestedManyWithoutGraduateInput
+    badges?: ProfileBadgeCreateNestedManyWithoutGraduateInput
+    groupMemberships?: GroupMemberCreateNestedManyWithoutGraduateInput
+    groupPosts?: GroupPostCreateNestedManyWithoutAuthorInput
+    postComments?: PostCommentCreateNestedManyWithoutAuthorInput
+    postReactions?: PostReactionCreateNestedManyWithoutGraduateInput
+    sentMessages?: MessageCreateNestedManyWithoutSenderInput
+    conversations?: ConversationParticipantCreateNestedManyWithoutGraduateInput
+    connectionsInitiated?: ConnectionCreateNestedManyWithoutRequesterInput
+    connectionsReceived?: ConnectionCreateNestedManyWithoutReceiverInput
+    jobPostings?: JobPostingCreateNestedManyWithoutPostedByInput
+    jobApplications?: JobApplicationCreateNestedManyWithoutApplicantInput
+    eventsCreated?: EventCreateNestedManyWithoutCreatorInput
+    eventAttendances?: EventAttendeeCreateNestedManyWithoutGraduateInput
+    mentorshipAsMentee?: MentorshipCreateNestedManyWithoutMenteeInput
+    mentorshipAsMentor?: MentorshipCreateNestedManyWithoutMentorInput
+    notifications?: NotificationCreateNestedManyWithoutGraduateInput
+    activityFeed?: ActivityFeedItemCreateNestedManyWithoutGraduateInput
+    profileViewsLog?: ProfileViewCreateNestedManyWithoutViewedInput
+    profileViewsGiven?: ProfileViewCreateNestedManyWithoutViewerInput
+    idCards?: IdCardCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportCreateNestedManyWithoutSubjectInput
+    blocksReceived?: MemberBlockCreateNestedManyWithoutBlockedInput
+  }
+
+  export type GraduateUncheckedCreateWithoutBlocksMadeInput = {
+    id?: string
+    userId: string
+    registrationNo: string
+    fullName: string
+    surname?: string | null
+    otherNames?: string | null
+    sex?: $Enums.Sex | null
+    stateOfOrigin?: string | null
+    lga?: string | null
+    facultyCode?: string | null
+    facultyName?: string | null
+    courseCode?: string | null
+    departmentName?: string | null
+    cgpa?: Decimal | DecimalJsLike | number | string | null
+    degreeClass?: $Enums.DegreeClass | null
+    graduationYear?: string | null
+    entryYear?: number | null
+    jambNumber?: string | null
+    sourceSheet?: string | null
+    dateOfBirth?: Date | string | null
+    bio?: string | null
+    linkedinUrl?: string | null
+    twitterUrl?: string | null
+    githubUrl?: string | null
+    personalWebsite?: string | null
+    signatureUrl?: string | null
+    nyscState?: string | null
+    nyscYear?: number | null
+    showCgpa?: boolean
+    showEmail?: boolean
+    showPhone?: boolean
+    showDob?: boolean
+    showInDirectory?: boolean
+    allowMessages?: boolean
+    showActivityFeed?: boolean
+    openToOpportunities?: boolean
+    availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
+    profileCompleted?: boolean
+    onboardingStep?: number
+    profileViews?: number
+    salaryMin?: Decimal | DecimalJsLike | number | string | null
+    salaryMax?: Decimal | DecimalJsLike | number | string | null
+    salaryCurrency?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    employment?: EmploymentUncheckedCreateNestedManyWithoutGraduateInput
+    education?: EducationUncheckedCreateNestedManyWithoutGraduateInput
+    skills?: SkillUncheckedCreateNestedManyWithoutGraduateInput
+    endorsementsGiven?: EndorsementUncheckedCreateNestedManyWithoutEndorserInput
+    endorsementsReceived?: EndorsementUncheckedCreateNestedManyWithoutEndorsedInput
+    location?: GraduateLocationUncheckedCreateNestedOneWithoutGraduateInput
+    achievements?: AchievementUncheckedCreateNestedManyWithoutGraduateInput
+    badges?: ProfileBadgeUncheckedCreateNestedManyWithoutGraduateInput
+    groupMemberships?: GroupMemberUncheckedCreateNestedManyWithoutGraduateInput
+    groupPosts?: GroupPostUncheckedCreateNestedManyWithoutAuthorInput
+    postComments?: PostCommentUncheckedCreateNestedManyWithoutAuthorInput
+    postReactions?: PostReactionUncheckedCreateNestedManyWithoutGraduateInput
+    sentMessages?: MessageUncheckedCreateNestedManyWithoutSenderInput
+    conversations?: ConversationParticipantUncheckedCreateNestedManyWithoutGraduateInput
+    connectionsInitiated?: ConnectionUncheckedCreateNestedManyWithoutRequesterInput
+    connectionsReceived?: ConnectionUncheckedCreateNestedManyWithoutReceiverInput
+    jobPostings?: JobPostingUncheckedCreateNestedManyWithoutPostedByInput
+    jobApplications?: JobApplicationUncheckedCreateNestedManyWithoutApplicantInput
+    eventsCreated?: EventUncheckedCreateNestedManyWithoutCreatorInput
+    eventAttendances?: EventAttendeeUncheckedCreateNestedManyWithoutGraduateInput
+    mentorshipAsMentee?: MentorshipUncheckedCreateNestedManyWithoutMenteeInput
+    mentorshipAsMentor?: MentorshipUncheckedCreateNestedManyWithoutMentorInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutGraduateInput
+    activityFeed?: ActivityFeedItemUncheckedCreateNestedManyWithoutGraduateInput
+    profileViewsLog?: ProfileViewUncheckedCreateNestedManyWithoutViewedInput
+    profileViewsGiven?: ProfileViewUncheckedCreateNestedManyWithoutViewerInput
+    idCards?: IdCardUncheckedCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportUncheckedCreateNestedManyWithoutSubjectInput
+    blocksReceived?: MemberBlockUncheckedCreateNestedManyWithoutBlockedInput
+  }
+
+  export type GraduateCreateOrConnectWithoutBlocksMadeInput = {
+    where: GraduateWhereUniqueInput
+    create: XOR<GraduateCreateWithoutBlocksMadeInput, GraduateUncheckedCreateWithoutBlocksMadeInput>
+  }
+
+  export type GraduateCreateWithoutBlocksReceivedInput = {
+    id?: string
+    registrationNo: string
+    fullName: string
+    surname?: string | null
+    otherNames?: string | null
+    sex?: $Enums.Sex | null
+    stateOfOrigin?: string | null
+    lga?: string | null
+    facultyCode?: string | null
+    facultyName?: string | null
+    courseCode?: string | null
+    departmentName?: string | null
+    cgpa?: Decimal | DecimalJsLike | number | string | null
+    degreeClass?: $Enums.DegreeClass | null
+    graduationYear?: string | null
+    entryYear?: number | null
+    jambNumber?: string | null
+    sourceSheet?: string | null
+    dateOfBirth?: Date | string | null
+    bio?: string | null
+    linkedinUrl?: string | null
+    twitterUrl?: string | null
+    githubUrl?: string | null
+    personalWebsite?: string | null
+    signatureUrl?: string | null
+    nyscState?: string | null
+    nyscYear?: number | null
+    showCgpa?: boolean
+    showEmail?: boolean
+    showPhone?: boolean
+    showDob?: boolean
+    showInDirectory?: boolean
+    allowMessages?: boolean
+    showActivityFeed?: boolean
+    openToOpportunities?: boolean
+    availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
+    profileCompleted?: boolean
+    onboardingStep?: number
+    profileViews?: number
+    salaryMin?: Decimal | DecimalJsLike | number | string | null
+    salaryMax?: Decimal | DecimalJsLike | number | string | null
+    salaryCurrency?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutGraduateInput
+    employment?: EmploymentCreateNestedManyWithoutGraduateInput
+    education?: EducationCreateNestedManyWithoutGraduateInput
+    skills?: SkillCreateNestedManyWithoutGraduateInput
+    endorsementsGiven?: EndorsementCreateNestedManyWithoutEndorserInput
+    endorsementsReceived?: EndorsementCreateNestedManyWithoutEndorsedInput
+    location?: GraduateLocationCreateNestedOneWithoutGraduateInput
+    achievements?: AchievementCreateNestedManyWithoutGraduateInput
+    badges?: ProfileBadgeCreateNestedManyWithoutGraduateInput
+    groupMemberships?: GroupMemberCreateNestedManyWithoutGraduateInput
+    groupPosts?: GroupPostCreateNestedManyWithoutAuthorInput
+    postComments?: PostCommentCreateNestedManyWithoutAuthorInput
+    postReactions?: PostReactionCreateNestedManyWithoutGraduateInput
+    sentMessages?: MessageCreateNestedManyWithoutSenderInput
+    conversations?: ConversationParticipantCreateNestedManyWithoutGraduateInput
+    connectionsInitiated?: ConnectionCreateNestedManyWithoutRequesterInput
+    connectionsReceived?: ConnectionCreateNestedManyWithoutReceiverInput
+    jobPostings?: JobPostingCreateNestedManyWithoutPostedByInput
+    jobApplications?: JobApplicationCreateNestedManyWithoutApplicantInput
+    eventsCreated?: EventCreateNestedManyWithoutCreatorInput
+    eventAttendances?: EventAttendeeCreateNestedManyWithoutGraduateInput
+    mentorshipAsMentee?: MentorshipCreateNestedManyWithoutMenteeInput
+    mentorshipAsMentor?: MentorshipCreateNestedManyWithoutMentorInput
+    notifications?: NotificationCreateNestedManyWithoutGraduateInput
+    activityFeed?: ActivityFeedItemCreateNestedManyWithoutGraduateInput
+    profileViewsLog?: ProfileViewCreateNestedManyWithoutViewedInput
+    profileViewsGiven?: ProfileViewCreateNestedManyWithoutViewerInput
+    idCards?: IdCardCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockCreateNestedManyWithoutBlockerInput
+  }
+
+  export type GraduateUncheckedCreateWithoutBlocksReceivedInput = {
+    id?: string
+    userId: string
+    registrationNo: string
+    fullName: string
+    surname?: string | null
+    otherNames?: string | null
+    sex?: $Enums.Sex | null
+    stateOfOrigin?: string | null
+    lga?: string | null
+    facultyCode?: string | null
+    facultyName?: string | null
+    courseCode?: string | null
+    departmentName?: string | null
+    cgpa?: Decimal | DecimalJsLike | number | string | null
+    degreeClass?: $Enums.DegreeClass | null
+    graduationYear?: string | null
+    entryYear?: number | null
+    jambNumber?: string | null
+    sourceSheet?: string | null
+    dateOfBirth?: Date | string | null
+    bio?: string | null
+    linkedinUrl?: string | null
+    twitterUrl?: string | null
+    githubUrl?: string | null
+    personalWebsite?: string | null
+    signatureUrl?: string | null
+    nyscState?: string | null
+    nyscYear?: number | null
+    showCgpa?: boolean
+    showEmail?: boolean
+    showPhone?: boolean
+    showDob?: boolean
+    showInDirectory?: boolean
+    allowMessages?: boolean
+    showActivityFeed?: boolean
+    openToOpportunities?: boolean
+    availableForMentorship?: boolean
+    activationVerifiedAt?: Date | string | null
+    activationMethod?: string | null
+    profileCompleted?: boolean
+    onboardingStep?: number
+    profileViews?: number
+    salaryMin?: Decimal | DecimalJsLike | number | string | null
+    salaryMax?: Decimal | DecimalJsLike | number | string | null
+    salaryCurrency?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    employment?: EmploymentUncheckedCreateNestedManyWithoutGraduateInput
+    education?: EducationUncheckedCreateNestedManyWithoutGraduateInput
+    skills?: SkillUncheckedCreateNestedManyWithoutGraduateInput
+    endorsementsGiven?: EndorsementUncheckedCreateNestedManyWithoutEndorserInput
+    endorsementsReceived?: EndorsementUncheckedCreateNestedManyWithoutEndorsedInput
+    location?: GraduateLocationUncheckedCreateNestedOneWithoutGraduateInput
+    achievements?: AchievementUncheckedCreateNestedManyWithoutGraduateInput
+    badges?: ProfileBadgeUncheckedCreateNestedManyWithoutGraduateInput
+    groupMemberships?: GroupMemberUncheckedCreateNestedManyWithoutGraduateInput
+    groupPosts?: GroupPostUncheckedCreateNestedManyWithoutAuthorInput
+    postComments?: PostCommentUncheckedCreateNestedManyWithoutAuthorInput
+    postReactions?: PostReactionUncheckedCreateNestedManyWithoutGraduateInput
+    sentMessages?: MessageUncheckedCreateNestedManyWithoutSenderInput
+    conversations?: ConversationParticipantUncheckedCreateNestedManyWithoutGraduateInput
+    connectionsInitiated?: ConnectionUncheckedCreateNestedManyWithoutRequesterInput
+    connectionsReceived?: ConnectionUncheckedCreateNestedManyWithoutReceiverInput
+    jobPostings?: JobPostingUncheckedCreateNestedManyWithoutPostedByInput
+    jobApplications?: JobApplicationUncheckedCreateNestedManyWithoutApplicantInput
+    eventsCreated?: EventUncheckedCreateNestedManyWithoutCreatorInput
+    eventAttendances?: EventAttendeeUncheckedCreateNestedManyWithoutGraduateInput
+    mentorshipAsMentee?: MentorshipUncheckedCreateNestedManyWithoutMenteeInput
+    mentorshipAsMentor?: MentorshipUncheckedCreateNestedManyWithoutMentorInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutGraduateInput
+    activityFeed?: ActivityFeedItemUncheckedCreateNestedManyWithoutGraduateInput
+    profileViewsLog?: ProfileViewUncheckedCreateNestedManyWithoutViewedInput
+    profileViewsGiven?: ProfileViewUncheckedCreateNestedManyWithoutViewerInput
+    idCards?: IdCardUncheckedCreateNestedManyWithoutGraduateInput
+    reportsMade?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
+    reportsAgainst?: ContentReportUncheckedCreateNestedManyWithoutSubjectInput
+    blocksMade?: MemberBlockUncheckedCreateNestedManyWithoutBlockerInput
+  }
+
+  export type GraduateCreateOrConnectWithoutBlocksReceivedInput = {
+    where: GraduateWhereUniqueInput
+    create: XOR<GraduateCreateWithoutBlocksReceivedInput, GraduateUncheckedCreateWithoutBlocksReceivedInput>
+  }
+
+  export type GraduateUpsertWithoutBlocksMadeInput = {
+    update: XOR<GraduateUpdateWithoutBlocksMadeInput, GraduateUncheckedUpdateWithoutBlocksMadeInput>
+    create: XOR<GraduateCreateWithoutBlocksMadeInput, GraduateUncheckedCreateWithoutBlocksMadeInput>
+    where?: GraduateWhereInput
+  }
+
+  export type GraduateUpdateToOneWithWhereWithoutBlocksMadeInput = {
+    where?: GraduateWhereInput
+    data: XOR<GraduateUpdateWithoutBlocksMadeInput, GraduateUncheckedUpdateWithoutBlocksMadeInput>
+  }
+
+  export type GraduateUpdateWithoutBlocksMadeInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    registrationNo?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    surname?: NullableStringFieldUpdateOperationsInput | string | null
+    otherNames?: NullableStringFieldUpdateOperationsInput | string | null
+    sex?: NullableEnumSexFieldUpdateOperationsInput | $Enums.Sex | null
+    stateOfOrigin?: NullableStringFieldUpdateOperationsInput | string | null
+    lga?: NullableStringFieldUpdateOperationsInput | string | null
+    facultyCode?: NullableStringFieldUpdateOperationsInput | string | null
+    facultyName?: NullableStringFieldUpdateOperationsInput | string | null
+    courseCode?: NullableStringFieldUpdateOperationsInput | string | null
+    departmentName?: NullableStringFieldUpdateOperationsInput | string | null
+    cgpa?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    degreeClass?: NullableEnumDegreeClassFieldUpdateOperationsInput | $Enums.DegreeClass | null
+    graduationYear?: NullableStringFieldUpdateOperationsInput | string | null
+    entryYear?: NullableIntFieldUpdateOperationsInput | number | null
+    jambNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceSheet?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    linkedinUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    nyscState?: NullableStringFieldUpdateOperationsInput | string | null
+    nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
+    showCgpa?: BoolFieldUpdateOperationsInput | boolean
+    showEmail?: BoolFieldUpdateOperationsInput | boolean
+    showPhone?: BoolFieldUpdateOperationsInput | boolean
+    showDob?: BoolFieldUpdateOperationsInput | boolean
+    showInDirectory?: BoolFieldUpdateOperationsInput | boolean
+    allowMessages?: BoolFieldUpdateOperationsInput | boolean
+    showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
+    openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
+    availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    profileCompleted?: BoolFieldUpdateOperationsInput | boolean
+    onboardingStep?: IntFieldUpdateOperationsInput | number
+    profileViews?: IntFieldUpdateOperationsInput | number
+    salaryMin?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    salaryMax?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    salaryCurrency?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutGraduateNestedInput
+    employment?: EmploymentUpdateManyWithoutGraduateNestedInput
+    education?: EducationUpdateManyWithoutGraduateNestedInput
+    skills?: SkillUpdateManyWithoutGraduateNestedInput
+    endorsementsGiven?: EndorsementUpdateManyWithoutEndorserNestedInput
+    endorsementsReceived?: EndorsementUpdateManyWithoutEndorsedNestedInput
+    location?: GraduateLocationUpdateOneWithoutGraduateNestedInput
+    achievements?: AchievementUpdateManyWithoutGraduateNestedInput
+    badges?: ProfileBadgeUpdateManyWithoutGraduateNestedInput
+    groupMemberships?: GroupMemberUpdateManyWithoutGraduateNestedInput
+    groupPosts?: GroupPostUpdateManyWithoutAuthorNestedInput
+    postComments?: PostCommentUpdateManyWithoutAuthorNestedInput
+    postReactions?: PostReactionUpdateManyWithoutGraduateNestedInput
+    sentMessages?: MessageUpdateManyWithoutSenderNestedInput
+    conversations?: ConversationParticipantUpdateManyWithoutGraduateNestedInput
+    connectionsInitiated?: ConnectionUpdateManyWithoutRequesterNestedInput
+    connectionsReceived?: ConnectionUpdateManyWithoutReceiverNestedInput
+    jobPostings?: JobPostingUpdateManyWithoutPostedByNestedInput
+    jobApplications?: JobApplicationUpdateManyWithoutApplicantNestedInput
+    eventsCreated?: EventUpdateManyWithoutCreatorNestedInput
+    eventAttendances?: EventAttendeeUpdateManyWithoutGraduateNestedInput
+    mentorshipAsMentee?: MentorshipUpdateManyWithoutMenteeNestedInput
+    mentorshipAsMentor?: MentorshipUpdateManyWithoutMentorNestedInput
+    notifications?: NotificationUpdateManyWithoutGraduateNestedInput
+    activityFeed?: ActivityFeedItemUpdateManyWithoutGraduateNestedInput
+    profileViewsLog?: ProfileViewUpdateManyWithoutViewedNestedInput
+    profileViewsGiven?: ProfileViewUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUpdateManyWithoutSubjectNestedInput
+    blocksReceived?: MemberBlockUpdateManyWithoutBlockedNestedInput
+  }
+
+  export type GraduateUncheckedUpdateWithoutBlocksMadeInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    registrationNo?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    surname?: NullableStringFieldUpdateOperationsInput | string | null
+    otherNames?: NullableStringFieldUpdateOperationsInput | string | null
+    sex?: NullableEnumSexFieldUpdateOperationsInput | $Enums.Sex | null
+    stateOfOrigin?: NullableStringFieldUpdateOperationsInput | string | null
+    lga?: NullableStringFieldUpdateOperationsInput | string | null
+    facultyCode?: NullableStringFieldUpdateOperationsInput | string | null
+    facultyName?: NullableStringFieldUpdateOperationsInput | string | null
+    courseCode?: NullableStringFieldUpdateOperationsInput | string | null
+    departmentName?: NullableStringFieldUpdateOperationsInput | string | null
+    cgpa?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    degreeClass?: NullableEnumDegreeClassFieldUpdateOperationsInput | $Enums.DegreeClass | null
+    graduationYear?: NullableStringFieldUpdateOperationsInput | string | null
+    entryYear?: NullableIntFieldUpdateOperationsInput | number | null
+    jambNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceSheet?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    linkedinUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    nyscState?: NullableStringFieldUpdateOperationsInput | string | null
+    nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
+    showCgpa?: BoolFieldUpdateOperationsInput | boolean
+    showEmail?: BoolFieldUpdateOperationsInput | boolean
+    showPhone?: BoolFieldUpdateOperationsInput | boolean
+    showDob?: BoolFieldUpdateOperationsInput | boolean
+    showInDirectory?: BoolFieldUpdateOperationsInput | boolean
+    allowMessages?: BoolFieldUpdateOperationsInput | boolean
+    showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
+    openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
+    availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    profileCompleted?: BoolFieldUpdateOperationsInput | boolean
+    onboardingStep?: IntFieldUpdateOperationsInput | number
+    profileViews?: IntFieldUpdateOperationsInput | number
+    salaryMin?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    salaryMax?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    salaryCurrency?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    employment?: EmploymentUncheckedUpdateManyWithoutGraduateNestedInput
+    education?: EducationUncheckedUpdateManyWithoutGraduateNestedInput
+    skills?: SkillUncheckedUpdateManyWithoutGraduateNestedInput
+    endorsementsGiven?: EndorsementUncheckedUpdateManyWithoutEndorserNestedInput
+    endorsementsReceived?: EndorsementUncheckedUpdateManyWithoutEndorsedNestedInput
+    location?: GraduateLocationUncheckedUpdateOneWithoutGraduateNestedInput
+    achievements?: AchievementUncheckedUpdateManyWithoutGraduateNestedInput
+    badges?: ProfileBadgeUncheckedUpdateManyWithoutGraduateNestedInput
+    groupMemberships?: GroupMemberUncheckedUpdateManyWithoutGraduateNestedInput
+    groupPosts?: GroupPostUncheckedUpdateManyWithoutAuthorNestedInput
+    postComments?: PostCommentUncheckedUpdateManyWithoutAuthorNestedInput
+    postReactions?: PostReactionUncheckedUpdateManyWithoutGraduateNestedInput
+    sentMessages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
+    conversations?: ConversationParticipantUncheckedUpdateManyWithoutGraduateNestedInput
+    connectionsInitiated?: ConnectionUncheckedUpdateManyWithoutRequesterNestedInput
+    connectionsReceived?: ConnectionUncheckedUpdateManyWithoutReceiverNestedInput
+    jobPostings?: JobPostingUncheckedUpdateManyWithoutPostedByNestedInput
+    jobApplications?: JobApplicationUncheckedUpdateManyWithoutApplicantNestedInput
+    eventsCreated?: EventUncheckedUpdateManyWithoutCreatorNestedInput
+    eventAttendances?: EventAttendeeUncheckedUpdateManyWithoutGraduateNestedInput
+    mentorshipAsMentee?: MentorshipUncheckedUpdateManyWithoutMenteeNestedInput
+    mentorshipAsMentor?: MentorshipUncheckedUpdateManyWithoutMentorNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutGraduateNestedInput
+    activityFeed?: ActivityFeedItemUncheckedUpdateManyWithoutGraduateNestedInput
+    profileViewsLog?: ProfileViewUncheckedUpdateManyWithoutViewedNestedInput
+    profileViewsGiven?: ProfileViewUncheckedUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUncheckedUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUncheckedUpdateManyWithoutSubjectNestedInput
+    blocksReceived?: MemberBlockUncheckedUpdateManyWithoutBlockedNestedInput
+  }
+
+  export type GraduateUpsertWithoutBlocksReceivedInput = {
+    update: XOR<GraduateUpdateWithoutBlocksReceivedInput, GraduateUncheckedUpdateWithoutBlocksReceivedInput>
+    create: XOR<GraduateCreateWithoutBlocksReceivedInput, GraduateUncheckedCreateWithoutBlocksReceivedInput>
+    where?: GraduateWhereInput
+  }
+
+  export type GraduateUpdateToOneWithWhereWithoutBlocksReceivedInput = {
+    where?: GraduateWhereInput
+    data: XOR<GraduateUpdateWithoutBlocksReceivedInput, GraduateUncheckedUpdateWithoutBlocksReceivedInput>
+  }
+
+  export type GraduateUpdateWithoutBlocksReceivedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    registrationNo?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    surname?: NullableStringFieldUpdateOperationsInput | string | null
+    otherNames?: NullableStringFieldUpdateOperationsInput | string | null
+    sex?: NullableEnumSexFieldUpdateOperationsInput | $Enums.Sex | null
+    stateOfOrigin?: NullableStringFieldUpdateOperationsInput | string | null
+    lga?: NullableStringFieldUpdateOperationsInput | string | null
+    facultyCode?: NullableStringFieldUpdateOperationsInput | string | null
+    facultyName?: NullableStringFieldUpdateOperationsInput | string | null
+    courseCode?: NullableStringFieldUpdateOperationsInput | string | null
+    departmentName?: NullableStringFieldUpdateOperationsInput | string | null
+    cgpa?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    degreeClass?: NullableEnumDegreeClassFieldUpdateOperationsInput | $Enums.DegreeClass | null
+    graduationYear?: NullableStringFieldUpdateOperationsInput | string | null
+    entryYear?: NullableIntFieldUpdateOperationsInput | number | null
+    jambNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceSheet?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    linkedinUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    nyscState?: NullableStringFieldUpdateOperationsInput | string | null
+    nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
+    showCgpa?: BoolFieldUpdateOperationsInput | boolean
+    showEmail?: BoolFieldUpdateOperationsInput | boolean
+    showPhone?: BoolFieldUpdateOperationsInput | boolean
+    showDob?: BoolFieldUpdateOperationsInput | boolean
+    showInDirectory?: BoolFieldUpdateOperationsInput | boolean
+    allowMessages?: BoolFieldUpdateOperationsInput | boolean
+    showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
+    openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
+    availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    profileCompleted?: BoolFieldUpdateOperationsInput | boolean
+    onboardingStep?: IntFieldUpdateOperationsInput | number
+    profileViews?: IntFieldUpdateOperationsInput | number
+    salaryMin?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    salaryMax?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    salaryCurrency?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutGraduateNestedInput
+    employment?: EmploymentUpdateManyWithoutGraduateNestedInput
+    education?: EducationUpdateManyWithoutGraduateNestedInput
+    skills?: SkillUpdateManyWithoutGraduateNestedInput
+    endorsementsGiven?: EndorsementUpdateManyWithoutEndorserNestedInput
+    endorsementsReceived?: EndorsementUpdateManyWithoutEndorsedNestedInput
+    location?: GraduateLocationUpdateOneWithoutGraduateNestedInput
+    achievements?: AchievementUpdateManyWithoutGraduateNestedInput
+    badges?: ProfileBadgeUpdateManyWithoutGraduateNestedInput
+    groupMemberships?: GroupMemberUpdateManyWithoutGraduateNestedInput
+    groupPosts?: GroupPostUpdateManyWithoutAuthorNestedInput
+    postComments?: PostCommentUpdateManyWithoutAuthorNestedInput
+    postReactions?: PostReactionUpdateManyWithoutGraduateNestedInput
+    sentMessages?: MessageUpdateManyWithoutSenderNestedInput
+    conversations?: ConversationParticipantUpdateManyWithoutGraduateNestedInput
+    connectionsInitiated?: ConnectionUpdateManyWithoutRequesterNestedInput
+    connectionsReceived?: ConnectionUpdateManyWithoutReceiverNestedInput
+    jobPostings?: JobPostingUpdateManyWithoutPostedByNestedInput
+    jobApplications?: JobApplicationUpdateManyWithoutApplicantNestedInput
+    eventsCreated?: EventUpdateManyWithoutCreatorNestedInput
+    eventAttendances?: EventAttendeeUpdateManyWithoutGraduateNestedInput
+    mentorshipAsMentee?: MentorshipUpdateManyWithoutMenteeNestedInput
+    mentorshipAsMentor?: MentorshipUpdateManyWithoutMentorNestedInput
+    notifications?: NotificationUpdateManyWithoutGraduateNestedInput
+    activityFeed?: ActivityFeedItemUpdateManyWithoutGraduateNestedInput
+    profileViewsLog?: ProfileViewUpdateManyWithoutViewedNestedInput
+    profileViewsGiven?: ProfileViewUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUpdateManyWithoutBlockerNestedInput
+  }
+
+  export type GraduateUncheckedUpdateWithoutBlocksReceivedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    registrationNo?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    surname?: NullableStringFieldUpdateOperationsInput | string | null
+    otherNames?: NullableStringFieldUpdateOperationsInput | string | null
+    sex?: NullableEnumSexFieldUpdateOperationsInput | $Enums.Sex | null
+    stateOfOrigin?: NullableStringFieldUpdateOperationsInput | string | null
+    lga?: NullableStringFieldUpdateOperationsInput | string | null
+    facultyCode?: NullableStringFieldUpdateOperationsInput | string | null
+    facultyName?: NullableStringFieldUpdateOperationsInput | string | null
+    courseCode?: NullableStringFieldUpdateOperationsInput | string | null
+    departmentName?: NullableStringFieldUpdateOperationsInput | string | null
+    cgpa?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    degreeClass?: NullableEnumDegreeClassFieldUpdateOperationsInput | $Enums.DegreeClass | null
+    graduationYear?: NullableStringFieldUpdateOperationsInput | string | null
+    entryYear?: NullableIntFieldUpdateOperationsInput | number | null
+    jambNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceSheet?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    linkedinUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    twitterUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    githubUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    personalWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    nyscState?: NullableStringFieldUpdateOperationsInput | string | null
+    nyscYear?: NullableIntFieldUpdateOperationsInput | number | null
+    showCgpa?: BoolFieldUpdateOperationsInput | boolean
+    showEmail?: BoolFieldUpdateOperationsInput | boolean
+    showPhone?: BoolFieldUpdateOperationsInput | boolean
+    showDob?: BoolFieldUpdateOperationsInput | boolean
+    showInDirectory?: BoolFieldUpdateOperationsInput | boolean
+    allowMessages?: BoolFieldUpdateOperationsInput | boolean
+    showActivityFeed?: BoolFieldUpdateOperationsInput | boolean
+    openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
+    availableForMentorship?: BoolFieldUpdateOperationsInput | boolean
+    activationVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    activationMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    profileCompleted?: BoolFieldUpdateOperationsInput | boolean
+    onboardingStep?: IntFieldUpdateOperationsInput | number
+    profileViews?: IntFieldUpdateOperationsInput | number
+    salaryMin?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    salaryMax?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    salaryCurrency?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    employment?: EmploymentUncheckedUpdateManyWithoutGraduateNestedInput
+    education?: EducationUncheckedUpdateManyWithoutGraduateNestedInput
+    skills?: SkillUncheckedUpdateManyWithoutGraduateNestedInput
+    endorsementsGiven?: EndorsementUncheckedUpdateManyWithoutEndorserNestedInput
+    endorsementsReceived?: EndorsementUncheckedUpdateManyWithoutEndorsedNestedInput
+    location?: GraduateLocationUncheckedUpdateOneWithoutGraduateNestedInput
+    achievements?: AchievementUncheckedUpdateManyWithoutGraduateNestedInput
+    badges?: ProfileBadgeUncheckedUpdateManyWithoutGraduateNestedInput
+    groupMemberships?: GroupMemberUncheckedUpdateManyWithoutGraduateNestedInput
+    groupPosts?: GroupPostUncheckedUpdateManyWithoutAuthorNestedInput
+    postComments?: PostCommentUncheckedUpdateManyWithoutAuthorNestedInput
+    postReactions?: PostReactionUncheckedUpdateManyWithoutGraduateNestedInput
+    sentMessages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
+    conversations?: ConversationParticipantUncheckedUpdateManyWithoutGraduateNestedInput
+    connectionsInitiated?: ConnectionUncheckedUpdateManyWithoutRequesterNestedInput
+    connectionsReceived?: ConnectionUncheckedUpdateManyWithoutReceiverNestedInput
+    jobPostings?: JobPostingUncheckedUpdateManyWithoutPostedByNestedInput
+    jobApplications?: JobApplicationUncheckedUpdateManyWithoutApplicantNestedInput
+    eventsCreated?: EventUncheckedUpdateManyWithoutCreatorNestedInput
+    eventAttendances?: EventAttendeeUncheckedUpdateManyWithoutGraduateNestedInput
+    mentorshipAsMentee?: MentorshipUncheckedUpdateManyWithoutMenteeNestedInput
+    mentorshipAsMentor?: MentorshipUncheckedUpdateManyWithoutMentorNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutGraduateNestedInput
+    activityFeed?: ActivityFeedItemUncheckedUpdateManyWithoutGraduateNestedInput
+    profileViewsLog?: ProfileViewUncheckedUpdateManyWithoutViewedNestedInput
+    profileViewsGiven?: ProfileViewUncheckedUpdateManyWithoutViewerNestedInput
+    idCards?: IdCardUncheckedUpdateManyWithoutGraduateNestedInput
+    reportsMade?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
+    reportsAgainst?: ContentReportUncheckedUpdateManyWithoutSubjectNestedInput
+    blocksMade?: MemberBlockUncheckedUpdateManyWithoutBlockerNestedInput
   }
 
   export type SessionCreateManyUserInput = {
@@ -72555,6 +77965,44 @@ export namespace Prisma {
     expiresAt: Date | string
     revokedAt?: Date | string | null
     revokedReason?: string | null
+  }
+
+  export type ContentReportCreateManyReporterInput = {
+    id?: string
+    targetType: $Enums.ReportTarget
+    targetId: string
+    subjectId?: string | null
+    reason: $Enums.ReportReason
+    details?: string | null
+    status?: $Enums.ReportStatus
+    createdAt?: Date | string
+    reviewedAt?: Date | string | null
+    reviewedBy?: string | null
+    resolution?: string | null
+  }
+
+  export type ContentReportCreateManySubjectInput = {
+    id?: string
+    reporterId: string
+    targetType: $Enums.ReportTarget
+    targetId: string
+    reason: $Enums.ReportReason
+    details?: string | null
+    status?: $Enums.ReportStatus
+    createdAt?: Date | string
+    reviewedAt?: Date | string | null
+    reviewedBy?: string | null
+    resolution?: string | null
+  }
+
+  export type MemberBlockCreateManyBlockerInput = {
+    blockedId: string
+    createdAt?: Date | string
+  }
+
+  export type MemberBlockCreateManyBlockedInput = {
+    blockerId: string
+    createdAt?: Date | string
   }
 
   export type EmploymentUpdateWithoutGraduateInput = {
@@ -73338,6 +78786,120 @@ export namespace Prisma {
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     revokedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     revokedReason?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type ContentReportUpdateWithoutReporterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    targetType?: EnumReportTargetFieldUpdateOperationsInput | $Enums.ReportTarget
+    targetId?: StringFieldUpdateOperationsInput | string
+    reason?: EnumReportReasonFieldUpdateOperationsInput | $Enums.ReportReason
+    details?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    resolution?: NullableStringFieldUpdateOperationsInput | string | null
+    subject?: GraduateUpdateOneWithoutReportsAgainstNestedInput
+  }
+
+  export type ContentReportUncheckedUpdateWithoutReporterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    targetType?: EnumReportTargetFieldUpdateOperationsInput | $Enums.ReportTarget
+    targetId?: StringFieldUpdateOperationsInput | string
+    subjectId?: NullableStringFieldUpdateOperationsInput | string | null
+    reason?: EnumReportReasonFieldUpdateOperationsInput | $Enums.ReportReason
+    details?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    resolution?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type ContentReportUncheckedUpdateManyWithoutReporterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    targetType?: EnumReportTargetFieldUpdateOperationsInput | $Enums.ReportTarget
+    targetId?: StringFieldUpdateOperationsInput | string
+    subjectId?: NullableStringFieldUpdateOperationsInput | string | null
+    reason?: EnumReportReasonFieldUpdateOperationsInput | $Enums.ReportReason
+    details?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    resolution?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type ContentReportUpdateWithoutSubjectInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    targetType?: EnumReportTargetFieldUpdateOperationsInput | $Enums.ReportTarget
+    targetId?: StringFieldUpdateOperationsInput | string
+    reason?: EnumReportReasonFieldUpdateOperationsInput | $Enums.ReportReason
+    details?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    resolution?: NullableStringFieldUpdateOperationsInput | string | null
+    reporter?: GraduateUpdateOneRequiredWithoutReportsMadeNestedInput
+  }
+
+  export type ContentReportUncheckedUpdateWithoutSubjectInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reporterId?: StringFieldUpdateOperationsInput | string
+    targetType?: EnumReportTargetFieldUpdateOperationsInput | $Enums.ReportTarget
+    targetId?: StringFieldUpdateOperationsInput | string
+    reason?: EnumReportReasonFieldUpdateOperationsInput | $Enums.ReportReason
+    details?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    resolution?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type ContentReportUncheckedUpdateManyWithoutSubjectInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reporterId?: StringFieldUpdateOperationsInput | string
+    targetType?: EnumReportTargetFieldUpdateOperationsInput | $Enums.ReportTarget
+    targetId?: StringFieldUpdateOperationsInput | string
+    reason?: EnumReportReasonFieldUpdateOperationsInput | $Enums.ReportReason
+    details?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    resolution?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type MemberBlockUpdateWithoutBlockerInput = {
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    blocked?: GraduateUpdateOneRequiredWithoutBlocksReceivedNestedInput
+  }
+
+  export type MemberBlockUncheckedUpdateWithoutBlockerInput = {
+    blockedId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MemberBlockUncheckedUpdateManyWithoutBlockerInput = {
+    blockedId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MemberBlockUpdateWithoutBlockedInput = {
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    blocker?: GraduateUpdateOneRequiredWithoutBlocksMadeNestedInput
+  }
+
+  export type MemberBlockUncheckedUpdateWithoutBlockedInput = {
+    blockerId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MemberBlockUncheckedUpdateManyWithoutBlockedInput = {
+    blockerId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type EndorsementCreateManySkillInput = {

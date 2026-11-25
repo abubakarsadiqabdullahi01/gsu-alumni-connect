@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { blockedIds } from "@/lib/moderation";
 import { getPusherServer } from "@/lib/pusher-server";
 import { isFeatureEnabled } from "@/lib/platform-settings";
 
@@ -43,7 +44,7 @@ export async function GET(
     if (!group) return NextResponse.json({ error: "Group not found." }, { status: 404 });
 
     const posts = await prisma.groupPost.findMany({
-      where: { groupId: id, isDeleted: false },
+      where: { groupId: id, isDeleted: false, authorId: { notIn: await blockedIds(me.id) } },
       orderBy: { createdAt: "desc" },
       take: 100,
       include: {

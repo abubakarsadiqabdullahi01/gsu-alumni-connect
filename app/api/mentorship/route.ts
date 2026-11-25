@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { blockedIds } from "@/lib/moderation";
 import { isFeatureEnabled } from "@/lib/platform-settings";
 
 export async function GET(req: NextRequest) {
@@ -27,7 +28,7 @@ export async function GET(req: NextRequest) {
     const [mentors, incoming, outgoing, activeAsMentee, activeAsMentor] = await Promise.all([
       prisma.graduate.findMany({
         where: {
-          id: { not: me.id },
+          id: { notIn: [me.id, ...(await blockedIds(me.id))] },
           availableForMentorship: true,
           user: { accountStatus: "ACTIVE" },
           ...(q

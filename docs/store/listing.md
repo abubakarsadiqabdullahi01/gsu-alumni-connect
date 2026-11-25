@@ -101,7 +101,7 @@ never a real graduate's account. Not created yet; it needs your approval.
 Review notes to paste:
 
 ```
-GSU Alumni Connect is for graduates of Gombe State University; accounts come from the University's graduation records, so there is no public sign-up. A reviewer account is provided below. Account deletion: Settings > Account > Delete account (also https://www.gsualumni.org.ng/delete-account). [Add once built: how to report a post, message or member, and how to block a member.]
+GSU Alumni Connect is for graduates of Gombe State University; accounts come from the University's graduation records, so there is no public sign-up. A reviewer account is provided below. Account deletion: Settings > Account > Delete account (also https://www.gsualumni.org.ng/delete-account). Reporting: the ⋮ menu on any group post > Report post; long-press any message from another member > Report; open a member's profile from the Directory > Report. Blocking: a member's profile > Block, or the ⋮ menu on their post > Block. Blocked members: Settings > Blocked members. Reports go to the Alumni Secretariat, who review them within 24 hours and can remove content and suspend accounts.
 ```
 
 ## Graphics (docs/store/graphics)

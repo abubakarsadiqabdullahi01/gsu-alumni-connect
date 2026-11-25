@@ -10,6 +10,7 @@ import '../../data/alumni_repository.dart';
 import '../../data/models/messaging.dart';
 import '../../data/providers.dart';
 import '../auth/session_controller.dart';
+import '../shared/moderation.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
   const ChatScreen({
@@ -222,65 +223,74 @@ class _MessageBubble extends StatelessWidget {
                 ),
               ),
             ),
-          Container(
-            constraints: BoxConstraints(
-              maxWidth: MediaQuery.sizeOf(context).width * 0.76,
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            decoration: BoxDecoration(
-              gradient: isMine ? AppColors.brandGradient : null,
-              color: isMine
-                  ? null
-                  : (isDark
-                      ? theme.colorScheme.surfaceContainerHigh
-                      : Colors.white),
-              borderRadius: BorderRadius.only(
-                topLeft: const Radius.circular(16),
-                topRight: const Radius.circular(16),
-                bottomLeft: Radius.circular(isMine ? 16 : 4),
-                bottomRight: Radius.circular(isMine ? 4 : 16),
+          GestureDetector(
+            // Long-press someone else's message to report it.
+            onLongPress: isMine
+                ? null
+                : () => reportContent(context,
+                    targetType: 'MESSAGE', targetId: message.id),
+            child: Container(
+              constraints: BoxConstraints(
+                maxWidth: MediaQuery.sizeOf(context).width * 0.76,
               ),
-              border:
-                  isMine ? null : Border.all(color: theme.colorScheme.outline),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  message.body,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: isMine ? Colors.white : theme.colorScheme.onSurface,
-                    height: 1.45,
-                  ),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              decoration: BoxDecoration(
+                gradient: isMine ? AppColors.brandGradient : null,
+                color: isMine
+                    ? null
+                    : (isDark
+                        ? theme.colorScheme.surfaceContainerHigh
+                        : Colors.white),
+                borderRadius: BorderRadius.only(
+                  topLeft: const Radius.circular(16),
+                  topRight: const Radius.circular(16),
+                  bottomLeft: Radius.circular(isMine ? 16 : 4),
+                  bottomRight: Radius.circular(isMine ? 4 : 16),
                 ),
-                const SizedBox(height: 4),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      Fmt.time(message.createdAt),
-                      style: theme.textTheme.labelSmall?.copyWith(
-                        letterSpacing: 0,
-                        fontSize: 10,
-                        color: isMine
-                            ? Colors.white.withValues(alpha: 0.7)
-                            : theme.colorScheme.onSurfaceVariant,
-                      ),
+                border: isMine
+                    ? null
+                    : Border.all(color: theme.colorScheme.outline),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    message.body,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color:
+                          isMine ? Colors.white : theme.colorScheme.onSurface,
+                      height: 1.45,
                     ),
-                    if (message.isPending) ...[
-                      const SizedBox(width: 5),
-                      SizedBox(
-                        height: 9,
-                        width: 9,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 1.4,
-                          color: Colors.white.withValues(alpha: 0.8),
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        Fmt.time(message.createdAt),
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          letterSpacing: 0,
+                          fontSize: 10,
+                          color: isMine
+                              ? Colors.white.withValues(alpha: 0.7)
+                              : theme.colorScheme.onSurfaceVariant,
                         ),
                       ),
+                      if (message.isPending) ...[
+                        const SizedBox(width: 5),
+                        SizedBox(
+                          height: 9,
+                          width: 9,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 1.4,
+                            color: Colors.white.withValues(alpha: 0.8),
+                          ),
+                        ),
+                      ],
                     ],
-                  ],
-                ),
-              ],
+                  ),
+                ],
+              ),
             ),
           ),
         ],

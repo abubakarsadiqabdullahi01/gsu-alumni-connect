@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { BLOCKED_MESSAGE, isBlockedBetween } from "@/lib/moderation";
 import { bumpAdminCacheVersion } from "@/lib/cache/admin-cache-version";
 
 export async function POST(req: NextRequest) {
@@ -25,6 +26,9 @@ export async function POST(req: NextRequest) {
     }
     if (requester.id === receiverGraduateId) {
       return NextResponse.json({ error: "You cannot connect to yourself." }, { status: 400 });
+    }
+    if (await isBlockedBetween(requester.id, receiverGraduateId)) {
+      return NextResponse.json({ error: BLOCKED_MESSAGE }, { status: 403 });
     }
 
     const existing = await prisma.connection.findFirst({

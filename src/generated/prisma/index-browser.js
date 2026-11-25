@@ -593,6 +593,27 @@ exports.Prisma.ImportJobErrorScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.ContentReportScalarFieldEnum = {
+  id: 'id',
+  reporterId: 'reporterId',
+  targetType: 'targetType',
+  targetId: 'targetId',
+  subjectId: 'subjectId',
+  reason: 'reason',
+  details: 'details',
+  status: 'status',
+  createdAt: 'createdAt',
+  reviewedAt: 'reviewedAt',
+  reviewedBy: 'reviewedBy',
+  resolution: 'resolution'
+};
+
+exports.Prisma.MemberBlockScalarFieldEnum = {
+  blockerId: 'blockerId',
+  blockedId: 'blockedId',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -757,6 +778,28 @@ exports.ImportJobStatus = exports.$Enums.ImportJobStatus = {
   CANCELLED: 'CANCELLED'
 };
 
+exports.ReportTarget = exports.$Enums.ReportTarget = {
+  POST: 'POST',
+  COMMENT: 'COMMENT',
+  MESSAGE: 'MESSAGE',
+  PROFILE: 'PROFILE'
+};
+
+exports.ReportReason = exports.$Enums.ReportReason = {
+  SPAM: 'SPAM',
+  HARASSMENT: 'HARASSMENT',
+  INAPPROPRIATE: 'INAPPROPRIATE',
+  IMPERSONATION: 'IMPERSONATION',
+  SCAM: 'SCAM',
+  OTHER: 'OTHER'
+};
+
+exports.ReportStatus = exports.$Enums.ReportStatus = {
+  OPEN: 'OPEN',
+  ACTIONED: 'ACTIONED',
+  DISMISSED: 'DISMISSED'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   Session: 'Session',
@@ -793,7 +836,9 @@ exports.Prisma.ModelName = {
   AdminSetting: 'AdminSetting',
   UploadAuditLog: 'UploadAuditLog',
   ImportJob: 'ImportJob',
-  ImportJobError: 'ImportJobError'
+  ImportJobError: 'ImportJobError',
+  ContentReport: 'ContentReport',
+  MemberBlock: 'MemberBlock'
 };
 
 /**

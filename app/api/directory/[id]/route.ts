@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { describeBadge } from "@/lib/badges";
 import { prisma } from "@/lib/db";
+import { isBlockedBetween } from "@/lib/moderation";
 
 type RouteCtx = {
   params: Promise<{ id: string }>;
@@ -32,6 +33,10 @@ export async function GET(req: NextRequest, ctx: RouteCtx) {
       where: { userId: session.user.id },
       select: { id: true },
     });
+
+    if (viewer && viewer.id !== id && (await isBlockedBetween(viewer.id, id))) {
+      return NextResponse.json({ error: "Graduate not found." }, { status: 404 });
+    }
 
     const graduate = await prisma.graduate.findFirst({
       where: {

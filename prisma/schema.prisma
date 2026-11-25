@@ -381,6 +381,10 @@ model Graduate {
   profileViewsLog      ProfileView[]             @relation("ViewedRelation")
   profileViewsGiven    ProfileView[]             @relation("ViewerRelation")
   idCards              IdCard[]
+  reportsMade          ContentReport[]           @relation("ReportsMade")
+  reportsAgainst       ContentReport[]           @relation("ReportsAgainst")
+  blocksMade           MemberBlock[]             @relation("BlocksMade")
+  blocksReceived       MemberBlock[]             @relation("BlocksReceived")
 
   @@index([registrationNo])
   @@index([graduationYear])
@@ -1024,4 +1028,69 @@ model ImportJobError {
 
   @@index([jobId, rowNumber])
   @@map("import_job_error")
+}
+
+// ── Moderation ──────────────────────────────────────────────────────────────
+// Both stores require that members can report content and block other members
+// in apps with posts and messages.
+
+enum ReportTarget {
+  POST
+  COMMENT
+  MESSAGE
+  PROFILE
+}
+
+enum ReportReason {
+  SPAM
+  HARASSMENT
+  INAPPROPRIATE
+  IMPERSONATION
+  SCAM
+  OTHER
+}
+
+enum ReportStatus {
+  OPEN
+  ACTIONED
+  DISMISSED
+}
+
+/// A member's report of a post, comment, message or profile, reviewed by the
+/// Secretariat at /admin/reports.
+model ContentReport {
+  id         String       @id @default(uuid())
+  reporterId String       @map("reporter_id")
+  reporter   Graduate     @relation("ReportsMade", fields: [reporterId], references: [id], onDelete: Cascade)
+  targetType ReportTarget @map("target_type")
+  targetId   String       @map("target_id") // post, comment, message or graduate id
+  /// Who wrote the reported content, so repeat offenders stand out.
+  subjectId  String?      @map("subject_id")
+  subject    Graduate?    @relation("ReportsAgainst", fields: [subjectId], references: [id], onDelete: SetNull)
+  reason     ReportReason
+  details    String?      @db.Text
+  status     ReportStatus @default(OPEN)
+  createdAt  DateTime     @default(now()) @map("created_at")
+  reviewedAt DateTime?    @map("reviewed_at")
+  reviewedBy String?      @map("reviewed_by") // admin user id
+  resolution String? // what the Secretariat did
+
+  @@unique([reporterId, targetType, targetId])
+  @@index([status, createdAt])
+  @@index([subjectId])
+  @@map("content_report")
+}
+
+/// blocker no longer sees blocked's content; blocked can no longer find,
+/// message or connect with blocker.
+model MemberBlock {
+  blockerId String   @map("blocker_id")
+  blocker   Graduate @relation("BlocksMade", fields: [blockerId], references: [id], onDelete: Cascade)
+  blockedId String   @map("blocked_id")
+  blocked   Graduate @relation("BlocksReceived", fields: [blockedId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@id([blockerId, blockedId])
+  @@index([blockedId])
+  @@map("member_block")
 }

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { BLOCKED_MESSAGE, blockedIds } from "@/lib/moderation";
 import { getPusherServer } from "@/lib/pusher-server";
 import { isFeatureEnabled } from "@/lib/platform-settings";
 
@@ -56,6 +57,14 @@ export async function POST(
       select: { id: true },
     });
     if (!participant) return NextResponse.json({ error: "Forbidden." }, { status: 403 });
+
+    if (!conversation.isGroup) {
+      const blocked = await blockedIds(me.id);
+      const blockedHere = blocked.length
+        ? await prisma.conversationParticipant.count({ where: { conversationId: id, graduateId: { in: blocked } } })
+        : 0;
+      if (blockedHere) return NextResponse.json({ error: BLOCKED_MESSAGE }, { status: 403 });
+    }
 
     const body = (await req.json()) as { body?: string };
     const text = body.body?.trim() ?? "";

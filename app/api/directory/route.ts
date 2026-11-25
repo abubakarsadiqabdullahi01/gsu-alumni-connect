@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { blockedIds } from "@/lib/moderation";
 import { redisGetJson, redisSetJson } from "@/lib/cache/redis-cache";
 
 const DIRECTORY_CACHE_TTL_SECONDS = Math.max(
@@ -28,7 +29,10 @@ export async function GET(req: NextRequest) {
       select: { id: true },
     });
 
-    const cacheKey = `directory:${session.user.id}:${encodeURIComponent(q)}:${encodeURIComponent(department)}:${encodeURIComponent(year)}:${page}:${pageSize}`;
+    const blocked = currentGraduate ? await blockedIds(currentGraduate.id) : [];
+    // shortcut: the key changes with the number of blocks, not their identity;
+    // swapping one block for another serves a stale page until the cache expires.
+    const cacheKey = `directory:${session.user.id}:b${blocked.length}:${encodeURIComponent(q)}:${encodeURIComponent(department)}:${encodeURIComponent(year)}:${page}:${pageSize}`;
     const cached = await redisGetJson<{
       items: Array<{
         id: string;
@@ -62,6 +66,7 @@ export async function GET(req: NextRequest) {
         accountStatus: "ACTIVE" as const,
       },
       ...(currentGraduate ? { userId: { not: session.user.id } } : {}),
+      ...(blocked.length ? { id: { notIn: blocked } } : {}),
       ...(department ? { departmentName: department } : {}),
       ...(year ? { graduationYear: year } : {}),
       ...(q

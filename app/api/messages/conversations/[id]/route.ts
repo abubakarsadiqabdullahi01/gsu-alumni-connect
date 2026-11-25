@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { blockedIds } from "@/lib/moderation";
 import { isFeatureEnabled } from "@/lib/platform-settings";
 
 export async function GET(
@@ -58,7 +59,7 @@ export async function GET(
     }
 
     const messages = await prisma.message.findMany({
-      where: { conversationId: id, isDeleted: false },
+      where: { conversationId: id, isDeleted: false, senderId: { notIn: await blockedIds(me.id) } },
       orderBy: { createdAt: "asc" },
       take: 200,
       include: {

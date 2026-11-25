@@ -103,6 +103,16 @@ const registrationSignInPlugin = {
           throw await fail("wrong password", user.id);
         }
 
+        // Checked after the password, so a suspension is revealed only to
+        // someone who already knows it.
+        if (user.accountStatus === "SUSPENDED") {
+          await recordAuthEvent("SIGN_IN_FAILED", { identifier, userId: user.id, ip, userAgent, reason: "account suspended" });
+          throw new APIError("FORBIDDEN", {
+            message: "This account is suspended. Contact the Alumni Secretariat at alumni@gsu.edu.ng.",
+            code: "ACCOUNT_SUSPENDED",
+          });
+        }
+
         // The default password is published, so it proves only that someone
         // knows a registration number. Before any session exists, the graduate
         // must also give something the record holds and the number does not

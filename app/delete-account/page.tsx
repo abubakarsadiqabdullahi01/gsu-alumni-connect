@@ -62,6 +62,7 @@ export default function DeleteAccountPage() {
         <li>Your profile photo and signature, and your alumni ID card (which will show as no longer valid)</li>
         <li>Your posts, comments and reactions, and the messages you sent</li>
         <li>Your connections, group memberships, event RSVPs, mentorship requests and job postings</li>
+        <li>Reports you made and members you blocked</li>
         <li>Your job applications and any CVs you uploaded</li>
         <li>Your notifications, activity feed and profile-view history</li>
       </ul>

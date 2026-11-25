@@ -58,6 +58,10 @@ export default function PrivacyPage() {
         <li>Sign-in sessions: a session cookie, your IP address and your browser or device description</li>
         <li>A security log of sign-in and activation attempts (see section 6)</li>
         <li>Notifications, profile views (members can see who viewed their profile) and your activity feed</li>
+        <li>
+          Reports you make about posts, messages or members (the reported member is not told who reported them),
+          and the members you block
+        </li>
         <li>Anonymous page-view statistics from Vercel Web Analytics, which uses no cookies and does not identify you</li>
       </ul>
       <p>

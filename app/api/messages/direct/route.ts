@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { BLOCKED_MESSAGE, isBlockedBetween } from "@/lib/moderation";
 import { isFeatureEnabled } from "@/lib/platform-settings";
 
 export async function POST(req: NextRequest) {
@@ -33,6 +34,9 @@ export async function POST(req: NextRequest) {
     });
     if (!target || target.user.accountStatus !== "ACTIVE") {
       return NextResponse.json({ error: "Target graduate not available." }, { status: 404 });
+    }
+    if (await isBlockedBetween(me.id, targetGraduateId)) {
+      return NextResponse.json({ error: BLOCKED_MESSAGE }, { status: 403 });
     }
     if (!target.allowMessages) {
       return NextResponse.json({ error: "This user does not allow direct messages." }, { status: 403 });

@@ -442,6 +442,49 @@ class AlumniRepository {
     await _api.post('/api/activation/confirm', body: {'answer': answer});
   }
 
+  /// Reports a POST, COMMENT, MESSAGE or PROFILE to the Secretariat.
+  Future<void> report({
+    required String targetType,
+    required String targetId,
+    required String reason,
+    String? details,
+  }) async {
+    await _api.post('/api/reports', body: {
+      'targetType': targetType,
+      'targetId': targetId,
+      'reason': reason,
+      if (details != null && details.trim().isNotEmpty)
+        'details': details.trim(),
+    });
+  }
+
+  Future<void> blockMember(String graduateId) async {
+    await _api.post('/api/blocks', body: {'graduateId': graduateId});
+  }
+
+  Future<void> unblockMember(String graduateId) async {
+    await _api.delete(
+        '/api/blocks?graduateId=${Uri.encodeQueryComponent(graduateId)}');
+  }
+
+  /// Members this member has blocked, newest first.
+  Future<List<({String id, String fullName, String? subtitle})>>
+      blockedMembers() async {
+    final json = await _api.get('/api/blocks');
+    final items =
+        (json['items'] as List? ?? const []).cast<Map<String, dynamic>>();
+    return [
+      for (final item in items)
+        (
+          id: item['id'] as String,
+          fullName: item['fullName'] as String? ?? '',
+          subtitle: [item['departmentName'], item['graduationYear']]
+              .whereType<String>()
+              .join(' · '),
+        ),
+    ];
+  }
+
   /// Deletes the account and everything the member added; see
   /// gsualumni.org.ng/delete-account. The password is asked again.
   Future<void> deleteAccount(String password) async {

@@ -11,6 +11,7 @@ import '../../data/providers.dart';
 import '../auth/session_controller.dart';
 import '../messages/chat_screen.dart';
 import 'navigation.dart';
+import 'moderation.dart';
 
 /// One alumnus, rendered identically in the directory, connection suggestions
 /// and the mentor list — including the connect/message affordances.
@@ -220,14 +221,20 @@ class _PersonCardState extends ConsumerState<PersonCard> {
   }
 }
 
-class _PersonSheet extends StatelessWidget {
+class _PersonSheet extends ConsumerWidget {
   const _PersonSheet({required this.person});
 
   final Person person;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final myId = ref
+        .watch(sessionControllerProvider)
+        .valueOrNull
+        ?.bootstrap
+        ?.identity
+        .graduateId;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(20, 4, 20, 32),
@@ -308,6 +315,39 @@ class _PersonSheet extends StatelessWidget {
                         : '${skill.name} · ${skill.proficiency}',
                     tone: AppColors.accentFor(skill.name),
                   ),
+              ],
+            ),
+          ],
+          if (person.graduateId != myId) ...[
+            const SizedBox(height: 20),
+            const Divider(),
+            Row(
+              children: [
+                TextButton.icon(
+                  onPressed: () => reportContent(
+                    context,
+                    targetType: 'PROFILE',
+                    targetId: person.graduateId,
+                  ),
+                  icon: const Icon(Icons.flag_outlined, size: 18),
+                  label: const Text('Report'),
+                ),
+                const SizedBox(width: 8),
+                TextButton.icon(
+                  style:
+                      TextButton.styleFrom(foregroundColor: AppColors.rose600),
+                  onPressed: () async {
+                    final blocked = await blockMember(
+                      context,
+                      ref,
+                      graduateId: person.graduateId,
+                      name: person.fullName,
+                    );
+                    if (blocked && context.mounted) Navigator.of(context).pop();
+                  },
+                  icon: const Icon(Icons.block_rounded, size: 18),
+                  label: const Text('Block'),
+                ),
               ],
             ),
           ],

@@ -9,9 +9,7 @@ import { prisma } from "@/lib/db";
  * introducing its own state, so it can ship without a migration and cannot
  * disagree with the per-module admin screens.
  *
- * Two items from the original brief are absent because the schema has nowhere
- * to put them yet — reported posts and flagged accounts both need a Report
- * model. See the `unavailable` array in the response.
+ * Reported content and members come from ContentReport (see /admin/reports).
  */
 const PREVIEW_LIMIT = 10;
 
@@ -97,7 +95,29 @@ export async function GET(request: NextRequest) {
       prisma.importJob.count({ where: { status: "FAILED" } }),
     ]);
 
+    const [openReports, openReportCount] = await Promise.all([
+      prisma.contentReport.findMany({
+        where: { status: "OPEN" },
+        orderBy: { createdAt: "asc" },
+        take: PREVIEW_LIMIT,
+        select: { id: true, targetType: true, reason: true, createdAt: true, subject: { select: { fullName: true } } },
+      }),
+      prisma.contentReport.count({ where: { status: "OPEN" } }),
+    ]);
+
     const sections = [
+      {
+        key: "reports",
+        label: "Reported content and members",
+        count: openReportCount,
+        href: "/admin/reports",
+        items: openReports.map((row) => ({
+          id: row.id,
+          primary: `${row.targetType.toLowerCase()} reported for ${row.reason.toLowerCase()}`,
+          secondary: row.subject?.fullName ?? "Member no longer exists",
+          createdAt: row.createdAt.toISOString(),
+        })),
+      },
       {
         key: "achievements",
         label: "Achievements awaiting verification",
@@ -166,10 +186,7 @@ export async function GET(request: NextRequest) {
       sections,
       // Named explicitly so the admin UI can say "not built yet" rather than
       // silently implying there is nothing to moderate.
-      unavailable: [
-        { key: "reportedPosts", reason: "Needs a Report model; no moderation reports are stored yet." },
-        { key: "flaggedAccounts", reason: "Needs a Report model; no abuse signals are stored yet." },
-      ],
+      unavailable: [],
     });
   } catch (error) {
     console.error("[AdminReviewQueueAPI] Error:", error);

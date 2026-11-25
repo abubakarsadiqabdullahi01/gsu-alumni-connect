@@ -10,6 +10,8 @@ import '../../data/alumni_repository.dart';
 import '../../data/models/profile.dart';
 import '../../data/providers.dart';
 import '../auth/session_controller.dart';
+import '../shared/moderation.dart';
+import '../shared/navigation.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -266,6 +268,20 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       subtitle: const Text('End this session on this device'),
                       trailing: const Icon(Icons.chevron_right_rounded),
                       onTap: _signOut,
+                    ),
+                    const Divider(height: 1, indent: 12, endIndent: 12),
+                    ListTile(
+                      leading: const IconBadge(
+                        Icons.block_rounded,
+                        color: AppColors.green600,
+                        size: 38,
+                      ),
+                      title: const Text('Blocked members'),
+                      subtitle:
+                          const Text('See and unblock members you blocked'),
+                      trailing: const Icon(Icons.chevron_right_rounded),
+                      onTap: () =>
+                          openScreen(context, const BlockedMembersScreen()),
                     ),
                     const Divider(height: 1, indent: 12, endIndent: 12),
                     ListTile(

@@ -12,6 +12,7 @@ import '../../data/providers.dart';
 import '../auth/session_controller.dart';
 import '../messages/chat_screen.dart';
 import '../shared/navigation.dart';
+import '../shared/moderation.dart';
 
 class GroupDetailScreen extends ConsumerStatefulWidget {
   const GroupDetailScreen({
@@ -164,15 +165,23 @@ class _GroupDetailScreenState extends ConsumerState<GroupDetailScreen> {
   }
 }
 
-class _PostCard extends StatelessWidget {
+class _PostCard extends ConsumerWidget {
   const _PostCard({required this.post, this.pinned = false});
 
   final GroupPost post;
   final bool pinned;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final myId = ref
+        .watch(sessionControllerProvider)
+        .valueOrNull
+        ?.bootstrap
+        ?.identity
+        .graduateId;
+    final authorId = post.authorId;
+    final isMine = authorId != null && authorId == myId;
 
     return GsuCard(
       accent: pinned ? AppColors.gold500 : null,
@@ -211,6 +220,28 @@ class _PostCard extends StatelessWidget {
                   'Pinned',
                   tone: AppColors.gold600,
                   icon: Icons.push_pin_rounded,
+                ),
+              if (!isMine)
+                PopupMenuButton<String>(
+                  tooltip: 'More',
+                  icon: const Icon(Icons.more_vert_rounded, size: 20),
+                  onSelected: (action) {
+                    if (action == 'report') {
+                      reportContent(context,
+                          targetType: 'POST', targetId: post.id);
+                    } else if (action == 'block' && authorId != null) {
+                      blockMember(context, ref,
+                          graduateId: authorId, name: post.authorName);
+                    }
+                  },
+                  itemBuilder: (_) => [
+                    const PopupMenuItem(
+                        value: 'report', child: Text('Report post')),
+                    if (authorId != null)
+                      PopupMenuItem(
+                          value: 'block',
+                          child: Text('Block ${post.authorName}')),
+                  ],
                 ),
             ],
           ),

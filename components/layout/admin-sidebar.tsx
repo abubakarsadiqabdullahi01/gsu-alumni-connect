@@ -15,6 +15,7 @@ import {
   GraduationCap,
   Globe,
   Trophy,
+  Flag,
   Bell,
 } from "lucide-react";
 import {
@@ -48,6 +49,7 @@ const adminNav = [
   { href: "/admin/uploads", label: "Uploads", icon: Upload },
   { href: "/admin/jobs", label: "Jobs", icon: Briefcase },
   { href: "/admin/achievements", label: "Achievements", icon: Trophy },
+  { href: "/admin/reports", label: "Reports", icon: Flag },
   { href: "/admin/groups", label: "Groups", icon: UsersRound },
   { href: "/admin/mentorship", label: "Mentorship", icon: GraduationCap },
   { href: "/admin/network", label: "Network", icon: Globe },

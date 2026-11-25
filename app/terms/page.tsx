@@ -56,8 +56,9 @@ export default function TermsPage() {
         <li>try to break, overload or get around the platform&rsquo;s security, including its sign-in limits</li>
       </ul>
       <p>
-        Tell the Secretariat about anything that breaks these rules. Administrators may remove content or
-        restrict accounts that break them.
+        Use <strong>Report</strong> on a post, message or profile to tell the Secretariat about anything that
+        breaks these rules; they review reports within 24 hours. Use <strong>Block</strong> to stop a member
+        contacting you. Administrators may remove content, and suspend accounts that break these rules.
       </p>
 
       <h2 id="content">5. What you post</h2>
