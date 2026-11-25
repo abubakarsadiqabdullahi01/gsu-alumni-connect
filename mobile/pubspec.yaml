@@ -1,7 +1,7 @@
 name: gsu_alumni_connect
 description: Flutter Android app for GSU Alumni Connect.
 publish_to: "none"
-version: 1.0.0+3
+version: 1.0.0+4
 
 environment:
   sdk: ">=3.4.0 <4.0.0"
@@ -19,12 +19,10 @@ dependencies:
   fl_chart: ^0.69.0
   flutter_animate: ^4.5.0
   flutter_riverpod: ^2.6.1
-  flutter_secure_storage: ^9.2.2
   go_router: ^14.3.0
   google_fonts: ^6.2.1
   path_provider: ^2.1.5
   qr_flutter: ^4.1.0
-  shared_preferences: ^2.3.2
   url_launcher: ^6.3.1
 
 dev_dependencies:
@@ -49,3 +47,5 @@ flutter:
     - assets/images/
     - assets/icons/
     - assets/lottie/
+    # Manrope, bundled so the app never fetches fonts from Google at runtime.
+    - assets/google_fonts/

@@ -172,7 +172,7 @@ export default function PrivacyPage() {
           <tr><td>Pusher</td><td>Real-time delivery of messages and notifications</td><td>European Union</td></tr>
           <tr><td>Resend</td><td>Sending account and notification emails</td><td>United States</td></tr>
           <tr><td>OpenStreetMap</td><td>Map images, loaded by your browser, which shares your IP address with it</td><td>United Kingdom / European Union</td></tr>
-          <tr><td>Google Fonts</td><td>The mobile app downloads its typeface from Google, which receives your IP address</td><td>United States</td></tr>
+          <tr><td>Google Fonts</td><td>Mobile app versions before 1.0.0 (build 4) download their typeface from Google, which receives your IP address. Later versions include it and make no such request</td><td>United States</td></tr>
         </tbody>
       </table>
       <p>
