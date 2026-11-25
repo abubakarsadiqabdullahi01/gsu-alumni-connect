@@ -159,6 +159,25 @@ function publicUrlFor(key: string, bucket: string, endpoint: string): string {
   return `${url.origin.replace(/\/+$/, "")}/${bucket}/${key}`;
 }
 
+/**
+ * The version baked into the APK, read with aapt2 from the same build-tools as
+ * apksigner. pubspec.yaml only says what the *next* build will be; labelling
+ * an older APK from it would publish build 3 under build 4's name.
+ */
+async function readApkVersion(apk: string): Promise<{ version: string; build: string } | null> {
+  const apksigner = findApksigner();
+  if (!apksigner || /["\r\n]/.test(apk)) return null;
+  const aapt2 = path.join(path.dirname(apksigner), process.platform === "win32" ? "aapt2.exe" : "aapt2");
+  if (!existsSync(aapt2)) return null;
+  try {
+    const { stdout } = await run(`"${aapt2}" dump badging "${apk}"`, { maxBuffer: 16 * 1024 * 1024 });
+    const match = stdout.match(/versionCode='(\d+)' versionName='([^']+)'/);
+    return match ? { version: match[2], build: match[1] } : null;
+  } catch {
+    return null;
+  }
+}
+
 function formatSize(bytes: number): string {
   return `${(bytes / 1024 / 1024).toFixed(0)} MB`;
 }
@@ -171,7 +190,7 @@ async function main() {
     );
   }
 
-  const { version, build } = readPubspecVersion();
+  const { version, build } = (await readApkVersion(apkPath)) ?? readPubspecVersion();
   const size = statSync(apkPath).size;
   const body = readFileSync(apkPath);
   const sha256 = createHash("sha256").update(body).digest("hex");
@@ -250,7 +269,9 @@ async function main() {
       secretAccessKey: requiredEnv("AWS_SECRET_ACCESS_KEY"),
     },
     forcePathStyle: false,
-    requestHandler: { requestTimeout: 0, connectionTimeout: 20_000 },
+    // A stalled part must time out, or withRetries never gets to retry it:
+    // with no timeout, one dead socket hung the upload for an hour.
+    requestHandler: { requestTimeout: 300_000, connectionTimeout: 20_000 },
   });
 
   // Multipart, sequential, one part at a time. A single 55 MB PUT does not
