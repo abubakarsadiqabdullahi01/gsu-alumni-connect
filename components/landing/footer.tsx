@@ -4,18 +4,18 @@ import { Separator } from "@/components/ui/separator";
 import { Mail, MapPin } from "lucide-react";
 
 const quickLinks = [
-	{ href: "#about", label: "About" },
-	{ href: "#features", label: "Features" },
-	{ href: "#download", label: "Get the App" },
-	{ href: "#leadership", label: "Leadership" },
+	{ href: "/#about", label: "About" },
+	{ href: "/#features", label: "Features" },
+	{ href: "/#download", label: "Get the App" },
+	{ href: "/#leadership", label: "Leadership" },
 	{ href: "/login", label: "Sign In" },
 ];
 
 const resourceLinks = [
-	{ href: "#", label: "Privacy Policy" },
-	{ href: "#", label: "Terms of Service" },
-	{ href: "#", label: "Help & Support" },
-	{ href: "#", label: "Contact Us" },
+	{ href: "/privacy", label: "Privacy Policy" },
+	{ href: "/terms", label: "Terms of Use" },
+	{ href: "/delete-account", label: "Delete Your Account" },
+	{ href: "mailto:alumni@gsu.edu.ng", label: "Help & Support" },
 ];
 
 export function Footer() {

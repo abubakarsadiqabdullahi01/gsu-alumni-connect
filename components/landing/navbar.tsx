@@ -14,11 +14,11 @@ import {
 } from "@/components/ui/sheet";
 
 const navLinks = [
-  { href: "#about", label: "About" },
-  { href: "#features", label: "Features" },
-  { href: "#download", label: "Get the App" },
-  { href: "#leadership", label: "Leadership" },
-  { href: "#contact", label: "Contact" },
+  { href: "/#about", label: "About" },
+  { href: "/#features", label: "Features" },
+  { href: "/#download", label: "Get the App" },
+  { href: "/#leadership", label: "Leadership" },
+  { href: "/#contact", label: "Contact" },
 ];
 
 export function Navbar() {
@@ -28,6 +28,7 @@ export function Navbar() {
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 60);
+    handleScroll(); // a page opened at an anchor or reloaded mid-scroll never fires a scroll event
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -112,10 +113,10 @@ export function Navbar() {
                   : "text-white/85 hover:bg-white/10 hover:text-white"
               }`}
             >
-              <a href="#download">
+              <Link href="/#download">
                 <Download className="size-3.5" />
                 Get App
-              </a>
+              </Link>
             </Button>
           )}
           <Button
@@ -195,10 +196,10 @@ export function Navbar() {
                     variant="outline"
                     className="w-full gap-2 rounded-xl"
                   >
-                    <a href="#download" onClick={() => setOpen(false)}>
+                    <Link href="/#download" onClick={() => setOpen(false)}>
                       <Download className="size-4" />
                       Get the Android app
-                    </a>
+                    </Link>
                   </Button>
                 )}
               </div>

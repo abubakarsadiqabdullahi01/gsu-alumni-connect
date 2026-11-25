@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { redisGetJson, redisSetJson } from "@/lib/cache/redis-cache";
+import { prisma } from "@/lib/db";
 
 /**
  * Daily Redis round trip, so the free Upstash database is never idle long
@@ -11,6 +12,9 @@ import { redisGetJson, redisSetJson } from "@/lib/cache/redis-cache";
  * and a read every day is activity, and doubles as a health check: the
  * response says whether Redis answered, and a 503 shows up in Vercel's cron
  * log.
+ *
+ * It also carries the one other daily chore: security-log rows older than 12
+ * months are deleted, as the privacy policy promises.
  *
  * Auth: Vercel sends `Authorization: Bearer <CRON_SECRET>` automatically.
  */
@@ -24,6 +28,14 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const purged = await prisma.authEvent
+    .deleteMany({ where: { createdAt: { lt: new Date(Date.now() - 365 * 24 * 60 * 60 * 1000) } } })
+    .then((r) => r.count)
+    .catch((error) => {
+      console.error("[cron/redis-keepalive] security-log purge failed", error);
+      return null;
+    });
+
   const url = process.env.IMPORT_QUEUE_REDIS_URL ?? process.env.REDIS_URL;
   const host = url ? new URL(url).hostname : null;
   const started = Date.now();
@@ -33,8 +45,8 @@ export async function GET(req: NextRequest) {
 
   if (!echoed) {
     console.error(`[cron/redis-keepalive] Redis did not answer (host: ${host ?? "not configured"})`);
-    return NextResponse.json({ ok: false, host, error: "Redis did not answer" }, { status: 503 });
+    return NextResponse.json({ ok: false, host, purged, error: "Redis did not answer" }, { status: 503 });
   }
 
-  return NextResponse.json({ ok: true, host, roundTripMs: Date.now() - started, at: echoed.at });
+  return NextResponse.json({ ok: true, host, purged, roundTripMs: Date.now() - started, at: echoed.at });
 }
