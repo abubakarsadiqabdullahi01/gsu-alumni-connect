@@ -16,7 +16,7 @@
 export const ANDROID_APP = {
   packageId: "com.gsualumni.connect",
   /** Mirrors `version:` in mobile/pubspec.yaml. */
-  version: process.env.NEXT_PUBLIC_ANDROID_APP_VERSION?.trim() || "0.1.0",
+  version: process.env.NEXT_PUBLIC_ANDROID_APP_VERSION?.trim() || "1.0.0",
   /** Display-only, e.g. "21 MB". Left blank when nobody set it. */
   sizeLabel: process.env.NEXT_PUBLIC_ANDROID_APK_SIZE?.trim() || "",
   /** minSdk 24 — see mobile/build/app/outputs/apk/release/output-metadata.json. */

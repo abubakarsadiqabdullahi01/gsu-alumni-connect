@@ -44,7 +44,7 @@ const installSteps = [
   },
   {
     title: "Sign in",
-    body: "Your registration number and password, same as the web app.",
+    body: "First time? Activate on this website first, then sign in to the app with your new password.",
   },
 ];
 
@@ -147,6 +147,14 @@ export function DownloadSection() {
                       ? metaBits.join(" · ")
                       : "Use the web app in any phone browser in the meantime."}
                   </p>
+                  {available && (
+                    <p className="mt-4 max-w-sm rounded-xl border border-primary/20 bg-primary/5 px-4 py-3 text-[13px] leading-relaxed text-foreground/80">
+                      <strong className="text-foreground">Using the app for the first time?</strong>{" "}
+                      Activate your account here on the website first: <Link href="/login" className="text-primary underline underline-offset-2">sign in</Link>{" "}
+                      with your registration number and starting password, then confirm your details. If the app
+                      keeps returning you to the login screen, download the latest version (1.0.0) above.
+                    </p>
+                  )}
                 </div>
 
                 {/* Scan-to-install, for anyone reading this on a desktop */}
