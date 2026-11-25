@@ -70,6 +70,28 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     await ref.read(sessionControllerProvider.notifier).signOut();
   }
 
+  Future<void> _deleteAccount() async {
+    final password = await showDialog<String>(
+      context: context,
+      builder: (context) => const _DeleteAccountDialog(),
+    );
+    if (password == null || !mounted) return;
+
+    setState(() => _saving = true);
+    try {
+      final repository = await ref.read(repositoryProvider.future);
+      await repository.deleteAccount(password);
+      if (!mounted) return;
+      showAppSnack(context, 'Your account has been deleted.');
+      await ref.read(sessionControllerProvider.notifier).signOut();
+    } catch (error) {
+      if (!mounted) return;
+      showAppSnack(context, ApiException.from(error).message, isError: true);
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -245,6 +267,20 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       trailing: const Icon(Icons.chevron_right_rounded),
                       onTap: _signOut,
                     ),
+                    const Divider(height: 1, indent: 12, endIndent: 12),
+                    ListTile(
+                      leading: const IconBadge(
+                        Icons.delete_forever_outlined,
+                        color: AppColors.rose600,
+                        size: 38,
+                      ),
+                      title: const Text('Delete account'),
+                      subtitle: const Text(
+                        'Permanently delete your account and what you added',
+                      ),
+                      trailing: const Icon(Icons.chevron_right_rounded),
+                      onTap: _saving ? null : _deleteAccount,
+                    ),
                   ],
                 ),
               ),
@@ -305,6 +341,66 @@ class _SettingSwitch extends StatelessWidget {
           contentPadding: const EdgeInsets.symmetric(horizontal: 10),
         ),
         if (!isLast) const Divider(height: 1, indent: 12, endIndent: 12),
+      ],
+    );
+  }
+}
+
+/// Asks for the password; pops it, or null when cancelled.
+class _DeleteAccountDialog extends StatefulWidget {
+  const _DeleteAccountDialog();
+
+  @override
+  State<_DeleteAccountDialog> createState() => _DeleteAccountDialogState();
+}
+
+class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
+  final _password = TextEditingController();
+
+  @override
+  void dispose() {
+    _password.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Delete your account?'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'This cannot be undone. Your profile, photos, posts, messages, '
+            'connections, RSVPs, mentorship and job applications will be '
+            'deleted, and your ID card will stop being valid. Your academic '
+            'record stays with the University, hidden.',
+          ),
+          const SizedBox(height: 16),
+          TextField(
+            controller: _password,
+            obscureText: true,
+            autofillHints: const [AutofillHints.password],
+            decoration: const InputDecoration(
+              labelText: 'Enter your password to confirm',
+            ),
+            onChanged: (_) => setState(() {}),
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Cancel'),
+        ),
+        FilledButton(
+          style: FilledButton.styleFrom(backgroundColor: AppColors.rose600),
+          onPressed: _password.text.isEmpty
+              ? null
+              : () => Navigator.of(context).pop(_password.text),
+          child: const Text('Delete permanently'),
+        ),
       ],
     );
   }

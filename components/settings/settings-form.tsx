@@ -10,6 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { DeleteAccountCard } from "@/components/settings/delete-account-card";
 
 type SettingsData = {
   accountStatus: string | null;
@@ -228,6 +229,8 @@ export function SettingsForm({ initialData }: SettingsFormProps) {
                 </p>
               </CardContent>
             </Card>
+
+            <DeleteAccountCard />
           </TabsContent>
         </Tabs>
       </motion.div>

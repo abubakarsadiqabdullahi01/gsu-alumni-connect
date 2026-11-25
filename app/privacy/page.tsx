@@ -43,11 +43,11 @@ export default function PrivacyPage() {
       <ul>
         <li>Registration number, full name and surname, sex, state of origin and local government area</li>
         <li>Faculty, department, course, entry year and graduation year</li>
-        <li>CGPA, degree class, JAMB registration number and date of birth, where the record includes them</li>
+        <li>CGPA, degree class and JAMB registration number, where the record includes them</li>
       </ul>
       <h3>What you add</h3>
       <ul>
-        <li>Email address, phone number and password (stored only as a salted scrypt hash, never in readable form)</li>
+        <li>Date of birth, email address, phone number and password (stored only as a salted scrypt hash, never in readable form)</li>
         <li>Profile photo, signature (for your alumni ID card), biography and social or website links</li>
         <li>Employment, further education, skills, NYSC details, current city and state, and an optional salary range</li>
         <li>Posts, comments, reactions, messages, connections, group memberships, event RSVPs, mentorship requests, job postings and job applications with any CV you upload</li>

@@ -441,6 +441,12 @@ class AlumniRepository {
   Future<void> confirmIdentity(String answer) async {
     await _api.post('/api/activation/confirm', body: {'answer': answer});
   }
+
+  /// Deletes the account and everything the member added; see
+  /// gsualumni.org.ng/delete-account. The password is asked again.
+  Future<void> deleteAccount(String password) async {
+    await _api.post('/api/account/delete', body: {'password': password});
+  }
 }
 
 final repositoryProvider = FutureProvider<AlumniRepository>((ref) async {

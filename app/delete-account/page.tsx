@@ -20,7 +20,19 @@ export default function DeleteAccountPage() {
       summary="You can ask for your GSU Alumni Connect account, and everything you added to it, to be deleted at any time. This page explains how, and what the University keeps."
       updated="25 November 2026"
     >
-      <h2 id="how">How to ask</h2>
+      <h2 id="in-app">Delete it yourself</h2>
+      <ol>
+        <li>Sign in to the GSU Alumni Connect app or to this website.</li>
+        <li>
+          Open <strong>Settings</strong>. In the app, scroll to <strong>Account</strong>; on the website, open the{" "}
+          <strong>Account Overview</strong> tab.
+        </li>
+        <li>Choose <strong>Delete account</strong> and enter your password to confirm.</li>
+      </ol>
+      <p>Deletion happens straight away and signs you out on every device.</p>
+
+      <h2 id="how">Or ask the Secretariat</h2>
+      <p>If you cannot sign in:</p>
       <ol>
         <li>
           Email <a href={`mailto:${PUBLISHER.email}?subject=${subject}&body=${body}`}>{PUBLISHER.email}</a> with
@@ -35,7 +47,7 @@ export default function DeleteAccountPage() {
         </li>
       </ol>
       <p>
-        We confirm by email once the deletion is done, within 30 days of your request. Deletion cannot be
+        We confirm by email once an emailed request is done, within 30 days. Deletion cannot be
         undone: if you want to use the platform again later, the Secretariat can set your University record up
         for activation again, but your old profile, posts and messages will not come back.
       </p>
@@ -43,7 +55,7 @@ export default function DeleteAccountPage() {
       <h2 id="deleted">What is deleted</h2>
       <ul>
         <li>Your sign-in details, password and all active sessions, on every device</li>
-        <li>Your email address, phone number and the rest of your profile: biography, links, employment, education, skills, NYSC details, location and salary range</li>
+        <li>Your date of birth, email address, phone number and the rest of your profile: biography, links, employment, education, skills, NYSC details, location and salary range</li>
         <li>Your profile photo and signature, and your alumni ID card (which will show as no longer valid)</li>
         <li>Your posts, comments and reactions, and the messages you sent</li>
         <li>Your connections, group memberships, event RSVPs, mentorship requests and job postings</li>

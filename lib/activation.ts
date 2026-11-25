@@ -25,7 +25,8 @@ export type AuthEventKind =
   | "ACTIVATION_LOCKED"
   | "ACTIVATION_RATE_LIMITED"
   | "ACTIVATION_SUCCEEDED"
-  | "ACTIVATION_UNLOCKED";
+  | "ACTIVATION_UNLOCKED"
+  | "ACCOUNT_DELETED";
 
 /**
  * Never throws: a failure to write the log must not become a failure to sign
