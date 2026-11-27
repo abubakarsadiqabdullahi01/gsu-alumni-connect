@@ -3,7 +3,7 @@ import { z } from "zod";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { verifyPassword } from "@/lib/password";
-import { clientIp, recordAuthEvent, signInBlockedBy } from "@/lib/activation";
+import { clientIp, recordAuthEvent, startSignInAttempt } from "@/lib/activation";
 import { deleteAccount } from "@/lib/account-deletion";
 
 /**
@@ -33,14 +33,16 @@ export async function POST(request: NextRequest) {
   const ip = clientIp(request.headers);
   const userAgent = request.headers.get("user-agent");
 
-  if (await signInBlockedBy(identifier, ip)) {
+  const attempt = await startSignInAttempt({ identifier, ip, userAgent });
+  if (attempt.blockedBy) {
     return NextResponse.json({ error: "Too many attempts. Please wait 15 minutes and try again." }, { status: 429 });
   }
   const hash = user.accounts[0]?.password;
   if (!hash || !(await verifyPassword(parsed.data.password, hash))) {
-    await recordAuthEvent("SIGN_IN_FAILED", { identifier, userId: user.id, ip, userAgent, reason: "wrong password (account deletion)" });
+    await attempt.fail("wrong password (account deletion)", user.id);
     return NextResponse.json({ error: "That password is not correct." }, { status: 400 });
   }
+  await attempt.pass();
 
   const result = await deleteAccount(user.id);
   await recordAuthEvent("ACCOUNT_DELETED", { identifier, ip, userAgent, reason: `member request; ${result.filesRemoved} files removed` });

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -7,19 +8,22 @@ import '../../features/shell/app_shell.dart';
 import '../../features/splash/splash_screen.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
-  final session = ref.watch(sessionControllerProvider);
+  final refresh = ValueNotifier(0);
+  ref.listen(sessionControllerProvider, (_, __) => refresh.value++);
 
-  return GoRouter(
+  final router = GoRouter(
+    refreshListenable: refresh,
     initialLocation: '/splash',
     redirect: (context, state) {
       final path = state.uri.path;
+      final session = ref.read(sessionControllerProvider);
       final value = session.valueOrNull;
 
       // Hold on the splash until the bootstrap probe resolves, so we never
       // flash the sign-in screen at a user who is already signed in.
       final resolved = value?.checked ?? false;
-      if (!resolved && !session.hasError) {
-        return path == '/splash' ? null : '/splash';
+      if (!resolved && !session.hasError && path == '/splash') {
+        return null;
       }
 
       final loggedIn = value?.isAuthenticated ?? false;
@@ -42,4 +46,9 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
     ],
   );
+  ref.onDispose(() {
+    router.dispose();
+    refresh.dispose();
+  });
+  return router;
 });

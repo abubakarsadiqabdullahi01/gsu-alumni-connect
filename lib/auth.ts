@@ -17,7 +17,7 @@ import {
   promptFor,
   recordAuthEvent,
   signActivationToken,
-  signInBlockedBy,
+  startSignInAttempt,
   verifyActivationToken,
 } from "@/lib/activation";
 
@@ -68,9 +68,8 @@ const registrationSignInPlugin = {
         const userAgent = headers.get("user-agent");
 
         // Checked before the password, so a paused identifier gives nothing away.
-        const blockedBy = await signInBlockedBy(identifier, ip);
-        if (blockedBy) {
-          await recordAuthEvent("SIGN_IN_RATE_LIMITED", { identifier, ip, userAgent, reason: `by ${blockedBy}` });
+        const attempt = await startSignInAttempt({ identifier, ip, userAgent });
+        if (attempt.blockedBy) {
           throw new APIError(
             "TOO_MANY_REQUESTS",
             { message: "Too many failed sign-in attempts. Please wait 15 minutes and try again." },
@@ -80,7 +79,7 @@ const registrationSignInPlugin = {
 
         // The SIGN_IN_FAILED row is the count the limit above reads.
         const fail = async (reason: string, userId?: string) => {
-          await recordAuthEvent("SIGN_IN_FAILED", { identifier, userId, ip, userAgent, reason });
+          await attempt.fail(reason, userId);
           return new APIError("UNAUTHORIZED", { message: INVALID_CREDENTIALS });
         };
 
@@ -106,12 +105,13 @@ const registrationSignInPlugin = {
         // Checked after the password, so a suspension is revealed only to
         // someone who already knows it.
         if (user.accountStatus === "SUSPENDED") {
-          await recordAuthEvent("SIGN_IN_FAILED", { identifier, userId: user.id, ip, userAgent, reason: "account suspended" });
+          await attempt.fail("account suspended", user.id);
           throw new APIError("FORBIDDEN", {
             message: "This account is suspended. Contact the Alumni Secretariat at alumni@gsu.edu.ng.",
             code: "ACCOUNT_SUSPENDED",
           });
         }
+        await attempt.pass();
 
         // The default password is published, so it proves only that someone
         // knows a registration number. Before any session exists, the graduate
@@ -261,9 +261,9 @@ export const auth = betterAuth({
   // ── Custom fields mapped to the User model ─────────────────────────────────
   user: {
     additionalFields: {
-      registrationNo:  { type: "string",  required: true,  unique: true },
-      defaultPassword: { type: "boolean", required: false, defaultValue: true },
-      accountStatus:   { type: "string",  required: false, defaultValue: "PENDING" },
+      registrationNo:  { type: "string", input: false,  required: true,  unique: true },
+      defaultPassword: { type: "boolean", input: false, required: false, defaultValue: true },
+      accountStatus:   { type: "string", input: false,  required: false, defaultValue: "PENDING" },
       phone:           { type: "string",  required: false, unique: true },
     },
   },

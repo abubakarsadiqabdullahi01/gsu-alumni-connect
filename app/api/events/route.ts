@@ -1,3 +1,4 @@
+import { visibleContact } from "@/lib/contact-privacy";
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
@@ -100,6 +101,8 @@ export async function GET(req: NextRequest) {
                   registrationNo: true,
                   departmentName: true,
                   facultyName: true,
+                  showEmail: true,
+                  showPhone: true,
                   user: {
                     select: {
                       email: true,
@@ -144,6 +147,7 @@ export async function GET(req: NextRequest) {
       })),
       myEvents: myEvents.map((event) => ({
         ...event,
+        attendees: event.attendees.map(row => ({ ...row, graduate: visibleContact(row.graduate) })),
         attendeesCount: event._count.attendees,
       })),
       myRsvps: myRsvpRows,

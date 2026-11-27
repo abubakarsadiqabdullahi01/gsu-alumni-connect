@@ -229,6 +229,10 @@ export function MessagesClient() {
     }
 
     const channel = pusher.subscribe(`private-conversation-${activeConversationId}`);
+    channel.bind("conversation:changed", () => {
+      void loadMessages(activeConversationId);
+      void loadConversations();
+    });
     channel.bind("message:new", (message: MessageItem) => {
       setMessages((prev) => (prev.some((m) => m.id === message.id) ? prev : [...prev, message]));
       setConversations((prev) =>

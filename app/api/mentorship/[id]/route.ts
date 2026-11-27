@@ -1,3 +1,4 @@
+import { isBlockedBetween } from "@/lib/moderation";
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
@@ -53,6 +54,10 @@ export async function PATCH(req: NextRequest, ctx: RouteCtx) {
     const isMentee = mentorship.menteeId === me.id;
     if (!isMentor && !isMentee && session.user.role !== "admin") {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    if ((isMentor || isMentee) && await isBlockedBetween(mentorship.mentorId, mentorship.menteeId)) {
+      return NextResponse.json({ error: "Mentorship unavailable." }, { status: 403 });
     }
 
     const data: Record<string, unknown> = {};
