@@ -48,6 +48,7 @@ final dioProvider = FutureProvider<Dio>((ref) async {
       sendTimeout: AppConfig.connectTimeout,
       headers: const {
         'Accept': 'application/json',
+        'Origin': AppConfig.apiBaseUrl,
         'Content-Type': 'application/json',
         'X-Client': 'gsu-alumni-android',
       },
@@ -59,8 +60,15 @@ final dioProvider = FutureProvider<Dio>((ref) async {
   dio.interceptors.add(CookieManager(cookieJar));
   dio.interceptors.add(
     InterceptorsWrapper(
-      onError: (error, handler) {
+      onError: (error, handler) async {
         if (error.response?.statusCode == 401) {
+          try {
+            await cookieJar.deleteAll();
+          } catch (cause) {
+            authEvents.signalUnauthorized();
+            handler.next(error.copyWith(error: cause));
+            return;
+          }
           authEvents.signalUnauthorized();
         }
         handler.next(error);

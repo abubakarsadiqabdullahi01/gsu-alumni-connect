@@ -44,6 +44,11 @@ export async function POST(
 
     if (conversation.isGroup && conversation.groupName?.startsWith("GROUP:")) {
       const groupId = conversation.groupName.replace("GROUP:", "");
+      const membership = await prisma.groupMember.findUnique({
+        where: { groupId_graduateId: { groupId, graduateId: me.id } },
+        select: { id: true },
+      });
+      if (!membership) return NextResponse.json({ error: "Forbidden." }, { status: 403 });
       await syncGroupParticipants(id, groupId);
     }
 
@@ -75,27 +80,31 @@ export async function POST(
       return NextResponse.json({ error: "Message too long." }, { status: 400 });
     }
 
-    const created = await prisma.message.create({
-      data: {
-        conversationId: id,
-        senderId: me.id,
-        body: text,
-      },
-      include: {
-        sender: {
-          select: {
-            id: true,
-            fullName: true,
-            registrationNo: true,
-            user: { select: { image: true } },
+    const created = await prisma.$transaction(async (tx) => {
+      await tx.conversation.update({ where: { id }, data: { updatedAt: new Date() } });
+      const created = await tx.message.create({
+        data: {
+          conversationId: id,
+          senderId: me.id,
+          body: text,
+        },
+        include: {
+          sender: {
+            select: {
+              id: true,
+              fullName: true,
+              registrationNo: true,
+              user: { select: { image: true } },
+            },
           },
         },
-      },
-    });
+      });
 
-    await prisma.conversationParticipant.updateMany({
-      where: { conversationId: id, graduateId: me.id },
-      data: { lastReadAt: new Date() },
+      await tx.conversationParticipant.updateMany({
+        where: { conversationId: id, graduateId: me.id },
+        data: { lastReadAt: new Date() },
+      });
+      return created;
     });
 
     const payload = {
@@ -111,7 +120,10 @@ export async function POST(
     };
 
     const pusher = getPusherServer();
-    if (pusher) {
+    if (pusher && conversation.isGroup && conversation.groupName?.startsWith("GROUP:")) {
+      // Open subscriptions can outlive membership. Fetch content through the authorized route.
+      await pusher.trigger(`private-conversation-${id}`, "conversation:changed", {});
+    } else if (pusher) {
       await pusher.trigger(`private-conversation-${id}`, "message:new", payload);
     }
 

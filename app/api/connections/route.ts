@@ -1,3 +1,4 @@
+import { blockedIds } from "@/lib/moderation";
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
@@ -39,10 +40,13 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Graduate profile not found." }, { status: 404 });
     }
 
+    const blocked = await blockedIds(me.id);
     const [acceptedRows, incomingRows, outgoingRows, existingRows] = await Promise.all([
       prisma.connection.findMany({
         where: {
           status: "ACCEPTED",
+          requesterId: { notIn: blocked },
+          receiverId: { notIn: blocked },
           OR: [{ requesterId: me.id }, { receiverId: me.id }],
         },
         orderBy: { updatedAt: "desc" },
@@ -63,6 +67,7 @@ export async function GET(req: NextRequest) {
         where: {
           status: "PENDING",
           receiverId: me.id,
+          requesterId: { notIn: blocked },
         },
         orderBy: { createdAt: "desc" },
         include: {
@@ -77,6 +82,7 @@ export async function GET(req: NextRequest) {
         where: {
           status: "PENDING",
           requesterId: me.id,
+          receiverId: { notIn: blocked },
         },
         orderBy: { createdAt: "desc" },
         include: {
@@ -125,7 +131,7 @@ export async function GET(req: NextRequest) {
       person: mapPerson(row.receiver),
     }));
 
-    const excludedIds = new Set<string>([me.id]);
+    const excludedIds = new Set<string>([me.id, ...blocked]);
     for (const row of existingRows) {
       excludedIds.add(row.requesterId);
       excludedIds.add(row.receiverId);

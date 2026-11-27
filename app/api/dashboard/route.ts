@@ -1,3 +1,4 @@
+import { blockedIds } from "@/lib/moderation";
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
@@ -176,7 +177,7 @@ export async function GET(req: NextRequest) {
       affinity.length > 0
         ? prisma.graduate.findMany({
             where: {
-              id: { not: graduate.id },
+              id: { notIn: [graduate.id, ...(await blockedIds(graduate.id))] },
               showInDirectory: true,
               user: { accountStatus: "ACTIVE" },
               OR: affinity,

@@ -1,7 +1,8 @@
+import { visibleContact } from "@/lib/contact-privacy";
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { blockedIds } from "@/lib/moderation";
+import { blockedIds, isBlockedBetween } from "@/lib/moderation";
 import { isFeatureEnabled } from "@/lib/platform-settings";
 
 export async function GET(req: NextRequest) {
@@ -25,10 +26,11 @@ export async function GET(req: NextRequest) {
 
     const q = (req.nextUrl.searchParams.get("q") ?? "").trim();
 
+    const blocked = await blockedIds(me.id);
     const [mentors, incoming, outgoing, activeAsMentee, activeAsMentor] = await Promise.all([
       prisma.graduate.findMany({
         where: {
-          id: { notIn: [me.id, ...(await blockedIds(me.id))] },
+          id: { notIn: [me.id, ...blocked] },
           availableForMentorship: true,
           user: { accountStatus: "ACTIVE" },
           ...(q
@@ -66,7 +68,7 @@ export async function GET(req: NextRequest) {
         },
       }),
       prisma.mentorship.findMany({
-        where: { mentorId: me.id, status: "PENDING" },
+        where: { mentorId: me.id, menteeId: { notIn: blocked }, status: "PENDING" },
         orderBy: [{ createdAt: "desc" }],
         select: {
           id: true,
@@ -81,13 +83,15 @@ export async function GET(req: NextRequest) {
               registrationNo: true,
               facultyName: true,
               departmentName: true,
+              showEmail: true,
+              showPhone: true,
               user: { select: { image: true, email: true, phone: true } },
             },
           },
         },
       }),
       prisma.mentorship.findMany({
-        where: { menteeId: me.id, status: "PENDING" },
+        where: { menteeId: me.id, mentorId: { notIn: blocked }, status: "PENDING" },
         orderBy: [{ createdAt: "desc" }],
         select: {
           id: true,
@@ -102,13 +106,15 @@ export async function GET(req: NextRequest) {
               registrationNo: true,
               facultyName: true,
               departmentName: true,
+              showEmail: true,
+              showPhone: true,
               user: { select: { image: true, email: true, phone: true } },
             },
           },
         },
       }),
       prisma.mentorship.findMany({
-        where: { menteeId: me.id, status: "ACCEPTED" },
+        where: { menteeId: me.id, mentorId: { notIn: blocked }, status: "ACCEPTED" },
         orderBy: [{ acceptedAt: "desc" }, { createdAt: "desc" }],
         select: {
           id: true,
@@ -125,13 +131,15 @@ export async function GET(req: NextRequest) {
               registrationNo: true,
               facultyName: true,
               departmentName: true,
+              showEmail: true,
+              showPhone: true,
               user: { select: { image: true, email: true, phone: true } },
             },
           },
         },
       }),
       prisma.mentorship.findMany({
-        where: { mentorId: me.id, status: "ACCEPTED" },
+        where: { mentorId: me.id, menteeId: { notIn: blocked }, status: "ACCEPTED" },
         orderBy: [{ acceptedAt: "desc" }, { createdAt: "desc" }],
         select: {
           id: true,
@@ -148,6 +156,8 @@ export async function GET(req: NextRequest) {
               registrationNo: true,
               facultyName: true,
               departmentName: true,
+              showEmail: true,
+              showPhone: true,
               user: { select: { image: true, email: true, phone: true } },
             },
           },
@@ -157,10 +167,10 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({
       mentors,
-      incoming,
-      outgoing,
-      activeAsMentee,
-      activeAsMentor,
+      incoming: incoming.map(row => ({ ...row, mentee: visibleContact(row.mentee) })),
+      outgoing: outgoing.map(row => ({ ...row, mentor: visibleContact(row.mentor) })),
+      activeAsMentee: activeAsMentee.map(row => ({ ...row, mentor: visibleContact(row.mentor) })),
+      activeAsMentor: activeAsMentor.map(row => ({ ...row, mentee: visibleContact(row.mentee) })),
       stats: {
         mentors: mentors.length,
         incoming: incoming.length,
@@ -207,6 +217,10 @@ export async function POST(req: NextRequest) {
     }
     if (mentorId === me.id) {
       return NextResponse.json({ error: "You cannot request mentorship from yourself." }, { status: 400 });
+    }
+
+    if (await isBlockedBetween(me.id, mentorId)) {
+      return NextResponse.json({ error: "Mentor not available." }, { status: 404 });
     }
 
     const mentor = await prisma.graduate.findUnique({

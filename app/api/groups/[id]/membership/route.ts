@@ -87,12 +87,12 @@ export async function DELETE(
       return NextResponse.json({ error: "Graduate profile not found." }, { status: 404 });
     }
 
-    await prisma.groupMember.deleteMany({
-      where: {
-        groupId: id,
-        graduateId: me.id,
-      },
-    });
+    await prisma.$transaction([
+      prisma.groupMember.deleteMany({ where: { groupId: id, graduateId: me.id } }),
+      prisma.conversationParticipant.deleteMany({
+        where: { graduateId: me.id, conversation: { groupName: `GROUP:${id}` } },
+      }),
+    ]);
 
     return NextResponse.json({ success: true });
   } catch (error) {

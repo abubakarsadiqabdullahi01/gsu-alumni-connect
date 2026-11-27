@@ -83,10 +83,12 @@ export async function PATCH(
     }
 
     if (action === "block") {
-      await prisma.connection.update({
-        where: { id: connection.id },
-        data: { status: "BLOCKED" },
-      });
+      const blockedId = connection.requesterId === me.id ? connection.receiverId : connection.requesterId;
+      const pair = { blockerId: me.id, blockedId };
+      await prisma.$transaction([
+        prisma.connection.update({ where: { id: connection.id }, data: { status: "BLOCKED" } }),
+        prisma.memberBlock.upsert({ where: { blockerId_blockedId: pair }, create: pair, update: {} }),
+      ]);
       void bumpAdminCacheVersion("network");
       return NextResponse.json({ success: true, status: "BLOCKED" });
     }

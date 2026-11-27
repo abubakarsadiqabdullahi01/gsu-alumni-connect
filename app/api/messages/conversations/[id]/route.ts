@@ -51,6 +51,11 @@ export async function GET(
     let resolvedGroupName = conversation.groupName;
     if (conversation.isGroup && conversation.groupName?.startsWith("GROUP:")) {
       const groupId = conversation.groupName.replace("GROUP:", "");
+      const membership = await prisma.groupMember.findUnique({
+        where: { groupId_graduateId: { groupId, graduateId: me.id } },
+        select: { id: true },
+      });
+      if (!membership) return NextResponse.json({ error: "Forbidden." }, { status: 403 });
       const group = await prisma.alumniGroup.findUnique({
         where: { id: groupId },
         select: { name: true },
@@ -60,7 +65,7 @@ export async function GET(
 
     const messages = await prisma.message.findMany({
       where: { conversationId: id, isDeleted: false, senderId: { notIn: await blockedIds(me.id) } },
-      orderBy: { createdAt: "asc" },
+      orderBy: [{ createdAt: "desc" }, { id: "desc" }],
       take: 200,
       include: {
         sender: {
@@ -87,7 +92,7 @@ export async function GET(
           lastSeenAt: p.graduate.user.lastSeenAt?.toISOString() ?? null,
         })),
       },
-      messages: messages.map((m) => ({
+      messages: messages.reverse().map((m) => ({
         id: m.id,
         body: m.body,
         createdAt: m.createdAt.toISOString(),

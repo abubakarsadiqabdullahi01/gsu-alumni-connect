@@ -2,13 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { isFeatureEnabled } from "@/lib/platform-settings";
-import { redisGetJson, redisSetJson } from "@/lib/cache/redis-cache";
-
-const MESSAGES_LIST_CACHE_TTL_SECONDS = Math.max(
-  1,
-  Number.parseInt(process.env.MESSAGES_LIST_CACHE_TTL_SECONDS ?? "8", 10) || 8
-);
-
 export async function GET(req: NextRequest) {
   try {
     if (!(await isFeatureEnabled("featureMessaging"))) {
@@ -23,36 +16,6 @@ export async function GET(req: NextRequest) {
       select: { id: true },
     });
     if (!me) return NextResponse.json({ error: "Graduate profile not found." }, { status: 404 });
-
-    const cacheKey = `messages:list:${me.id}`;
-    const cached = await redisGetJson<{
-      conversations: Array<{
-        id: string;
-        isGroup: boolean;
-        title: string;
-        avatar: string | null;
-        participants: Array<{
-          graduateId: string;
-          fullName: string;
-          registrationNo: string;
-          image: string | null;
-          lastSeenAt: string | null;
-        }>;
-        lastMessage: {
-          id: string;
-          body: string;
-          createdAt: string;
-          senderName: string;
-        } | null;
-        unreadCount: number;
-        updatedAt: string;
-      }>;
-      selfGraduateId: string;
-    }>(cacheKey);
-
-    if (cached) {
-      return NextResponse.json(cached);
-    }
 
     const rows = await prisma.conversationParticipant.findMany({
       where: { graduateId: me.id },
@@ -72,7 +35,8 @@ export async function GET(req: NextRequest) {
               },
             },
             messages: {
-              orderBy: { createdAt: "desc" },
+              where: { isDeleted: false },
+              orderBy: [{ createdAt: "desc" }, { id: "desc" }],
               take: 1,
               include: {
                 sender: {
@@ -120,6 +84,7 @@ export async function GET(req: NextRequest) {
         const unread = await prisma.message.count({
           where: {
             conversationId: conv.id,
+            isDeleted: false,
             senderId: { not: me.id },
             createdAt: {
               gt: row.lastReadAt ?? new Date(0),
@@ -178,7 +143,6 @@ export async function GET(req: NextRequest) {
     );
 
     const payload = { conversations: normalized, selfGraduateId: me.id };
-    void redisSetJson(cacheKey, payload, MESSAGES_LIST_CACHE_TTL_SECONDS);
     return NextResponse.json(payload);
   } catch (error) {
     console.error("[MessagesConversations] Error:", error);

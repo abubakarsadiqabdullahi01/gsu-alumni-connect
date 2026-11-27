@@ -46,7 +46,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!_scrollController.hasClients) return;
       _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
+        _scrollController.position.minScrollExtent,
         duration: const Duration(milliseconds: 240),
         curve: Curves.easeOut,
       );
@@ -158,12 +158,14 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 }
 
                 return ListView.builder(
+                  reverse: true,
                   controller: _scrollController,
                   padding: const EdgeInsets.fromLTRB(14, 16, 14, 16),
                   itemCount: messages.length,
                   itemBuilder: (context, index) {
-                    final message = messages[index];
-                    final previous = index == 0 ? null : messages[index - 1];
+                    final chronologicalIndex = messages.length - 1 - index;
+                    final message = messages[chronologicalIndex];
+                    final previous = chronologicalIndex == 0 ? null : messages[chronologicalIndex - 1];
                     final showAuthor = data.isGroup &&
                         message.senderId != myId &&
                         previous?.senderId != message.senderId;

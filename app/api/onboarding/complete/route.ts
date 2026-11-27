@@ -111,7 +111,7 @@ export async function POST(req: NextRequest) {
       await tx.user.update({
         where: { id: session.user.id },
         data: {
-          email: normalizeOptionalString(normalizedProfile.email),
+          email: normalizeOptionalString(normalizedProfile.email?.toLowerCase()),
           phone: normalizeOptionalString(normalizedProfile.phone),
           defaultPassword: false,
           accountStatus: "ACTIVE",
