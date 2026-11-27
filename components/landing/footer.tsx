@@ -14,6 +14,7 @@ const quickLinks = [
 const resourceLinks = [
 	{ href: "/privacy", label: "Privacy Policy" },
 	{ href: "/terms", label: "Terms of Use" },
+	{ href: "/child-safety", label: "Child Safety" },
 	{ href: "/delete-account", label: "Delete Your Account" },
 	{ href: "mailto:alumni@gsu.edu.ng", label: "Help & Support" },
 ];
